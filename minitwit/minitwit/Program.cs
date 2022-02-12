@@ -1,6 +1,10 @@
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.MapFallbackToFile("./../index.html");
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
 
 app.Run(); 

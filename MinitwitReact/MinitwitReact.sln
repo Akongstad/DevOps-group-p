@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinitwitReact", "MinitwitReact\MinitwitReact.csproj", "{4F07CAD8-6115-4242-91E5-558CA9539CEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minitwit.Tests", "Minitwit.Tests\Minitwit.Tests.csproj", "{D6A8E5CB-B0D5-48FC-A1AA-B1275DD2334A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F07CAD8-6115-4242-91E5-558CA9539CEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F07CAD8-6115-4242-91E5-558CA9539CEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F07CAD8-6115-4242-91E5-558CA9539CEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F07CAD8-6115-4242-91E5-558CA9539CEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6A8E5CB-B0D5-48FC-A1AA-B1275DD2334A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6A8E5CB-B0D5-48FC-A1AA-B1275DD2334A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6A8E5CB-B0D5-48FC-A1AA-B1275DD2334A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6A8E5CB-B0D5-48FC-A1AA-B1275DD2334A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
