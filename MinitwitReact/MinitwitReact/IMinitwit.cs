@@ -1,5 +1,7 @@
 using System.Data;
+using System.Net.Mime;
 using Microsoft.Data.Sqlite;
+using MinitwitReact.Entities;
 
 namespace MinitwitReact;
 
@@ -13,19 +15,24 @@ public interface IMinitwit
 
     IEnumerable<string> GetUsers();
 
+    User GetUser(long userid);
+
+    bool isFollow(long userid, string username);
+
     DataTable GetSchema();
     
     //"""Queries the database and returns a list of dictionaries."""
-    void QueryDb( /*query, args=(), one=False*/);
+    ICollection<Dictionary<string, string>> QueryDb(SqliteCommand query, bool one=false);
     
     //"""Convenience method to look up the id for a username."""
-    void GetUserId(string username);
+    long GetUserId(string username);
     
     //"""Format a timestamp for display."""
-    void FormatDatetime(string timestamp); //Can probably be done using datetime
+    DateTime FormatDatetime(string timestamp); //Can probably be done using datetime
     
     //"""Return the gravatar image for the given email address."""
-    void gravatar_url(string email, int size = 80);
+    Uri gravatar_url(string email, int size = 80);
+
     
     //@app.before_request
     /*"""Make sure we are connected to the database each request and look
@@ -35,47 +42,45 @@ public interface IMinitwit
     
      //@app.after_request
     //"""Closes the database again at the end of the request."""
-    void after_request(string response); //TODO response might be and enum
+    void after_request(string response); //TODO response might be an enum
+
 
     //@app.route('/')
     /*"""Shows a users timeline or if no user is logged in it will
     redirect to the public timeline.  This timeline shows the user's
     messages as well as all the messages of followed users.
     """*/
-    void Timeline();
+    IEnumerable<(Message, User)> Timeline(long userid);
     
     //@app.route('/public')
     //"""Displays the latest messages of all users."""
-    void public_timeline();
+    IEnumerable<(Message, User)> public_timeline();
     
     //@app.route('/<username>')
     //"""Display's a users tweets."""
-    void user_timeline(string username);
-
+    IEnumerable<(Message, User)> user_timeline(long sessionId ,string username);
     
     //@app.route('/<username>/follow')
     //"""Adds the current user as follower of the given user."""
-    void follow_user(string username);
+    long follow_user(string username, long userid);
     
     //@app.route('/<username>/unfollow')
      //"""Removes the current user as follower of the given user.""" 
-     void unfollow_user(string username);
+     long unfollow_user(string username, long userid);
        
      //@app.route('/add_message', methods=['POST'])
      //"""Registers a new message for the user."""
-     void add_message();
+     string add_message(long userid, string message);
          
      //@app.route('/login', methods=['GET', 'POST'])
      //"""Logs the user in."""
-     void Login();
+     long Login(string username, string pw);
      
      //@app.route('/register', methods=['GET', 'POST'])
      //"""Registers the user."""
-     void Register();
+     long Register(string username, string email, string pw);
          
      //@app.route('/logout')
      //"""Logs the user out"""
-     void Logout();
-         
-     
+     void Logout(long userid);        
 }

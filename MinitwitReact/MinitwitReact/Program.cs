@@ -1,4 +1,4 @@
-
+using Microsoft.AspNetCore.Antiforgery;
 using MinitwitReact;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +7,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IMinitwit, Minitwit>();
-    
+
+
+// csrf configuration
+builder.Services.AddAntiforgery(options =>
+{
+    // Set Cookie properties using CookieBuilder properties†.
+    options.FormFieldName = "AntiforgeryFieldname";
+    options.HeaderName = "X-CSRF-TOKEN-HEADERNAME";
+    options.SuppressXFrameOptionsHeader = false;
+});
 var app = builder.Build();
     
 // Configure the HTTP request pipeline.
@@ -25,5 +34,25 @@ app.MapControllerRoute(
     pattern: "{controller}/{action=Index}/{id?}");
     
 app.MapFallbackToFile("index.html");
+
+//generate csrf tokens
+app.UseAuthorization();
+var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
+app.Use((context, next) =>
+{
+    var requestPath = context.Request.Path.Value;
+
+    if (string.Equals(requestPath, "/", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(requestPath, "/index.html", StringComparison.OrdinalIgnoreCase))
+    {
+        var tokenSet = antiforgery.GetAndStoreTokens(context);
+        context.Response.Cookies.Append("XSRF-TOKEN", tokenSet.RequestToken!,
+            new CookieOptions { HttpOnly = false });
+    }
+
+    return next(context);
+});
+
+
 
 app.Run();

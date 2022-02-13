@@ -18,6 +18,12 @@
         <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.1" />
         <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.2" />
         <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.2">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.2" />
+
     </ItemGroup>
 
     <ItemGroup>
@@ -26,6 +32,11 @@
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Entities" />
+    </ItemGroup>
+
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
         <!-- Ensure Node.js is installed -->
