@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MinitwitReact.Entities;
 
+
 namespace MinitwitReact.Controllers;
 
 [ApiController]
@@ -15,6 +16,7 @@ public class MinitwitController : ControllerBase
         _logger = logger;
         _minitwit = minitwit;
     }
+
     // Get Public timeline
     [HttpGet("Users")]
     public IEnumerable<string> Get(){

@@ -32,6 +32,7 @@ public interface IMinitwit
     
     //"""Return the gravatar image for the given email address."""
     Uri gravatar_url(string email, int size = 80);
+
     
     //@app.before_request
     /*"""Make sure we are connected to the database each request and look
@@ -42,6 +43,7 @@ public interface IMinitwit
      //@app.after_request
     //"""Closes the database again at the end of the request."""
     void after_request(string response); //TODO response might be an enum
+
 
     //@app.route('/')
     /*"""Shows a users timeline or if no user is logged in it will
@@ -57,7 +59,6 @@ public interface IMinitwit
     //@app.route('/<username>')
     //"""Display's a users tweets."""
     IEnumerable<(Message, User)> user_timeline(long sessionId ,string username);
-
     
     //@app.route('/<username>/follow')
     //"""Adds the current user as follower of the given user."""
@@ -81,7 +82,5 @@ public interface IMinitwit
          
      //@app.route('/logout')
      //"""Logs the user out"""
-     void Logout(long userid);
-         
-     
+     void Logout(long userid);        
 }

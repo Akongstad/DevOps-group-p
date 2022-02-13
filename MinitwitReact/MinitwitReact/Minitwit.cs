@@ -1,6 +1,7 @@
 using System.Data;
 using MinitwitReact.Entities;
 
+
 namespace MinitwitReact;
 
 using Microsoft.Data.Sqlite;
@@ -11,6 +12,7 @@ public class Minitwit : IMinitwit, IDisposable
     const string DATABASE = "Data Source=./../../minitwit.db";
     // docker
     //const string DATABASE = "Data Source=./../../minitwit.db";
+
     const int PER_PAGE = 30;
     const bool DEBUG = true;
     const string SECRET_KEY = "development key";
@@ -55,7 +57,9 @@ public class Minitwit : IMinitwit, IDisposable
         OpenConnection();
 
         using var reader = command.ExecuteReader();
+
         
+
         while (reader.Read())
         {
             yield return reader.GetString("username");
@@ -151,6 +155,7 @@ public class Minitwit : IMinitwit, IDisposable
 
     // Make sure we are connected to the database each request and look
     // up the current user so that we know they are there.
+
     public void before_request()
     {
         throw new NotImplementedException();

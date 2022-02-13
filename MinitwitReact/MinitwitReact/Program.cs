@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Antiforgery;
 using MinitwitReact;
 
@@ -35,7 +34,6 @@ app.MapControllerRoute(
     pattern: "{controller}/{action=Index}/{id?}");
     
 app.MapFallbackToFile("index.html");
-
 
 //generate csrf tokens
 app.UseAuthorization();
