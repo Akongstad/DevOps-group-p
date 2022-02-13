@@ -8,7 +8,7 @@ using Microsoft.Data.Sqlite;
 public class Minitwit : IMinitwit, IDisposable
 {
 // configuration
-    const string DATABASE = "Data Source=./../../../../minitwit.db";
+    const string DATABASE = "Data Source=./../../minitwit.db";
     // docker
     //const string DATABASE = "Data Source=./../../minitwit.db";
     const int PER_PAGE = 30;
@@ -203,7 +203,9 @@ public class Minitwit : IMinitwit, IDisposable
     public IEnumerable<(Message, User)> public_timeline()
     {
         var cmd =
-            "select message.*, user.* from message, user\nwhere message.flagged = 0 and message.author_id = user.user_id\norder by message.pub_date desc limit @limit";
+            @"select message.*, user.* from message, user 
+            where message.flagged = 0 and message.author_id = user.user_id
+            order by message.pub_date desc limit @limit";
         using var command = new SqliteCommand(cmd, _connection);
         OpenConnection();
 
@@ -238,7 +240,8 @@ public class Minitwit : IMinitwit, IDisposable
     
         var profileid = GetUserId(username);
         
-        var cmd = "select message.*, user.* from message, user where user.user_id = message.author_id and user.user_id = @profile_userid\norder by message.pub_date desc limit @limit";
+        var cmd = @"select message.*, user.* from message, user where user.user_id = message.author_id and user.user_id = @profile_userid
+        order by message.pub_date desc limit @limit";
     
         using var command2 = new SqliteCommand(cmd, _connection);
         command2.Parameters.AddWithValue("@profile_userid", profileid);

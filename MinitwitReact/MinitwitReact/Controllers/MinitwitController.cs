@@ -20,12 +20,15 @@ public class MinitwitController : ControllerBase
     public IEnumerable<string> Get(){
         return _minitwit.GetUsers();
     }
-    
     //[AutoValidateAntiforgeryToken]
     [HttpGet]
-    public IEnumerable<(Message, User)> GetPublicTimeline()
+    public IEnumerable<Tuple<Message, User>> GetPublicTimeline()
     {
-        return _minitwit.public_timeline();
+        //return _minitwit.public_timeline();
+        foreach (var item in _minitwit.public_timeline())
+        {
+            yield return item.ToTuple();
+        }
     }
     // Get User's timeline
     [HttpGet("{id}")]
