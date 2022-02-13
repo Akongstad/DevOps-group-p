@@ -1,12 +1,25 @@
 import React, { useState } from 'react';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import { useNavigate } from 'react-router-dom';
+
 export default function Register() {
     const title = 'Sign Up';
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     function handleSubmit(event) {
         event.preventDefault();
+        const user = { username, password }
+        const response = await axios.post(
+            'minitwit', user
+        )
+        if ( response.data ) { 
+            let path = 'login';
+            localStorage.setItem('user', response.data);
+            navigate(path);
     }
 
     function validateForm() {
