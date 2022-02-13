@@ -5,7 +5,10 @@ import { useNavigate } from 'react-router-dom'
 
 export default function Login(props) {
     const title = 'Sign In';
+<<<<<<< HEAD:minitwit/frontend/src/components/Login.js
     const navigate = useNavigate()
+=======
+>>>>>>> bccbf7d (Refactor frontend):MinitwitReact/MinitwitReact/ClientApp/src/components/Login.js
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -16,6 +19,7 @@ export default function Login(props) {
         const response = await axios.post(
             'minitwit', user
         )
+<<<<<<< HEAD:minitwit/frontend/src/components/Login.js
         // Condition dependant on API return schema
         if ( response.data ) { 
             let path = 'user_timeline';
@@ -25,6 +29,8 @@ export default function Login(props) {
         }
         navigate(path);
     }
+=======
+>>>>>>> bccbf7d (Refactor frontend):MinitwitReact/MinitwitReact/ClientApp/src/components/Login.js
 
     function validateForm() {
         return username.length > 0 && password.length > 0;
@@ -47,7 +53,11 @@ export default function Login(props) {
                     <Form.Control
                         type="password"
                         value={password}
+<<<<<<< HEAD:minitwit/frontend/src/components/Login.js
                         onChange={(e) => setPassword(e.target.value)}
+=======
+                        onChange={(e) => setPassword(e.targe.value)}
+>>>>>>> bccbf7d (Refactor frontend):MinitwitReact/MinitwitReact/ClientApp/src/components/Login.js
                     />
                 </Form.Group>
                 <Button type="submit" disabled={!validateForm()}>
