@@ -11,17 +11,16 @@ RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
         nodejs \
     && rm -rf /var/lib/apt/lists/*
 
+COPY . /src
 WORKDIR /src
-COPY ["MinitwitReact/MinitwitReact.csproj", "MinitwitReact/"]
-RUN dotnet restore "MinitwitReact/MinitwitReact.csproj"
-COPY . .
-WORKDIR "/src/MinitwitReact"
-RUN dotnet build "MinitwitReact.csproj" -c Release -o /app/build
 
-FROM build AS publish
-RUN dotnet publish "MinitwitReact.csproj" -c Release -o /app/publish
+RUN dotnet restore
+
+RUN dotnet build
+
+RUN dotnet publish --configuration Release --output /app
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app ./
 ENTRYPOINT ["dotnet", "MinitwitReact.dll"]
