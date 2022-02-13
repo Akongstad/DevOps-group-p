@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD:minitwit/frontend/src/components/Register.js
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
@@ -7,17 +6,12 @@ import { useNavigate } from 'react-router-dom';
 export default function Register() {
     const title = 'Sign Up';
     const navigate = useNavigate();
-=======
-export default function Register() {
-    const title = 'Sign Up';
->>>>>>> bccbf7d (Refactor frontend):MinitwitReact/MinitwitReact/ClientApp/src/components/Register.js
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     function handleSubmit(event) {
         event.preventDefault();
-<<<<<<< HEAD:minitwit/frontend/src/components/Register.js
         const user = { username, password }
         const response = await axios.post(
             'minitwit', user
@@ -27,8 +21,6 @@ export default function Register() {
             localStorage.setItem('user', response.data);
             navigate(path);
         }
-=======
->>>>>>> bccbf7d (Refactor frontend):MinitwitReact/MinitwitReact/ClientApp/src/components/Register.js
     }
 
     function validateForm() {
