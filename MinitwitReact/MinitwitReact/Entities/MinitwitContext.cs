@@ -5,26 +5,18 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace MinitwitReact.Entities
 {
-    public partial class MinitwitContext : DbContext
+    public partial class MinitwitContext : DbContext, IMinitwitContext
     {
-        public MinitwitContext()
-        {
-        }
+        public MinitwitContext(DbContextOptions<MinitwitContext> options) : base(options) { }
 
-        public MinitwitContext(DbContextOptions<MinitwitContext> options)
-            : base(options)
-        {
-        }
-
-        public virtual DbSet<Follower> Followers { get; set; } = null!;
-        public virtual DbSet<Message> Messages { get; set; } = null!;
-        public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<Follower> Followers => Set<Follower>();
+        public virtual DbSet<Message> Messages => Set<Message>();
+        public virtual DbSet<User> Users  => Set<User>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+            { 
                 optionsBuilder.UseSqlite("Data Source=./../../minitwit.db");
             }
         }

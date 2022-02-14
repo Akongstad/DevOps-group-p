@@ -1,4 +1,5 @@
 using System.Data;
+using Microsoft.EntityFrameworkCore;
 using MinitwitReact.Entities;
 
 
@@ -18,13 +19,16 @@ public class Minitwit : IMinitwit, IDisposable
     const string SECRET_KEY = "development key";
 
     private readonly SqliteConnection _connection;
+    private readonly IMinitwitContext _context;
     
-    public Minitwit()
+    public Minitwit(IMinitwitContext context)
     {
+        _context = context;
         _connection = ConnectDb();
     }
-    public Minitwit(SqliteConnection connection)
+    public Minitwit(IMinitwitContext context ,SqliteConnection connection)
     {
+        _context = context;
         _connection = connection;
     }
 
@@ -45,11 +49,34 @@ public class Minitwit : IMinitwit, IDisposable
         CloseConnection();
     }
 
-    public DataTable GetSchema()
+    //___________________EF Core implementations________________________________//
+    public async Task<IEnumerable<User>> GetUsersEf() => await _context.Users.Select(u => u).ToListAsync();
+
+    public async Task<User?> GetUserEf(long userid) =>
+        await _context.Users.FirstOrDefaultAsync(u => u.UserId == userid);
+
+    public async Task<long> GetUserIdEf(string username)
     {
-        return _connection.GetSchema();
+       var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+       if (user == null)
+       {
+           return 0;
+       }
+       return user.UserId;
     }
 
+    public async Task<IEnumerable<ValueTuple<Message,User>>> PublicTimelineEf()
+    {
+        var timeline = from m in _context.Messages
+            join u in _context.Users on m.AuthorId equals u.UserId
+            where m.Flagged == 0
+            orderby m.PubDate descending
+            select new {m, u};
+        var reformat = timeline.Select(i => new ValueTuple<Message, User>(i.m, i.u));
+        return await reformat.ToListAsync();
+    }
+
+    //_____________________Raw Sql implementation__________________________________________
     public IEnumerable<string> GetUsers()
     {
         var cmd = "SELECT username FROM user";

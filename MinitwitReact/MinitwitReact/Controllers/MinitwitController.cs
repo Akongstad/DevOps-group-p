@@ -19,8 +19,8 @@ public class MinitwitController : ControllerBase
 
     // Get Public timeline
     [HttpGet("Users")]
-    public IEnumerable<string> Get(){
-        return _minitwit.GetUsers();
+    public Task<IEnumerable<User>> Get(){
+        return _minitwit.GetUsersEf();
     }
     //[AutoValidateAntiforgeryToken]
     [HttpGet]

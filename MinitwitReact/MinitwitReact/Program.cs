@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.EntityFrameworkCore;
 using MinitwitReact;
+using MinitwitReact.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<MinitwitContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("minitwitSqlite")));
+builder.Services.AddScoped<IMinitwitContext, MinitwitContext>();
 builder.Services.AddScoped<IMinitwit, Minitwit>();
 
 
