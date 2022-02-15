@@ -28,7 +28,10 @@ export default function Login(props) {
         if ( response.data ) { 
             let path = 'user_timeline';
             localStorage.setItem('user', response.data);
-            navigate(path);
+        } else {
+            let path = 'public_timeline';
+        }
+        navigate(path);
     }
 
     function validateForm() {
