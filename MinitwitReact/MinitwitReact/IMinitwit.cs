@@ -61,6 +61,9 @@ public interface IMinitwit
     //@app.route('/<username>')
     //"""Display's a users tweets."""
     IEnumerable<(Message, User)> user_timeline(long sessionId ,string username);
+    Task<IEnumerable<(Message, User)>> UserTimelineEf(long sessionId, string username);
+    Task<bool> Follows(long sessionId, User user);
+    
     
     //@app.route('/<username>/follow')
     //"""Adds the current user as follower of the given user."""

@@ -1,5 +1,7 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
+using MinitwitReact.Core;
 using MinitwitReact.Entities;
 
 
@@ -74,6 +76,45 @@ public class Minitwit : IMinitwit, IDisposable
             select new {m, u};
         var reformat = timeline.Select(i => new ValueTuple<Message, User>(i.m, i.u));
         return await reformat.ToListAsync();
+    }
+
+    public async Task<bool> Follows(long sessionId, User user)
+    {
+        var follows = await _context.Followers.Where(f => f.WhoId == sessionId && f.WhomId == user.UserId).ToListAsync();
+        return follows.Count > 0;
+    }
+
+    public async Task<IEnumerable<ValueTuple<Message, User>>> UserTimelineEf(long sessionId, string username)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (user == null)
+        {
+            return null!;
+        }
+        var follows = await Follows(sessionId, user);
+        if (!follows)
+        {
+            return await PublicTimelineEf();
+        }
+        var timeline = from m in _context.Messages
+            join u in _context.Users on m.AuthorId equals u.UserId
+            where u.UserId == m.AuthorId
+            where u.UserId == user.UserId
+            orderby m.PubDate descending
+            select new {m, u};
+        var reformat = timeline.Select(i => new ValueTuple<Message, User>(i.m, i.u));
+        return await reformat.ToListAsync();
+    }
+
+    public async Task<IEnumerable<ValueTuple<Message, User>>> TimelineEf(long sessionId)
+    {
+        var user = await GetUserEf(sessionId);
+        if (sessionId > 0 && user != null)
+        {
+            return await UserTimelineEf(sessionId, user.Username);
+        }
+
+        return await PublicTimelineEf();
     }
 
     //_____________________Raw Sql implementation__________________________________________
