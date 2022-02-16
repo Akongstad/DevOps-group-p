@@ -1,4 +1,4 @@
-# H1 Describe Distributed Workflow
+# Describe Distributed Workflow
 *These changes to the group worflow is define week2 and will be implemented from next week*
 
 **Public GitHub-repository, with the following setup:**
@@ -9,7 +9,7 @@
 
 
 **TDB branching model**: 
-Integrating changes to a shared short-lived development-branch, that is allways in a releasable state. 
+Integrating changes to the main, that is allways in a releasable state. 
 This branch is merged to the main branch, when a weeks assignment/issues have been solved. 
 Submitting code every day will ensure that the team is forced to integrate changes fast.
 We will often collaborate on a single local branch in collaboration via a screenshare or codeshare, but this practice keeps us flexible if needing to split the team to solve larger tasks.
@@ -22,6 +22,10 @@ No rebasing and squasing.
 - Everything works, but minor UI is okay. 
 - It must run with no issue to functionality. *Like a GET- method must work. All tests should pass.* 
 - pull requests is accepted.
+
+Naming ceonvention branches: (optional: reference issue, or HOTFIX) hyphon, lowercase descriptive. 
+*hotfix-<branchName>*
+*<isssue>-description*
 
 *This is a contributiuon: Task (assigment) -> Issue -> Coding -> pull request.*
 
