@@ -17,7 +17,7 @@ namespace MinitwitReact.Entities
         {
             if (!optionsBuilder.IsConfigured)
             { 
-                optionsBuilder.UseSqlite("Data Source=./../../minitwit.db");
+                optionsBuilder.UseSqlite("Data Source=./minitwit.db");
             }
         }
 
