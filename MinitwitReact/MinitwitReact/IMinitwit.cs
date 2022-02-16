@@ -14,19 +14,20 @@ public interface IMinitwit
     void InitDb();
 
     IEnumerable<string> GetUsers();
+    Task<IEnumerable<User>> GetUsersEf();
 
     User GetUser(long userid);
+    Task<User> GetUserEf(long userId);
 
     bool isFollow(long userid, string username);
 
-    DataTable GetSchema();
-    
     //"""Queries the database and returns a list of dictionaries."""
     ICollection<Dictionary<string, string>> QueryDb(SqliteCommand query, bool one=false);
     
     //"""Convenience method to look up the id for a username."""
     long GetUserId(string username);
-    
+    Task<long> GetUserIdEf(string username);
+
     //"""Format a timestamp for display."""
     DateTime FormatDatetime(string timestamp); //Can probably be done using datetime
     
@@ -55,10 +56,14 @@ public interface IMinitwit
     //@app.route('/public')
     //"""Displays the latest messages of all users."""
     IEnumerable<(Message, User)> public_timeline();
+    Task<IEnumerable<(Message, User)>> PublicTimelineEf();
     
     //@app.route('/<username>')
     //"""Display's a users tweets."""
     IEnumerable<(Message, User)> user_timeline(long sessionId ,string username);
+    Task<IEnumerable<(Message, User)>> UserTimelineEf(long sessionId, string username);
+    Task<bool> Follows(long sessionId, User user);
+    
     
     //@app.route('/<username>/follow')
     //"""Adds the current user as follower of the given user."""
