@@ -20,6 +20,7 @@ export default function Register() {
             let path = 'login';
             localStorage.setItem('user', response.data);
             navigate(path);
+        }
     }
 
     function validateForm() {
