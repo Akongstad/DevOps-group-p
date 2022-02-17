@@ -61,19 +61,6 @@ public class MinitwitTests : IDisposable
         var actual = _minitwit.GetUsers();
         Assert.NotNull(_minitwit);
     }
-
-    [Fact]
-    public void GetUsername_returns_UserName()
-    {
-        var actual = _minitwit.GetUserId("Roger Histand");
-        var actual1 = _minitwit.GetUserId("Geoffrey Stieff");
-        var actual2 = _minitwit.GetUserId("Wendell Ballan");
-        var actual3 = _minitwit.GetUserId("Nathan Sirmon");
-        Assert.Equal(1, actual);
-        Assert.Equal(2, actual1);
-        Assert.Equal(3, actual2);
-        Assert.Equal(4, actual3);
-    }
     // TEST FOR ADD MESSAGES
     [Fact]
     public async Task GetUserId_returns_UserId_given_valid_username()
