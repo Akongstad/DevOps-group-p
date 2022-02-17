@@ -1,30 +1,9 @@
-<<<<<<< HEAD
-using System;
-using System.IO;
-using System.Linq;
-using Microsoft.Data.Sqlite;
-using MinitwitReact;
-using Xunit;
-
-=======
->>>>>>> main
 namespace Minitwit.Tests;
 
 public class MinitwitTests : IDisposable
 {
     private readonly IMinitwit _minitwit;
-<<<<<<< HEAD
-
-    public MinitwitTests()
-    {
-        var tempfile = Path.GetTempFileName();
-        var connection = new SqliteConnection($"Data source={tempfile}");
-        connection.Open();
-        _minitwit = new MinitwitReact.Minitwit(connection);
-        _minitwit.InitDb();
-    }
-
-=======
+    
     //EF core
     private readonly IMinitwitContext _context;
 
@@ -76,15 +55,11 @@ public class MinitwitTests : IDisposable
         _minitwit = new MinitwitReact.Minitwit(context, connection);
         //_minitwit.InitDb();
     }
->>>>>>> main
     [Fact]
     public void Test_if_tempfile_with_schema_created()
     {
         var actual = _minitwit.GetUsers();
         Assert.NotNull(_minitwit);
-<<<<<<< HEAD
-        Assert.NotNull(actual);
-        Assert.NotEqual(0,_minitwit.GetSchema().Rows.Count);
     }
 
     [Fact]
@@ -100,12 +75,6 @@ public class MinitwitTests : IDisposable
         Assert.Equal(4, actual3);
     }
     // TEST FOR ADD MESSAGES
-
-    public void Dispose()
-    {
-=======
-        Assert.NotNull(actual); 
-    }
     [Fact]
     public async Task GetUserId_returns_UserId_given_valid_username()
     {
@@ -167,7 +136,6 @@ public class MinitwitTests : IDisposable
     public void Dispose()
     {
         Dispose(disposing:true);
->>>>>>> main
         GC.SuppressFinalize(this);
     }
 }
