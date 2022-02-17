@@ -1,27 +1,37 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import { useNavigate } from 'react-router-dom';
+import Button from 'react-bootsrap/Button';
+import { useNavigate } from 'react-router-dom'
 
-export default function Register() {
-    const title = 'Sign Up';
-    const navigate = useNavigate();
+export default function Login(props) {
+    const title = 'Sign In';
+    const navigate = useNavigate()
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    async function handleSubmit(event) {
+    function handleSubmit(event) {
         event.preventDefault();
         const user = { username, password }
         const response = await axios.post(
             'minitwit', user
         )
+        // Condition dependant on API return schema
         if ( response.data ) { 
-            let path = 'login';
+            let path = 'user_timeline';
             localStorage.setItem('user', response.data);
-            navigate(path);
+        } else {
+            let path = 'public_timeline';
         }
+        navigate(path);
+    }
+        if ( response.data ) { 
+            let path = 'user_timeline';
+            localStorage.setItem('user', response.data);
+        } else {
+            let path = 'public_timeline';
+        }
+        navigate(path);
     }
 
     function validateForm() {
@@ -29,10 +39,10 @@ export default function Register() {
     }
 
     return (
-        <div className="SignUp">
+        <div className="Login">
             <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="username">
-                    <Form.Label>Username</Form.Label>
+                    <Form.label>Username</Form.label>
                     <Form.Control
                         autoFocus
                         type="text"
@@ -41,25 +51,17 @@ export default function Register() {
                     />
                 </Form.Group>
                 <Form.Group controlId="password">
-                    <Form.Label>Create Password</Form.Label>
+                    <Form.Label>Password</Form.Label>
                     <Form.Control
                         type="password"
                         value={password}
-                        onChange={(e) => setPassword(e.targe.value)}
-                    />
-                </Form.Group>
-                <Form.Group controlId="password">
-                    <Form.Label>Retype Password</Form.Label>
-                    <Form.Control
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.targe.value)}
+                        onChange={(e) => setPassword(e.target.value)}
                     />
                 </Form.Group>
                 <Button type="submit" disabled={!validateForm()}>
-                    Register 
+                    Login
                 </Button>
             </Form>
-        </div>
+        <div>
     );
 }
