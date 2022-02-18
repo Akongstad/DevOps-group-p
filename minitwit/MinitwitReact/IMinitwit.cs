@@ -58,8 +58,7 @@ public interface IMinitwit
     messages as well as all the messages of followed users.
     """*/
     IEnumerable<(Message, User)> Timeline(long userid);
-    Task<IEnumerable<(Message, User)>> TimelineEf(long userid);
-    
+
     //@app.route('/public')
     //"""Displays the latest messages of all users."""
     IEnumerable<(Message, User)> public_timeline();
