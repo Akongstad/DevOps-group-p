@@ -1,4 +1,4 @@
-FROM node:17-alpine
+FROM node:17-alpine as builder
 
 WORKDIR /app
 
@@ -8,6 +8,12 @@ RUN npm install --silent
 
 COPY . ./
 
-EXPOSE 3000
+RUN npm run build
 
-CMD ["npm", "start"]
+FROM node:17-alpine
+
+RUN npm install -g serve
+
+WORKDIR /app
+
+COPY --from=builder /app/build ./build
