@@ -1,6 +1,7 @@
 using System.Data;
 using System.Net.Mime;
 using Microsoft.Data.Sqlite;
+using MinitwitReact.Core;
 using MinitwitReact.Entities;
 
 namespace MinitwitReact;
@@ -12,12 +13,15 @@ public interface IMinitwit
     
     //"""Creates the database tables."""
     void InitDb();
-
+    
     IEnumerable<string> GetUsers();
-    Task<IEnumerable<User>> GetUsersEf();
+    
+    //EF core method: Gets all users
+    Task<IEnumerable<UserDto>> GetAllUsers();
 
     User GetUser(long userid);
-    Task<User> GetUserEf(long userId);
+    // EF core method: Gets User by their id
+    Task<UserDto> GetUserById(long userId);
 
     bool isFollow(long userid, string username);
 
@@ -26,6 +30,7 @@ public interface IMinitwit
     
     //"""Convenience method to look up the id for a username."""
     long GetUserId(string username);
+    // returns userId based on their username
     Task<long> GetUserIdEf(string username);
 
     //"""Format a timestamp for display."""
@@ -56,13 +61,13 @@ public interface IMinitwit
     //@app.route('/public')
     //"""Displays the latest messages of all users."""
     IEnumerable<(Message, User)> public_timeline();
-    Task<IEnumerable<(Message, User)>> PublicTimelineEf();
+    Task<IEnumerable<(MessageDto, UserDto)>> PublicTimelineEf();
     
     //@app.route('/<username>')
     //"""Display's a users tweets."""
     IEnumerable<(Message, User)> user_timeline(long sessionId ,string username);
-    Task<IEnumerable<(Message, User)>> UserTimelineEf(long sessionId, string username);
-    Task<bool> Follows(long sessionId, User user);
+    Task<IEnumerable<(MessageDto, UserDto)>> UserTimelineEf(long sessionId, string username);
+    Task<bool> Follows(long sessionId, UserDto user);
     
     
     //@app.route('/<username>/follow')

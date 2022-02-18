@@ -2,9 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MinitwitReact.Core;
 
-public record UserDto(int UserId, string Username);
+public record UserDto(long UserId, string Username);
 
-public record UserDetailsDto(int UserId, string Username, string Email, string PwHash);
+public record UserDetailsDto(long UserId, string Username, string Email, string PwHash);
 
 public record UserCreateDto
 {
