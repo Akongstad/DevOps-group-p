@@ -63,7 +63,17 @@ public class Minitwit : IMinitwit, IDisposable
 
         return await users.FirstOrDefaultAsync<UserDto>();
     }
-    
+
+    public async Task<UserDetailsDto?> GetUserDetialsById(long userid)
+    {
+        var users = from u in _context.Users
+            where u.UserId == userid
+            select new UserDetailsDto(u.UserId, u.Username, u.Email, u.PwHash);
+
+        return await users.FirstOrDefaultAsync<UserDetailsDto>();
+        
+    }
+
     // refactor to DTO - return the UserDTO's id field
     public async Task<long> GetUserIdEf(string username)
     {

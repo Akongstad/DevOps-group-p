@@ -1,30 +1,9 @@
-<<<<<<< HEAD
-using System;
-using System.IO;
-using System.Linq;
-using Microsoft.Data.Sqlite;
-using MinitwitReact;
-using Xunit;
-
-=======
->>>>>>> main
 namespace Minitwit.Tests;
 
 public class MinitwitTests : IDisposable
 {
     private readonly IMinitwit _minitwit;
-<<<<<<< HEAD
-
-    public MinitwitTests()
-    {
-        var tempfile = Path.GetTempFileName();
-        var connection = new SqliteConnection($"Data source={tempfile}");
-        connection.Open();
-        _minitwit = new MinitwitReact.Minitwit(connection);
-        _minitwit.InitDb();
-    }
-
-=======
+    
     //EF core
     private readonly IMinitwitContext _context;
 
@@ -76,36 +55,13 @@ public class MinitwitTests : IDisposable
         _minitwit = new MinitwitReact.Minitwit(context, connection);
         //_minitwit.InitDb();
     }
->>>>>>> main
     [Fact]
     public void Test_if_tempfile_with_schema_created()
     {
         var actual = _minitwit.GetUsers();
         Assert.NotNull(_minitwit);
-<<<<<<< HEAD
-        Assert.NotNull(actual);
-        Assert.NotEqual(0,_minitwit.GetSchema().Rows.Count);
-    }
-
-    [Fact]
-    public void GetUsername_returns_UserName()
-    {
-        var actual = _minitwit.GetUserId("Roger Histand");
-        var actual1 = _minitwit.GetUserId("Geoffrey Stieff");
-        var actual2 = _minitwit.GetUserId("Wendell Ballan");
-        var actual3 = _minitwit.GetUserId("Nathan Sirmon");
-        Assert.Equal(1, actual);
-        Assert.Equal(2, actual1);
-        Assert.Equal(3, actual2);
-        Assert.Equal(4, actual3);
     }
     // TEST FOR ADD MESSAGES
-
-    public void Dispose()
-    {
-=======
-        Assert.NotNull(actual); 
-    }
     [Fact]
     public async Task GetUserId_returns_UserId_given_valid_username()
     {
@@ -120,10 +76,10 @@ public class MinitwitTests : IDisposable
         Assert.Equal(0, await _minitwit.GetUserIdEf("Irrelevant person"));
     }
     [Fact]
-    public async Task GetUserEF_returns_User_given_valid_id()
+    public async Task GetUserById_returns_User_given_valid_id()
     {
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
-        var actual = await _minitwit.GetUserEf(1);
+        var actual = await _minitwit.GetUserDetialsById(1);
         Assert.Equal(elon.Username, actual.Username);
         Assert.Equal(elon.Email, actual.Email);
         Assert.Equal(elon.UserId, actual.UserId);
@@ -132,7 +88,7 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task GetUsersEf_returns_Users()
     {
-        var actual = await _minitwit.GetUsersEf();
+        var actual = await _minitwit.GetAllUsers();
         Assert.Equal("Elon Musk", actual.First().Username);
     }
     [Fact]
@@ -167,7 +123,6 @@ public class MinitwitTests : IDisposable
     public void Dispose()
     {
         Dispose(disposing:true);
->>>>>>> main
         GC.SuppressFinalize(this);
     }
 }

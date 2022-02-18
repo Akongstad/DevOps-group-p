@@ -33,6 +33,8 @@ public interface IMinitwit
     // returns userId based on their username
     Task<long> GetUserIdEf(string username);
 
+    Task<UserDetailsDto?> GetUserDetialsById(long userid);
+
     //"""Format a timestamp for display."""
     DateTime FormatDatetime(string timestamp); //Can probably be done using datetime
     
