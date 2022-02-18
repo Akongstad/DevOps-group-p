@@ -78,15 +78,15 @@ public class MinitwitTests : IDisposable
         Assert.Equal(expected, await _minitwit.GetUserIdEf(username));
     }
     [Fact]
-    public async Task GetUserId_returns_0_given_invalid_username()
+    public async Task GetUserIdEF_returns_0_given_invalid_username()
     {
         Assert.Equal(0, await _minitwit.GetUserIdEf("Irrelevant person"));
     }
     [Fact]
-    public async Task GetUserEF_returns_User_given_valid_id()
+    public async Task GetUserDetailsById_returns_User_given_valid_id()
     {
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
-        var actual = await _minitwit.GetUserEf(1);
+        var actual = await _minitwit.GetUserDetialsById(1);
         Assert.Equal(elon.Username, actual.Username);
         Assert.Equal(elon.Email, actual.Email);
         Assert.Equal(elon.UserId, actual.UserId);
@@ -95,7 +95,7 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task GetUsersEf_returns_Users()
     {
-        var actual = await _minitwit.GetUsersEf();
+        var actual = await _minitwit.GetAllUsers();
         Assert.Equal("Elon Musk", actual.First().Username);
     }
     [Fact]
@@ -234,9 +234,14 @@ public class MinitwitTests : IDisposable
         Assert.Equal(0, register);
     }
     
-
-
-
+    [Fact]
+    public async Task GetUserById_returns_User_given_valid_id()
+    {
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
+        var actual = await _minitwit.GetUserById(1);
+        Assert.Equal(elon.Username, actual.Username);
+        Assert.Equal(elon.UserId, actual.UserId);
+    }
 
     // TEST FOR ADD MESSAGES
     private bool _disposed;

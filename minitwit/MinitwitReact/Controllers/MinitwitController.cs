@@ -1,5 +1,6 @@
 using System.Xml.Schema;
 using Microsoft.AspNetCore.Mvc;
+using MinitwitReact.Core;
 using MinitwitReact.Entities;
 
 
@@ -20,8 +21,8 @@ public class MinitwitController : ControllerBase
 
     // Get Public timeline
     [HttpGet("Users")]
-    public Task<IEnumerable<User>> Get(){
-        return _minitwit.GetUsersEf();
+    public Task<IEnumerable<UserDto>> Get(){
+        return _minitwit.GetAllUsers();
     }
     //[AutoValidateAntiforgeryToken]
     [HttpGet]
