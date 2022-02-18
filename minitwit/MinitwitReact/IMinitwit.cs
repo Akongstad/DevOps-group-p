@@ -7,12 +7,15 @@ public interface IMinitwit
     
     //"""Creates the database tables."""
     void InitDb();
-
+    
     IEnumerable<string> GetUsers();
-    Task<IEnumerable<User>> GetUsersEf();
+    
+    //EF core method: Gets all users
+    Task<IEnumerable<UserDto>> GetAllUsers();
 
     User GetUser(long userid);
-    Task<User> GetUserEf(long userId);
+    // EF core method: Gets User by their id
+    Task<UserDto> GetUserById(long userId);
 
     bool isFollow(long userid, string username);
 
@@ -21,7 +24,10 @@ public interface IMinitwit
     
     //"""Convenience method to look up the id for a username."""
     long GetUserId(string username);
+    // returns userId based on their username
     Task<long> GetUserIdEf(string username);
+
+    Task<UserDetailsDto?> GetUserDetialsById(long userid);
 
     //"""Format a timestamp for display."""
     Task<DateTime> FormatDatetime(string timestamp); //Can probably be done using datetime
@@ -52,19 +58,19 @@ public interface IMinitwit
     messages as well as all the messages of followed users.
     """*/
     IEnumerable<(Message, User)> Timeline(long userid);
-    Task<IEnumerable<(Message, User)>> TimelineEf(long userid);
-    
+
     //@app.route('/public')
     //"""Displays the latest messages of all users."""
     IEnumerable<(Message, User)> public_timeline();
-    Task<IEnumerable<(Message, User)>> PublicTimelineEf();
+    Task<IEnumerable<(MessageDto, UserDto)>> PublicTimelineEf();
     
     //@app.route('/<username>')
     //"""Display's a users tweets."""
     IEnumerable<(Message, User)> user_timeline(long sessionId ,string username);
-    Task<IEnumerable<(Message, User)>> UserTimelineEf(long sessionId, string username);
-    Task<bool> Follows(long sessionId, User user);
-    
+    Task<IEnumerable<(MessageDto, UserDto)>> UserTimelineEf(long sessionId, string username);
+    Task<bool> Follows(long sessionId, UserDto user);
+
+    Task<IEnumerable<ValueTuple<MessageDto, UserDto>>> TimelineEf(long sessionId);
     
     //@app.route('/<username>/follow')
     //"""Adds the current user as follower of the given user."""

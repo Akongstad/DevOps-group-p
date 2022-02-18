@@ -45,41 +45,65 @@ public class Minitwit : IMinitwit, IDisposable
     }
 
     //___________________EF Core implementations________________________________//
-    public async Task<IEnumerable<User>> GetUsersEf() => await _context.Users.Select(u => u).ToListAsync();
+    public async Task<IEnumerable<UserDto>> GetAllUsers() => await _context.Users.Select(u => new UserDto(u.UserId, u.Username)).ToListAsync();
+    public async Task<UserDto?> GetUserById(long userid)
+    {
+        var users = from u in _context.Users
+                    where u.UserId == userid
+                    select new UserDto(u.UserId, u.Username);
 
-    public async Task<User?> GetUserEf(long userid) =>
-        await _context.Users.FirstOrDefaultAsync(u => u.UserId == userid);
+        return await users.FirstOrDefaultAsync<UserDto>();
+    }
 
+    public async Task<UserDetailsDto?> GetUserDetialsById(long userid)
+    {
+        var users = from u in _context.Users
+            where u.UserId == userid
+            select new UserDetailsDto(u.UserId, u.Username, u.Email, u.PwHash);
+
+        return await users.FirstOrDefaultAsync<UserDetailsDto>();
+        
+    }
+    
     public async Task<long> GetUserIdEf(string username)
     {
-       var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+       var users = from u in _context.Users
+                   where u.Username == username
+                   select new UserDto(u.UserId, u.Username);
+        
+       var user = await users.FirstOrDefaultAsync<UserDto>();
        if (user == null)
        {
            return 0;
        }
        return user.UserId;
     }
-
-    public async Task<IEnumerable<ValueTuple<Message,User>>> PublicTimelineEf()
+    
+    public async Task<IEnumerable<ValueTuple<MessageDto,UserDto>>> PublicTimelineEf()
     {
         var timeline = from m in _context.Messages
             join u in _context.Users on m.AuthorId equals u.UserId
             where m.Flagged == 0
             orderby m.PubDate descending
-            select new {m, u};
-        var reformat = timeline.Select(i => new ValueTuple<Message, User>(i.m, i.u));
+            select new {m, u}; // had errors when changing this line, changing it to DTO's below seemed to compile
+        var reformat = timeline.Select(i => new ValueTuple<MessageDto, UserDto>(new MessageDto(i.m.MessageId, i.m.Author.ToString(), i.m.Text, i.m.PubDate), 
+                                                                                                                new UserDto(i.u.UserId, i.u.Username)));
         return await reformat.ToListAsync();
     }
-
-    public async Task<bool> Follows(long sessionId, User user)
+    
+    public async Task<bool> Follows(long sessionId, UserDto user)
     {
         var follows = await _context.Followers.Where(f => f.WhoId == sessionId && f.WhomId == user.UserId).ToListAsync();
         return follows.Count > 0;
     }
 
-    public async Task<IEnumerable<ValueTuple<Message, User>>> UserTimelineEf(long sessionId, string username)
+    public async Task<IEnumerable<ValueTuple<MessageDto, UserDto>>> UserTimelineEf(long sessionId, string username)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        var users = from u in _context.Users
+                   where u.Username == username
+                   select new UserDto(u.UserId, u.Username);
+        
+        var user = await users.FirstOrDefaultAsync<UserDto>();
         if (user == null)
         {
             return null!;
@@ -95,13 +119,14 @@ public class Minitwit : IMinitwit, IDisposable
             where u.UserId == user.UserId
             orderby m.PubDate descending
             select new {m, u};
-        var reformat = timeline.Select(i => new ValueTuple<Message, User>(i.m, i.u));
+        var reformat = timeline.Select(i => new ValueTuple<MessageDto, UserDto>(new MessageDto(i.m.MessageId, i.m.Author.ToString(), i.m.Text, i.m.PubDate), 
+                                                                                new UserDto(i.u.UserId, i.u.Username)));
         return await reformat.ToListAsync();
     }
 
-    public async Task<IEnumerable<ValueTuple<Message, User>>> TimelineEf(long sessionId)
+    public async Task<IEnumerable<ValueTuple<MessageDto, UserDto>>> TimelineEf(long sessionId)
     {
-        var user = await GetUserEf(sessionId);
+        var user = await GetUserById(sessionId);
         if (sessionId > 0 && user != null)
         {
             return await UserTimelineEf(sessionId, user.Username);
