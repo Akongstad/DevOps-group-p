@@ -1,8 +1,3 @@
-using System.Data;
-using System.Net.Mime;
-using Microsoft.Data.Sqlite;
-using MinitwitReact.Entities;
-
 namespace MinitwitReact;
 
 public interface IMinitwit
@@ -29,11 +24,16 @@ public interface IMinitwit
     Task<long> GetUserIdEf(string username);
 
     //"""Format a timestamp for display."""
-    DateTime FormatDatetime(string timestamp); //Can probably be done using datetime
+    Task<DateTime> FormatDatetime(string timestamp); //Can probably be done using datetime
     
     //"""Return the gravatar image for the given email address."""
     Uri gravatar_url(string email, int size = 80);
-
+    
+    Task<string> PostMessageEf(long userid, string message);
+    long FollowUserEf(string username, long userid);
+    Task<long> UnfollowUserEf(string username, long userid);
+    Task<long> LoginEf(string username, string pw);
+    Task<long> RegisterEf(string username, string email, string pw);
     
     //@app.before_request
     /*"""Make sure we are connected to the database each request and look
@@ -52,6 +52,7 @@ public interface IMinitwit
     messages as well as all the messages of followed users.
     """*/
     IEnumerable<(Message, User)> Timeline(long userid);
+    Task<IEnumerable<(Message, User)>> TimelineEf(long userid);
     
     //@app.route('/public')
     //"""Displays the latest messages of all users."""
