@@ -1,7 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using MinitwitReact.Entities;
-
-
 namespace MinitwitReact.Controllers;
 
 [ApiController]
@@ -19,83 +15,84 @@ public class MinitwitController : ControllerBase
 
     // Get Public timeline
     [HttpGet("Users")]
-    public Task<IEnumerable<User>> Get(){
-        return _minitwit.GetUsersEf();
+    public Task<IEnumerable<UserDto>> Get(){
+        return _minitwit.GetAllUsers();
     }
     //[AutoValidateAntiforgeryToken]
     [HttpGet]
-    public IEnumerable<Tuple<Message, User>> GetPublicTimeline()
+    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> GetPublicTimeline()
     {
-        //return _minitwit.public_timeline();
-        foreach (var item in _minitwit.public_timeline())
-        {
-            yield return item.ToTuple();
-        }
-    }
+        return await _minitwit.PublicTimeline();
+    } 
+   
     // Get User's timeline
     [HttpGet("{id}")]
-    public IEnumerable<(Message, User)> GetTimeline(int id)
+    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> GetTimeline(int id)
     {
-        if (validateID(id)){
+        if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
-        return _minitwit.Timeline(id);
+        return await _minitwit.OwnTimeline(id);
     }
 
     // Get other users' timeline
     [HttpGet("{id}/{username}")]
-    public IEnumerable<(Message, User)> GetUserTimeline(int id,string username)
+    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> GetUserTimeline(int id,string username)
     {
-        if (validateID(id)){
+        if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
-        return _minitwit.user_timeline(id, username);
+        return await _minitwit.UserTimeline(id, username);
     }
 
     // Follow
     [HttpPost("follow/{id}/{username}")]
-    public long Follow(int id, string username){
-        if (validateID(id)){
+    public async Task<IActionResult> Follow(int id, string username){
+        if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
-        return _minitwit.follow_user(username, id);
+        var result = await _minitwit.FollowUserEf(id, username);
+        return result.ToActionResult();
     }
     //Unfollow
     [HttpPost("/unfollow/{id}/{username}")]
-    public long Unfollow(int id, string username){
-        if (validateID(id)){
+    public async Task<IActionResult>  Unfollow(int id, string username){
+        if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
-        return _minitwit.unfollow_user(username, id);
+        var result = await _minitwit.FollowUserEf(id, username);
+        return result.ToActionResult();
     }
 
     // Login
     [HttpGet("login/{username}/{pw_hash}")]
-    public long GetLogin(string username, string pw_hash)
+    public async Task<long>GetLogin(string username, string pw_hash)
     {
-        return _minitwit.Login(username, pw_hash);
+        return await _minitwit.LoginEf(username, pw_hash);
     }
     
     // Add message
     [HttpPost("{id}/{message}")]
-    public string Message(long id, string message)
+    public async Task<IActionResult> Message(long id, string message)
     {        
-        if (validateID(id)){
+        if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
-         return _minitwit.add_message(id, message);
+
+        var result = await _minitwit.PostMessageEf(id, message);
+         return result.ToActionResult();
     }
 
     //Register
     [HttpPost("{username}/{email}/{pw}")]
-    public long PostRegister (string username, string email, string pw)
+    public async Task<long> PostRegister (string username, string email, string pw)
     {
-        return _minitwit.Register(username, email, pw);
+        return await _minitwit.RegisterEf(username, email, pw);
     }
 
 
     //validate user
-    private bool validateID(long id){
-        return (_minitwit.GetUser(id) == null);
+    private async Task<bool> ValidateId(long id){
+        return await _minitwit.GetUserDetialsById(id) == null;
     }
 }
