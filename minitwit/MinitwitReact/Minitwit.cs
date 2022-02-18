@@ -73,8 +73,7 @@ public class Minitwit : IMinitwit, IDisposable
         return await users.FirstOrDefaultAsync<UserDetailsDto>();
         
     }
-
-    // refactor to DTO - return the UserDTO's id field
+    
     public async Task<long> GetUserIdEf(string username)
     {
        var users = from u in _context.Users
@@ -88,7 +87,7 @@ public class Minitwit : IMinitwit, IDisposable
        }
        return user.UserId;
     }
-    // MessageDTO and UserDTO
+    
     public async Task<IEnumerable<ValueTuple<MessageDto,UserDto>>> PublicTimelineEf()
     {
         var timeline = from m in _context.Messages
@@ -100,8 +99,7 @@ public class Minitwit : IMinitwit, IDisposable
                                                                                                                 new UserDto(i.u.UserId, i.u.Username)));
         return await reformat.ToListAsync();
     }
-
-    // use? UserDTO
+    
     public async Task<bool> Follows(long sessionId, UserDto user)
     {
         var follows = await _context.Followers.Where(f => f.WhoId == sessionId && f.WhomId == user.UserId).ToListAsync();
