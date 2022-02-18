@@ -52,6 +52,4 @@ app.Use((context, next) =>
     return next(context);
 });
 
-
-
 app.Run();
