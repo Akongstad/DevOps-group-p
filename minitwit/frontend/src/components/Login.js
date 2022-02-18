@@ -1,22 +1,32 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootsrap/Button';
+import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom'
 
-export default function Login(props) {
+export default function Login() {
     const title = 'Sign In';
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
-        const user = { username, password }
+        const user = { username, password };
         const response = await axios.post(
             'minitwit', user
-        )
+        );
         // Condition dependant on API return schema
+        if ( response.data ) { 
+            let path = 'user_timeline';
+            localStorage.setItem('user', response.data);
+            navigate(path);
+        } else {
+            let path = 'public_timeline';
+            navigate(path);
+        }
+    }
         if ( response.data ) { 
             let path = 'user_timeline';
             localStorage.setItem('user', response.data);
@@ -42,7 +52,7 @@ export default function Login(props) {
         <div className="Login">
             <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="username">
-                    <Form.label>Username</Form.label>
+                    <Form.Label>Username</Form.Label>
                     <Form.Control
                         autoFocus
                         type="text"
@@ -62,6 +72,6 @@ export default function Login(props) {
                     Login
                 </Button>
             </Form>
-        <div>
+        </div>
     );
 }

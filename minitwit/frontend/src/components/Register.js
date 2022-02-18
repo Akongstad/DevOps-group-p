@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -7,10 +8,10 @@ export default function Register() {
     const title = 'Sign Up';
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
         const user = { username, password }
         const response = await axios.post(
@@ -24,19 +25,19 @@ export default function Register() {
     }
 
     function validateForm() {
-        return email.length > 0 && password.length > 0;
+        return username.length > 0 && password.length > 0;
     }
 
     return (
         <div className="SignUp">
             <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="email">
-                    <Form.label>Email</Form.label>
+                <Form.Group controlId="username">
+                    <Form.Label>Username</Form.Label>
                     <Form.Control
                         autoFocus
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                     />
                 </Form.Group>
                 <Form.Group controlId="password">
@@ -59,6 +60,6 @@ export default function Register() {
                     Register 
                 </Button>
             </Form>
-        <div>
+        </div>
     );
 }
