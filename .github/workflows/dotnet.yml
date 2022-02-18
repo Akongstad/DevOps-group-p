@@ -18,8 +18,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore MinitwitReact
+      run: dotnet restore minitwit
     - name: Build
-      run: dotnet build MinitwitReact --no-restore
+      run: dotnet build minitwit --no-restore
     - name: Test
-      run: dotnet test MinitwitReact --no-build --verbosity normal
+      run: dotnet test minitwit --no-build --verbosity normal
