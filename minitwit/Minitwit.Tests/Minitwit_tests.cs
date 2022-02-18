@@ -5,10 +5,7 @@ namespace Minitwit.Tests;
 public class MinitwitTests : IDisposable
 {
     private readonly IMinitwit _minitwit;
-    
-    //EF core
     private readonly IMinitwitContext _context;
-
     public MinitwitTests()
     {
         //Setup for EF Core
@@ -47,27 +44,12 @@ public class MinitwitTests : IDisposable
         };
         context.Messages.AddRange(hello, bye, batman, chip);
         context.Followers.Add(new Follower {WhoId = 2, WhomId = 1});
-        
-        //Test login
 
         context.SaveChanges();
 
         _context = context;
-
-        //Setup for raw sql
-        var tempfile = Path.GetTempFileName();
-        var connection = new SqliteConnection($"Data source={tempfile}");
-        connection.Open();
-        _minitwit = new MinitwitReact.Minitwit(context, connection);
-        //_minitwit.InitDb();
+        _minitwit = new MinitwitReact.Minitwit(context);
     }
-    [Fact]
-    public void Test_if_tempfile_with_schema_created()
-    {
-        var actual = _minitwit.GetUsers();
-        Assert.NotNull(_minitwit);
-    }
-    // TEST FOR ADD MESSAGES
     [Theory]
     [InlineData("Elon Musk", 1)]
     [InlineData("Jeff Bezos", 2)]
@@ -101,7 +83,7 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task PublicTimeline_returns_public_timeline()
     {
-        var actual = await _minitwit.PublicTimelineEf();
+        var actual = await _minitwit.PublicTimeline();
         var valueTuples = actual.ToList();
         
         Assert.Equal("Jeff Bezos", valueTuples.Last().Item2.Username);
@@ -130,7 +112,7 @@ public class MinitwitTests : IDisposable
         var response = await _minitwit.PostMessageEf(1, "I make a new post yes");
         Assert.Equal(Status.Created, response);
 
-        var timeline = await _minitwit.PublicTimelineEf();
+        var timeline = await _minitwit.PublicTimeline();
         timeline = timeline.ToList();
         //Post by user 1?
         Assert.Equal(1, timeline.First().Item2.UserId);
@@ -163,7 +145,7 @@ public class MinitwitTests : IDisposable
     public async Task FollowUser_add_follow_to_database()
     {
         var response = await _minitwit.FollowUserEf(1, "Jeff Bezos");
-        var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321", UserId = 2};
+        var jeff = new UserDto( 2, "Jeff Bezos");
         var follows = await _minitwit.Follows(1, jeff);
         Assert.True(follows);
     }
@@ -189,7 +171,7 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task UnfollowUser_removes_follow_to_database()
     {
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
+        var elon = new UserDto(1, "Elon Musk");
         var follows = await _minitwit.Follows(2, elon);
         Assert.True(follows);
         

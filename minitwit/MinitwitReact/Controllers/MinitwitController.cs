@@ -1,9 +1,3 @@
-using System.Xml.Schema;
-using Microsoft.AspNetCore.Mvc;
-using MinitwitReact.Core;
-using MinitwitReact.Entities;
-
-
 namespace MinitwitReact.Controllers;
 
 [ApiController]
@@ -26,29 +20,29 @@ public class MinitwitController : ControllerBase
     }
     //[AutoValidateAntiforgeryToken]
     [HttpGet]
-    public async Task<IEnumerable<Tuple<Message, User>>> GetPublicTimeline()
+    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> GetPublicTimeline()
     {
-        return await _minitwit.PublicTimelineEf();
+        return await _minitwit.PublicTimeline();
     } 
    
     // Get User's timeline
     [HttpGet("{id}")]
-    public async Task<IEnumerable<Tuple<Message, User>>> GetTimeline(int id)
+    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> GetTimeline(int id)
     {
         if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
-        return await _minitwit.TimelineEf(id);
+        return await _minitwit.OwnTimeline(id);
     }
 
     // Get other users' timeline
     [HttpGet("{id}/{username}")]
-    public async Task<IEnumerable<Tuple<Message, User>>> GetUserTimeline(int id,string username)
+    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> GetUserTimeline(int id,string username)
     {
         if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
-        return await _minitwit.UserTimelineEf(id, username);
+        return await _minitwit.UserTimeline(id, username);
     }
 
     // Follow
@@ -99,6 +93,6 @@ public class MinitwitController : ControllerBase
 
     //validate user
     private async Task<bool> ValidateId(long id){
-        return await _minitwit.GetUserEf(id) == null;
+        return await _minitwit.GetUserDetialsById(id) == null;
     }
 }
