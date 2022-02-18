@@ -12,7 +12,7 @@ public interface IMinitwit
     Task<IEnumerable<User>> GetUsersEf();
 
     User GetUser(long userid);
-    Task<User> GetUserEf(long userId);
+    Task<User?> GetUserEf(long userId);
 
     bool isFollow(long userid, string username);
 
@@ -29,9 +29,9 @@ public interface IMinitwit
     //"""Return the gravatar image for the given email address."""
     Uri gravatar_url(string email, int size = 80);
     
-    Task<string> PostMessageEf(long userid, string message);
-    long FollowUserEf(string username, long userid);
-    Task<long> UnfollowUserEf(string username, long userid);
+    Task<Status> PostMessageEf(long userid, string message);
+    Task<Status> FollowUserEf(long sessionId ,string username);
+    Task<Status> UnfollowUserEf(long sessionId ,string username);
     Task<long> LoginEf(string username, string pw);
     Task<long> RegisterEf(string username, string email, string pw);
     
@@ -52,17 +52,17 @@ public interface IMinitwit
     messages as well as all the messages of followed users.
     """*/
     IEnumerable<(Message, User)> Timeline(long userid);
-    Task<IEnumerable<(Message, User)>> TimelineEf(long userid);
+    Task<IEnumerable<Tuple<Message, User>>> TimelineEf(long userid);
     
     //@app.route('/public')
     //"""Displays the latest messages of all users."""
     IEnumerable<(Message, User)> public_timeline();
-    Task<IEnumerable<(Message, User)>> PublicTimelineEf();
+    Task<IEnumerable<Tuple<Message, User>>>  PublicTimelineEf();
     
     //@app.route('/<username>')
     //"""Display's a users tweets."""
     IEnumerable<(Message, User)> user_timeline(long sessionId ,string username);
-    Task<IEnumerable<(Message, User)>> UserTimelineEf(long sessionId, string username);
+    Task<IEnumerable<Tuple<Message, User>>>  UserTimelineEf(long sessionId, string username);
     Task<bool> Follows(long sessionId, User user);
     
     

@@ -1,3 +1,8 @@
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Identity;
+using static Microsoft.AspNetCore.Identity.PasswordVerificationResult;
+
 namespace MinitwitReact;
 
 using Microsoft.Data.Sqlite;
@@ -60,15 +65,18 @@ public class Minitwit : IMinitwit, IDisposable
        return user.UserId;
     }
 
-    public async Task<IEnumerable<ValueTuple<Message,User>>> PublicTimelineEf()
+    public async Task<IEnumerable<Tuple<Message,User>>> PublicTimelineEf()
     {
         var timeline = from m in _context.Messages
             join u in _context.Users on m.AuthorId equals u.UserId
             where m.Flagged == 0
             orderby m.PubDate descending
             select new {m, u};
-        var reformat = timeline.Select(i => new ValueTuple<Message, User>(i.m, i.u));
-        return await reformat.ToListAsync();
+        var reformat = timeline.Select(i => new Tuple<Message, User>(i.m, i.u));
+        
+        //To get newest messages o top
+        var ordered = await reformat.ToListAsync();
+        return ordered.OrderBy(m => m.Item1.PubDate);
     }
 
     public async Task<bool> Follows(long sessionId, User user)
@@ -77,7 +85,7 @@ public class Minitwit : IMinitwit, IDisposable
         return follows.Count > 0;
     }
 
-    public async Task<IEnumerable<ValueTuple<Message, User>>> UserTimelineEf(long sessionId, string username)
+    public async Task<IEnumerable<Tuple<Message, User>>> UserTimelineEf(long sessionId, string username)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null)
@@ -85,21 +93,23 @@ public class Minitwit : IMinitwit, IDisposable
             return null!;
         }
         var follows = await Follows(sessionId, user);
-        if (!follows)
+        /*if (!follows)
         {
             return await PublicTimelineEf();
-        }
+        }*/
         var timeline = from m in _context.Messages
             join u in _context.Users on m.AuthorId equals u.UserId
             where u.UserId == m.AuthorId
             where u.UserId == user.UserId
-            orderby m.PubDate descending
             select new {m, u};
-        var reformat = timeline.Select(i => new ValueTuple<Message, User>(i.m, i.u));
-        return await reformat.ToListAsync();
+        var reformat = timeline.Select(i => new Tuple<Message, User>(i.m, i.u));
+        
+        //To get newest messages on top
+        var ordered = await reformat.ToListAsync();
+        return ordered.OrderBy(m => m.Item1.PubDate);
     }
 
-    public async Task<IEnumerable<ValueTuple<Message, User>>> TimelineEf(long sessionId)
+    public async Task<IEnumerable<Tuple<Message, User>>> TimelineEf(long sessionId)
     {
         var user = await GetUserEf(sessionId);
         if (sessionId > 0 && user != null)
@@ -123,29 +133,99 @@ public class Minitwit : IMinitwit, IDisposable
         return new Uri($"http://www.gravatar.com/avatar/{emailTrim}?d=identicon&s={size}");
     }
 
-    public Task<string> PostMessageEf(long userid, string message)
+    public async Task<Status> PostMessageEf(long userid, string text)
     {
-        throw new NotImplementedException();
+        var user = await GetUserEf(userid);
+        if (user == null)
+        {
+            return Status.NotFound;
+        }
+        await _context.Messages.AddAsync(new Message
+        {
+            Text = text,
+            AuthorId = userid,
+            Author = user,
+            PubDate = DateTime.UtcNow.Ticks,
+            Flagged = 0
+        });
+        await _context.SaveChangesAsync();
+        return Status.Created;
     }
 
-    public long FollowUserEf(string username, long userid)
+    public async Task<Status> FollowUserEf(long sessionId ,string username)
     {
-        throw new NotImplementedException();
+        var ownUser = GetUserEf(sessionId);
+        if (ownUser == null)
+        {
+            return Status.NotFound;
+        }
+        var whomId = await GetUserIdEf(username);
+        if (whomId == 0)
+        {
+            return Status.NotFound;
+        }
+        var whomUser = await GetUserEf(whomId);
+        if ( await Follows(sessionId, whomUser))
+        {
+            return Status.Conflict;
+        }
+
+        await _context.Followers.AddAsync(new Follower {WhoId = sessionId, WhomId = whomId});
+        await _context.SaveChangesAsync();
+        return Status.Updated;
     }
 
-    public Task<long> UnfollowUserEf(string username, long userid)
+    public async Task<Status> UnfollowUserEf(long sessionId ,string username)
     {
-        throw new NotImplementedException();
+        var ownUser = GetUserEf(sessionId);
+        if (ownUser == null)
+        {
+            return Status.NotFound;
+        }
+        var whomId = await GetUserIdEf(username);
+        if (whomId == 0)
+        {
+            return Status.NotFound;
+        }
+        var whomUser = await GetUserEf(whomId);
+        if ( !await Follows(sessionId, whomUser))
+        {
+            return Status.Conflict;
+        }
+        var follower = await _context.Followers.FirstOrDefaultAsync(f => f.WhoId == sessionId && f.WhomId == whomId);
+        _context.Followers.Remove(follower!);
+        await _context.SaveChangesAsync();
+        return Status.Updated;
+        
     }
 
-    public Task<long> LoginEf(string username, string pw)
+    public async Task<long> LoginEf(string username, string pw)
     {
-        throw new NotImplementedException();
+        var userid = await GetUserIdEf(username);
+        if (userid <= 0)
+        {
+            return 0;
+        }
+        var user = await GetUserEf(userid);
+        if (pw != user.PwHash)
+        {
+            return -1;
+        }
+        return userid;
     }
 
-    public Task<long> RegisterEf(string username, string email, string pw)
+    public async Task<long> RegisterEf(string username, string email, string pw)
     {
-        throw new NotImplementedException();
+        var conflict = await GetUserIdEf(username);
+        if (conflict > 0)
+        {
+            return 0;
+        }
+        var user = new User {Username = username, Email = email, PwHash = pw};
+        await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();
+        var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        return savedUser.UserId;
     }
 
     //_____________________Raw Sql implementation__________________________________________
