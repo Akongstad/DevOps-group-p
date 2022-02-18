@@ -1,12 +1,3 @@
-using System.Data;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using MinitwitReact.Core;
-using System.Collections.Generic;
-using MinitwitReact.Entities;
-
-
 namespace MinitwitReact;
 
 using Microsoft.Data.Sqlite;
@@ -140,8 +131,46 @@ public class Minitwit : IMinitwit, IDisposable
         {
             return await UserTimelineEf(sessionId, user.Username);
         }
-
         return await PublicTimelineEf();
+    }
+    
+    public async Task<DateTime> FormatDatetime(string timestamp)
+    {
+        return DateTime.Parse(timestamp);
+        //.utcfromtimestamp(timestamp).strftime('%Y-%m-%d @ %H:%M')
+    }
+    // TODO: Make a Datetime convert from Datetime.Now to string
+
+    // Return the gravatar image for the given email address.
+    public Uri gravatar_url(string email, int size = 80)
+    {
+        var emailTrim = email.ToLower().Trim();
+        return new Uri($"http://www.gravatar.com/avatar/{emailTrim}?d=identicon&s={size}");
+    }
+
+    public Task<string> PostMessageEf(long userid, string message)
+    {
+        throw new NotImplementedException();
+    }
+
+    public long FollowUserEf(string username, long userid)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<long> UnfollowUserEf(string username, long userid)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<long> LoginEf(string username, string pw)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<long> RegisterEf(string username, string email, string pw)
+    {
+        throw new NotImplementedException();
     }
 
     //_____________________Raw Sql implementation__________________________________________
@@ -234,19 +263,6 @@ public class Minitwit : IMinitwit, IDisposable
     }
 
     // Format a timestamp for display.
-    public DateTime FormatDatetime(string timestamp)
-    {
-        return DateTime.Parse(timestamp);
-        //.utcfromtimestamp(timestamp).strftime('%Y-%m-%d @ %H:%M')
-    }
-    // TODO: Make a Datetime convert from Datetime.Now to string
-
-    // Return the gravatar image for the given email address.
-    public Uri gravatar_url(string email, int size = 80)
-    {
-        var emailTrim = email.ToLower().Trim();
-        return new Uri($"http://www.gravatar.com/avatar/{email}?d=identicon&s={size}");
-    }
 
     // Make sure we are connected to the database each request and look
     // up the current user so that we know they are there.
