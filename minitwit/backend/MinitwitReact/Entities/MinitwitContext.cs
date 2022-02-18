@@ -25,8 +25,7 @@ namespace MinitwitReact.Entities
         {
             modelBuilder.Entity<Follower>(entity =>
             {
-                entity.HasNoKey();
-
+                entity.HasKey(nameof(Follower.WhoId), nameof(Follower.WhomId));
                 entity.ToTable("follower");
 
                 entity.Property(e => e.WhoId)
@@ -67,6 +66,8 @@ namespace MinitwitReact.Entities
             {
                 entity.ToTable("user");
 
+                entity.HasIndex(u => u.Email)
+                    .IsUnique();
                 entity.Property(e => e.UserId)
                     .HasColumnType("integer")
                     .HasColumnName("user_id");

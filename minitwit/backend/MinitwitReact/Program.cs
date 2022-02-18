@@ -1,8 +1,3 @@
-using Microsoft.AspNetCore.Antiforgery;
-using Microsoft.EntityFrameworkCore;
-using MinitwitReact;
-using MinitwitReact.Entities;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -56,7 +51,5 @@ app.Use((context, next) =>
 
     return next(context);
 });
-
-
 
 app.Run();

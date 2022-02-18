@@ -8,7 +8,7 @@ public record MessageCreateDto
 {
     public string? Author { get; set; }
     public string Text { get; set; } = null!;
-    public long? PubDate { get; set; }
+    public long PubDate { get; set; }
     public long? Flagged { get; set; }
 }
 
