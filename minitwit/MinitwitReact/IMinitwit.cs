@@ -70,7 +70,8 @@ public interface IMinitwit
     IEnumerable<(Message, User)> user_timeline(long sessionId ,string username);
     Task<IEnumerable<(MessageDto, UserDto)>> UserTimelineEf(long sessionId, string username);
     Task<bool> Follows(long sessionId, UserDto user);
-    
+
+    Task<IEnumerable<ValueTuple<MessageDto, UserDto>>> TimelineEf(long sessionId);
     
     //@app.route('/<username>/follow')
     //"""Adds the current user as follower of the given user."""
