@@ -4,7 +4,7 @@ public interface IMinitwit
 {
     Task<IEnumerable<UserDto>> GetAllUsers();
     Task<UserDto?> GetUserById(long userId);
-    Task<long> GetUserIdEf(string username);
+    Task<long> GetUserId(string username);
     Task<UserDetailsDto?> GetUserDetialsById(long userid);
     Task<DateTime> FormatDatetime(string timestamp); //Can probably be done using datetime
     Uri gravatar_url(string email, int size = 80);

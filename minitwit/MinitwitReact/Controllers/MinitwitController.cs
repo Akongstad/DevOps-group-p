@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace MinitwitReact.Controllers;
 
 [ApiController]
@@ -19,10 +21,10 @@ public class MinitwitController : ControllerBase
         return _minitwit.GetAllUsers();
     }
     //[AutoValidateAntiforgeryToken]
-    [HttpGet]
+    [HttpGet("msgs")]
     public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> GetPublicTimeline()
     {
-        return await _minitwit.PublicTimeline();
+       return  await _minitwit.PublicTimeline();
     } 
    
     // Get User's timeline

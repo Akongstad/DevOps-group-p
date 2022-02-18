@@ -57,12 +57,12 @@ public class MinitwitTests : IDisposable
     [InlineData("Bruce Wayne",4)]
     public async Task GetUserId_returns_UserId_given_valid_username(string username, long expected)
     {
-        Assert.Equal(expected, await _minitwit.GetUserIdEf(username));
+        Assert.Equal(expected, await _minitwit.GetUserId(username));
     }
     [Fact]
     public async Task GetUserIdEF_returns_0_given_invalid_username()
     {
-        Assert.Equal(0, await _minitwit.GetUserIdEf("Irrelevant person"));
+        Assert.Equal(0, await _minitwit.GetUserId("Irrelevant person"));
     }
     [Fact]
     public async Task GetUserDetailsById_returns_User_given_valid_id()
@@ -86,10 +86,10 @@ public class MinitwitTests : IDisposable
         var actual = await _minitwit.PublicTimeline();
         var valueTuples = actual.ToList();
         
-        Assert.Equal("Jeff Bezos", valueTuples.Last().Item2.Username);
-        Assert.Equal("Elon bad", valueTuples.Last().Item1.Text);
-        Assert.Equal("Bruce Wayne", valueTuples.First().Item2.Username);
-        Assert.Equal("I am Batman!", valueTuples.First().Item1.Text);
+        Assert.Equal("Jeff Bezos", valueTuples.First().Item2.Username);
+        Assert.Equal("Elon bad", valueTuples.First().Item1.Text);
+        Assert.Equal("Bruce Wayne", valueTuples.Last().Item2.Username);
+        Assert.Equal("I am Batman!", valueTuples.Last().Item1.Text);
     }
 
     [Fact]
@@ -115,9 +115,9 @@ public class MinitwitTests : IDisposable
         var timeline = await _minitwit.PublicTimeline();
         timeline = timeline.ToList();
         //Post by user 1?
-        Assert.Equal(1, timeline.First().Item2.UserId);
+        Assert.Equal(1, timeline.Last().Item2.UserId);
         //Post correct post?
-        Assert.Equal("I make a new post yes", timeline.First().Item1.Text);
+        Assert.Equal("I make a new post yes", timeline.Last().Item1.Text);
     }
 
     [Fact]
