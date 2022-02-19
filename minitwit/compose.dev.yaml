@@ -1,0 +1,19 @@
+services:
+
+  frontend:
+
+    container_name: react_frontend
+
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+
+    ports:
+      - 3000:3000
+
+    command: serve -s build -l 3000
+
+    depends_on:
+      - backend
+
+    restart: on-failure
