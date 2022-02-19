@@ -27,22 +27,6 @@ export default function Login() {
             navigate(path);
         }
     }
-        if ( response.data ) { 
-            let path = 'user_timeline';
-            localStorage.setItem('user', response.data);
-        } else {
-            let path = 'public_timeline';
-        }
-        navigate(path);
-    }
-        if ( response.data ) { 
-            let path = 'user_timeline';
-            localStorage.setItem('user', response.data);
-        } else {
-            let path = 'public_timeline';
-        }
-        navigate(path);
-    }
 
     function validateForm() {
         return username.length > 0 && password.length > 0;
