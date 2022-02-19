@@ -95,21 +95,21 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task PostMessage_Creates_new_message_by_user()
     {
-        var response = await _minitwit.PostMessageEf(1, "I make a new post yes");
+        var response = await _minitwit.PostMessage(1, "I make a new post yes");
         Assert.Equal(Status.Created, response);
     }
 
     [Fact]
     public async Task PostMessage_returns_NotFound_given_invalid_userid()
     {
-        var response = await _minitwit.PostMessageEf(111, "I make a new post yes");
+        var response = await _minitwit.PostMessage(111, "I make a new post yes");
         Assert.Equal(Status.NotFound, response);
     }
 
     [Fact]
     public async Task PostMessage_Posts_Message_to_top_of_timeline()
     {
-        var response = await _minitwit.PostMessageEf(1, "I make a new post yes");
+        var response = await _minitwit.PostMessage(1, "I make a new post yes");
         Assert.Equal(Status.Created, response);
 
         var timeline = await _minitwit.PublicTimeline();
@@ -123,28 +123,28 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task FollowUser_returns_updated_given_valid_session_and_target()
     {
-        var response = await _minitwit.FollowUserEf(1, "Jeff Bezos");
+        var response = await _minitwit.FollowUser(1, "Jeff Bezos");
         Assert.Equal(Status.Updated, response);
     }
 
     [Fact]
     public async Task FollowUser_returns_NotFound_given_invalid_session_and_target()
     {
-        var response = await _minitwit.FollowUserEf(0, "Jeffers");
+        var response = await _minitwit.FollowUser(0, "Jeffers");
         Assert.Equal(Status.NotFound, response);
     }
 
     [Fact]
     public async Task FollowUser_returns_Conflict_given_existing_follow()
     {
-        var response = await _minitwit.FollowUserEf(2, "Elon Musk");
+        var response = await _minitwit.FollowUser(2, "Elon Musk");
         Assert.Equal(Status.Conflict, response);
     }
 
     [Fact]
     public async Task FollowUser_add_follow_to_database()
     {
-        var response = await _minitwit.FollowUserEf(1, "Jeff Bezos");
+        var response = await _minitwit.FollowUser(1, "Jeff Bezos");
         var jeff = new UserDto( 2, "Jeff Bezos");
         var follows = await _minitwit.Follows(1, jeff);
         Assert.True(follows);
@@ -153,19 +153,19 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task UnFollowUser_returns_updated_given_valid_session_and_target()
     {
-        var response = await _minitwit.UnfollowUserEf(2, "Elon Musk");
+        var response = await _minitwit.UnfollowUser(2, "Elon Musk");
         Assert.Equal(Status.Updated, response);
     }
     [Fact]
     public async Task UnFollowUser_returns_Notfound_given_invalid_session_and_target()
     {
-        var response = await _minitwit.UnfollowUserEf(0, "Elonis");
+        var response = await _minitwit.UnfollowUser(0, "Elonis");
         Assert.Equal(Status.NotFound, response);
     }
     [Fact]
     public async Task UnFollowUser_returns_Conflict_given_nonExisting_follow()
     {
-        var response = await _minitwit.UnfollowUserEf(1, "Jeff Bezos");
+        var response = await _minitwit.UnfollowUser(1, "Jeff Bezos");
         Assert.Equal(Status.Conflict, response);
     }
     [Fact]
@@ -175,7 +175,7 @@ public class MinitwitTests : IDisposable
         var follows = await _minitwit.Follows(2, elon);
         Assert.True(follows);
         
-        var response = await _minitwit.UnfollowUserEf(2, "Elon Musk");
+        var response = await _minitwit.UnfollowUser(2, "Elon Musk");
         var unfollows = await _minitwit.Follows(2, elon);
         Assert.False(unfollows);
     }
@@ -184,7 +184,7 @@ public class MinitwitTests : IDisposable
     public async Task Login_given_valid_username_and_pw_returns_id()
     {
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
-        var login = await _minitwit.LoginEf(elon.Username, elon.PwHash);
+        var login = await _minitwit.Login(elon.Username, elon.PwHash);
         Assert.Equal(1, login);
     }
 
@@ -192,27 +192,27 @@ public class MinitwitTests : IDisposable
     public async Task Login_given_invalid_username_and_pw_returns_0()
     {
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
-        var login = await _minitwit.LoginEf("elonis", elon.PwHash);
+        var login = await _minitwit.Login("elonis", elon.PwHash);
         Assert.Equal(0, login);
     }
     [Fact]
     public async Task Login_given_valid_username_and_invalid_pw_returns_minus1()
     {
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
-        var login = await _minitwit.LoginEf(elon.Username, "Tesla->Moon");
+        var login = await _minitwit.Login(elon.Username, "Tesla->Moon");
         Assert.Equal(-1, login);
     }
 
     [Fact]
     public async Task register_returns_id_given_nonExisting_user()
     {
-        var register = await _minitwit.RegisterEf("New User", "user@user.com", "SafePassword");
+        var register = await _minitwit.Register("New User", "user@user.com", "SafePassword");
         Assert.Equal(5, register);
     }
     [Fact]
     public async Task register_returns_0_given_Existing_user()
     {
-        var register = await _minitwit.RegisterEf("Elon Musk", "user@user.com", "SafePassword");
+        var register = await _minitwit.Register("Elon Musk", "user@user.com", "SafePassword");
         Assert.Equal(0, register);
     }
     
@@ -223,6 +223,23 @@ public class MinitwitTests : IDisposable
         var actual = await _minitwit.GetUserById(1);
         Assert.Equal(elon.Username, actual.Username);
         Assert.Equal(elon.UserId, actual.UserId);
+    }
+
+    [Fact]
+    public async Task GetFollowers_returns_List_of_followers()
+    {
+        var bezos = "Jeff Bezos";
+        var elon = "Elon Musk";
+        var actual = await _minitwit.GetFollowers(bezos, 5);
+        Assert.Equal(elon,actual.First().Username);
+    }
+    [Fact]
+    public async Task GetFollowers_returns_EmptyList_of_followers_if_no_follows()
+    {
+        var bezos = "Jeff Bezos";
+        var elon = "Elon Musk";
+        var actual = await _minitwit.GetFollowers(elon, 5);
+        Assert.Empty(actual);
     }
 
     // TEST FOR ADD MESSAGES
