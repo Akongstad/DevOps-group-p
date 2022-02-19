@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace MinitwitReact.Controllers;
 
 [ApiController]
@@ -19,10 +21,10 @@ public class MinitwitController : ControllerBase
         return _minitwit.GetAllUsers();
     }
     //[AutoValidateAntiforgeryToken]
-    [HttpGet]
+    [HttpGet("msgs")]
     public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> GetPublicTimeline()
     {
-        return await _minitwit.PublicTimeline();
+       return  await _minitwit.PublicTimeline();
     } 
    
     // Get User's timeline
@@ -51,7 +53,7 @@ public class MinitwitController : ControllerBase
         if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
-        var result = await _minitwit.FollowUserEf(id, username);
+        var result = await _minitwit.FollowUser(id, username);
         return result.ToActionResult();
     }
     //Unfollow
@@ -60,7 +62,7 @@ public class MinitwitController : ControllerBase
         if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
-        var result = await _minitwit.FollowUserEf(id, username);
+        var result = await _minitwit.FollowUser(id, username);
         return result.ToActionResult();
     }
 
@@ -68,7 +70,7 @@ public class MinitwitController : ControllerBase
     [HttpGet("login/{username}/{pw_hash}")]
     public async Task<long>GetLogin(string username, string pw_hash)
     {
-        return await _minitwit.LoginEf(username, pw_hash);
+        return await _minitwit.Login(username, pw_hash);
     }
     
     // Add message
@@ -79,7 +81,7 @@ public class MinitwitController : ControllerBase
             throw new ArgumentException("user not logged in");
         }
 
-        var result = await _minitwit.PostMessageEf(id, message);
+        var result = await _minitwit.PostMessage(id, message);
          return result.ToActionResult();
     }
 
@@ -87,7 +89,7 @@ public class MinitwitController : ControllerBase
     [HttpPost("{username}/{email}/{pw}")]
     public async Task<long> PostRegister (string username, string email, string pw)
     {
-        return await _minitwit.RegisterEf(username, email, pw);
+        return await _minitwit.Register(username, email, pw);
     }
 
 

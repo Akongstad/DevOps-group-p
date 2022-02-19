@@ -1,11 +1,6 @@
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.AspNetCore.Identity;
-using static Microsoft.AspNetCore.Identity.PasswordVerificationResult;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace MinitwitReact;
-
-using Microsoft.Data.Sqlite;
 
 public class Minitwit : IMinitwit, IDisposable
 {
@@ -43,13 +38,13 @@ public class Minitwit : IMinitwit, IDisposable
         
     }
     
-    public async Task<long> GetUserIdEf(string username)
+    public async Task<long> GetUserId(string username)
     {
        var users = from u in _context.Users
                    where u.Username == username
                    select new UserDto(u.UserId, u.Username);
         
-       var user = await users.FirstOrDefaultAsync<UserDto>();
+       var user = await users.FirstOrDefaultAsync();
        if (user == null)
        {
            return 0;
@@ -67,7 +62,7 @@ public class Minitwit : IMinitwit, IDisposable
         var reformat = timeline.Select(i => new Tuple<MessageDto, UserDto>(new MessageDto(i.m.MessageId, i.m.Author.Username, i.m.Text, i.m.PubDate), 
                                                                                                                 new UserDto(i.u.UserId, i.u.Username)));
         var ordered = await reformat.ToListAsync();
-        return ordered.OrderBy(m => m.Item1.PubDate);
+        return ordered.OrderByDescending(m => m.Item1.PubDate).Take(PER_PAGE);
     }
     
     public async Task<bool> Follows(long sessionId, UserDto user)
@@ -100,7 +95,7 @@ public class Minitwit : IMinitwit, IDisposable
         var reformat = timeline.Select(i => new Tuple<MessageDto, UserDto>(new MessageDto(i.m.MessageId, i.m.Author.Username, i.m.Text, i.m.PubDate), 
                                                                                 new UserDto(i.u.UserId, i.u.Username)));
         var ordered = await reformat.ToListAsync();
-        return ordered.OrderBy(m => m.Item1.PubDate);
+        return ordered.OrderByDescending(m => m.Item1.PubDate).Take(PER_PAGE);
     }
     public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> OwnTimeline(long sessionId)
     {
@@ -111,6 +106,22 @@ public class Minitwit : IMinitwit, IDisposable
         }
         return await PublicTimeline();
     }
+
+    public async Task<IEnumerable<UserDto>> GetFollowers(string username, int limit)
+    {
+        var userId = await GetUserId(username);
+        if (userId <= 0)
+        {
+            return new List<UserDto>();
+        }
+
+        var followers = from u in _context.Users
+            join f in _context.Followers on u.UserId equals f.WhomId
+            where f.WhoId == userId
+            select new UserDto(u.UserId, u.Username);
+        return await followers.Take(limit).ToListAsync();
+    }
+
     public async Task<DateTime> FormatDatetime(string timestamp)
     {
         return DateTime.Parse(timestamp);
@@ -124,7 +135,7 @@ public class Minitwit : IMinitwit, IDisposable
         var emailTrim = email.ToLower().Trim();
         return new Uri($"http://www.gravatar.com/avatar/{emailTrim}?d=identicon&s={size}");
     }
-    public async Task<Status> PostMessageEf(long userid, string text)
+    public async Task<Status> PostMessage(long userid, string text)
     {
         var user = await GetUserDetialsById(userid);
         if (user == null)
@@ -142,14 +153,14 @@ public class Minitwit : IMinitwit, IDisposable
         await _context.SaveChangesAsync();
         return Status.Created;
     }
-    public async Task<Status> FollowUserEf(long sessionId ,string username)
+    public async Task<Status> FollowUser(long sessionId ,string username)
     {
         var ownUser = GetUserDetialsById(sessionId);
         if (ownUser == null)
         {
             return Status.NotFound;
         }
-        var whomId = await GetUserIdEf(username);
+        var whomId = await GetUserId(username);
         if (whomId == 0)
         {
             return Status.NotFound;
@@ -164,14 +175,14 @@ public class Minitwit : IMinitwit, IDisposable
         await _context.SaveChangesAsync();
         return Status.Updated;
     }
-    public async Task<Status> UnfollowUserEf(long sessionId ,string username)
+    public async Task<Status> UnfollowUser(long sessionId ,string username)
     {
         var ownUser = GetUserDetialsById(sessionId);
         if (ownUser == null)
         {
             return Status.NotFound;
         }
-        var whomId = await GetUserIdEf(username);
+        var whomId = await GetUserId(username);
         if (whomId == 0)
         {
             return Status.NotFound;
@@ -188,9 +199,9 @@ public class Minitwit : IMinitwit, IDisposable
         
     }
 
-    public async Task<long> LoginEf(string username, string pw)
+    public async Task<long> Login(string username, string pw)
     {
-        var userid = await GetUserIdEf(username);
+        var userid = await GetUserId(username);
         if (userid <= 0)
         {
             return 0;
@@ -203,9 +214,9 @@ public class Minitwit : IMinitwit, IDisposable
         return userid;
     }
 
-    public async Task<long> RegisterEf(string username, string email, string pw)
+    public async Task<long> Register(string username, string email, string pw)
     {
-        var conflict = await GetUserIdEf(username);
+        var conflict = await GetUserId(username);
         if (conflict > 0)
         {
             return 0;

@@ -6,6 +6,7 @@ global using MinitwitReact.Entities;
 global using Microsoft.Data.Sqlite;
 global using Microsoft.AspNetCore.Antiforgery;
 global using Microsoft.AspNetCore.Mvc;
+global using System.Text.Json;
 
 global using MinitwitReact;
 global using MinitwitReact.Core;
