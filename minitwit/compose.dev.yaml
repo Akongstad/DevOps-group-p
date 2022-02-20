@@ -27,6 +27,6 @@ services:
       dockerfile: Dockerfile.dev
 
     ports:
-      - 7005:7005
+      - 5229:5229
 
     restart: on-failure
