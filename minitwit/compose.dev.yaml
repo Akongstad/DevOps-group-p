@@ -17,3 +17,16 @@ services:
       - backend
 
     restart: on-failure
+
+  backend:
+
+    container_name: dotnet_backend
+
+    build:
+      context: ./backend/MinitwitReact
+      dockerfile: Dockerfile.dev
+
+    ports:
+      - 7005:7005
+
+    restart: on-failure
