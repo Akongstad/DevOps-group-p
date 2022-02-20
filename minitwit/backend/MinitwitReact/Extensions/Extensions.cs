@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace MinitwitReact.Extenions;
+namespace MinitwitReact.Extensions;
 
 public static class Extensions
 {
