@@ -2,8 +2,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+//For temp databases
+var tempFile = Path.GetTempFileName();
+
+//------
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<MinitwitContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("minitwitSqlite")));
+builder.Services.AddDbContext<MinitwitContext>(options => options.UseSqlite($"DataSource={tempFile}"));
 builder.Services.AddScoped<IMinitwitContext, MinitwitContext>();
 builder.Services.AddScoped<IMinitwit, Minitwit>();
 
@@ -51,5 +55,6 @@ app.Use((context, next) =>
 
     return next(context);
 });
+await app.SeedAsync();
 
 app.Run();
