@@ -23,71 +23,8 @@ namespace MinitwitReact.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Follower>(entity =>
-            {
-                entity.HasKey(nameof(Follower.WhoId), nameof(Follower.WhomId));
-                entity.ToTable("follower");
-
-                entity.Property(e => e.WhoId)
-                    .HasColumnType("integer")
-                    .HasColumnName("who_id");
-
-                entity.Property(e => e.WhomId)
-                    .HasColumnType("integer")
-                    .HasColumnName("whom_id");
-            });
-
-            modelBuilder.Entity<Message>(entity =>
-            {
-                entity.ToTable("message");
-
-                entity.Property(e => e.MessageId)
-                    .HasColumnType("integer")
-                    .HasColumnName("message_id");
-
-                entity.Property(e => e.AuthorId)
-                    .HasColumnType("integer")
-                    .HasColumnName("author_id");
-
-                entity.Property(e => e.Flagged)
-                    .HasColumnType("integer")
-                    .HasColumnName("flagged");
-
-                entity.Property(e => e.PubDate)
-                    .HasColumnType("integer")
-                    .HasColumnName("pub_date");
-
-                entity.Property(e => e.Text)
-                    .HasColumnType("string")
-                    .HasColumnName("text");
-            });
-
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.ToTable("user");
-
-                entity.HasIndex(u => u.Email)
-                    .IsUnique();
-                entity.Property(e => e.UserId)
-                    .HasColumnType("integer")
-                    .HasColumnName("user_id");
-
-                entity.Property(e => e.Email)
-                    .HasColumnType("string")
-                    .HasColumnName("email");
-
-                entity.Property(e => e.PwHash)
-                    .HasColumnType("string")
-                    .HasColumnName("pw_hash");
-
-                entity.Property(e => e.Username)
-                    .HasColumnType("string")
-                    .HasColumnName("username");
-            });
-
-            OnModelCreatingPartial(modelBuilder);
+            modelBuilder
+                .Entity<Follower>().HasKey(nameof(Follower.WhoId), nameof(Follower.WhomId));
         }
-
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
