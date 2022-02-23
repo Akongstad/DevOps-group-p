@@ -17,16 +17,37 @@ services:
       - backend
 
     restart: on-failure
+  
+  db:
+    image: mcr.microsoft.com/azure-sql-edge #mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD_FILE: /run/secrets/db_password
+    ports:
+      - 1433:1433
+    secrets:
+      - db_password
 
   backend:
 
     container_name: dotnet_backend
-
     build:
       context: ./backend/MinitwitReact
       dockerfile: Dockerfile.dev
-
     ports:
       - 5229:5229
-
+    environment:
+      ConnectionStrings__Minitwit:
+    depends_on:
+      - db
+    secrets:
+      - source: connection_string
+        target: ConnectionStrings__Minitwit
     restart: on-failure
+    
+secrets:
+  db_password:
+    file: .local/db_password.txt
+  connection_string:
+    file: .local/connection_string.txt
+  

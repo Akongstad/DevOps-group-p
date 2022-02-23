@@ -1,13 +1,13 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Configuration.AddKeyPerFile("/run/secrets", optional: true);
 //For temp databases
-var tempFile = Path.GetTempFileName();
+//var tempFile = Path.GetTempFileName();
 
 //------
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<MinitwitContext>(options => options.UseSqlite($"DataSource={tempFile}"));
+builder.Services.AddDbContext<MinitwitContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Minitwit")));
 builder.Services.AddScoped<IMinitwitContext, MinitwitContext>();
 builder.Services.AddScoped<IMinitwit, Minitwit>();
 

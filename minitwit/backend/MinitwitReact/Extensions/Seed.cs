@@ -16,9 +16,9 @@ public static class Seed
 
     public static async Task SeedMinitwitAsync(MinitwitContext context)
     {
-        await context.Database.EnsureCreatedAsync();
+        await context.Database.MigrateAsync();
         
-        /*var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
         var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321", UserId = 2};
         var bill = new User {Username = "Bill Gates", Email = "Microsoft@gmail.com", PwHash = "321123", UserId = 3};
         var bruce = new User{Username = "Bruce Wayne", Email = "Gotham@gmail.com", PwHash = "321", UserId = 4};
@@ -44,7 +44,7 @@ public static class Seed
             PubDate = DateTime.UtcNow.AddDays(2).Ticks
         };
         context.Messages.AddRange(hello, bye, batman, chip);
-        context.Followers.Add(new Follower {WhoId = 2, WhomId = 1});*/
+        context.Followers.Add(new Follower {WhoId = 2, WhomId = 1});
         await context.SaveChangesAsync();
         
     }
