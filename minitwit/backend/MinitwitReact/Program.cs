@@ -1,13 +1,13 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Configuration.AddKeyPerFile("/run/secrets", optional: true);
 //For temp databases
-var tempFile = Path.GetTempFileName();
+//var tempFile = Path.GetTempFileName();
 
 //------
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<MinitwitContext>(options => options.UseSqlite($"DataSource={tempFile}"));
+builder.Services.AddDbContext<MinitwitContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Minitwit")));
 builder.Services.AddScoped<IMinitwitContext, MinitwitContext>();
 builder.Services.AddScoped<IMinitwit, Minitwit>();
 
@@ -23,12 +23,14 @@ builder.Services.AddAntiforgery(options =>
 var app = builder.Build();
     
 // Configure the HTTP request pipeline.
-//if (!app.Environment.IsDevelopment())
-//{
-    //// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    //app.UseHsts();
-//}
-//app.UseHttpsRedirection();
+
+/*if (!app.Environment.IsDevelopment())
+{
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+app.UseHttpsRedirection();*/
+
 app.UseStaticFiles();
 app.UseRouting();
 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MinitwitReact.Entities
 {
-    public partial class User
+    public class User
     {
         public long UserId { get; set; }
         public string Username { get; set; } = null!;
