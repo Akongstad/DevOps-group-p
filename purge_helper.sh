@@ -10,6 +10,9 @@ else
     STATEMENT=''
 fi
 
+echo;echo;echo      # Newlines
+echo "Printing all instances of $KEYWORD in $DIRECTORY $STATEMENT"
+echo
 
 # Search for all instances of pattern in directory
 grep -irn $ADD_GREP_PARAM "$DIRECTORY" -e "$KEYWORD" 2>/dev/null |
@@ -22,8 +25,3 @@ grep -irn $ADD_GREP_PARAM "$DIRECTORY" -e "$KEYWORD" 2>/dev/null |
 
     # Print the first column (filename + lineno)
     awk '{print $1}'
-
-echo;echo;echo
-echo "Printing all instances of $KEYWORD in $DIRECTORY $STATEMENT"
-echo
-grep -irn $ADD_GREP_PARAM "$DIRECTORY" -e "$KEYWORD" 2>/dev/null | awk '$0 !~ /\/bin\//' | awk '$0 !~ /\/obj\//' | awk '{print $1}'
