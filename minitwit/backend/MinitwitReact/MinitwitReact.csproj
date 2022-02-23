@@ -3,19 +3,19 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
-        <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
-        <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+        <!--<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>-->
+        <!--<TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>-->
         <IsPackable>false</IsPackable>
-        <SpaRoot>../frontend\</SpaRoot>
-        <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-        <SpaProxyServerUrl>https://localhost:44455</SpaProxyServerUrl>
-        <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
+        <!--<SpaRoot>../frontend\</SpaRoot>-->
+        <!--<DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>-->
+        <!--<SpaProxyServerUrl>https://localhost:44455</SpaProxyServerUrl>-->
+        <!--<SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>-->
         <ImplicitUsings>enable</ImplicitUsings>
-        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <!--<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>-->
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.1" />
+        <!--<PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.1" />-->
         <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.2" />
         <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.2">
@@ -26,12 +26,12 @@
 
     </ItemGroup>
 
-    <ItemGroup>
-        <!-- Don't publish the SPA source files, but do show them in the project files list -->
-        <Content Remove="$(SpaRoot)**" />
-        <None Remove="$(SpaRoot)**" />
-        <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-    </ItemGroup>
+    <!--<ItemGroup>-->
+        <!--[> Don't publish the SPA source files, but do show them in the project files list <]-->
+        <!--<Content Remove="$(SpaRoot)**" />-->
+        <!--<None Remove="$(SpaRoot)**" />-->
+        <!--<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />-->
+    <!--</ItemGroup>-->
 
     <ItemGroup>
       <Folder Include="Simulator" />
