@@ -36,6 +36,7 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - 5229:80
+
     environment:
       ConnectionStrings__Minitwit:
     depends_on:
