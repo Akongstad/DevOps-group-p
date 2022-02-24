@@ -1,5 +1,15 @@
 services:
 
+  proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile.dev
+    networks:
+      - frontend_network
+    ports: 
+      - 80:80
+      - 443:443
+
   frontend:
 
     container_name: react_frontend
@@ -46,6 +56,11 @@ services:
         target: ConnectionStrings__Minitwit
     restart: on-failure
     
+networks:
+  frontend_network:
+    #external: true
+    name: frontend_network
+  
 secrets:
   db_password:
     file: .local/db_password.txt
