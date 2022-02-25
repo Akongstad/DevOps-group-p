@@ -7,7 +7,7 @@ builder.Configuration.AddKeyPerFile("/run/secrets", optional: true);
 
 //------
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<MinitwitContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Minitwit")));
+builder.Services.AddDbContext<MinitwitContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Minitwit")));
 builder.Services.AddScoped<IMinitwitContext, MinitwitContext>();
 builder.Services.AddScoped<IMinitwit, Minitwit>();
 

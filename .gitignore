@@ -2,9 +2,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode
 
-### Secrets ###
-.local/
-
 ### Vagrant ###
 .vagrant/
 
@@ -289,3 +286,4 @@ fabric.properties
 MinitwitReact/MinitwitReact.sln.DotSettings.user
 .DS_Store
 
+.gitignore
