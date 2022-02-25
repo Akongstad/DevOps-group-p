@@ -1,1 +1,0 @@
-Server=db;Database=Minitwit;User Id=sa;Password=cb1d33c4-fdb6-4389-9a73-acfd4f83bf53;Trusted_Connection=False;Encrypt=False
