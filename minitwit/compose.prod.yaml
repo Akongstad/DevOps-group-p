@@ -1,8 +1,10 @@
 services:
 
   letsencrypt:
-    image: linuxserver/letsencrypt
+    image: linuxserver/swag:version-1.23.0
+
     container_name: letsencrypt
+
     environment:
       - PUID=1000
       - PGID=1000
@@ -13,9 +15,15 @@ services:
       - DNSPLUGIN=digitalocean
       - EMAIL=eythor108@gmail.com
       - DHLEVEL=4096
+
     volumes:
       - ./letsencrypt:/config
+
     restart: unless-stopped
+
+    ports:
+      - 80:80
+      - 443:443
 
   frontend:
 
