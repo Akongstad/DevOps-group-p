@@ -1,9 +1,9 @@
 name: .NET
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
+    branches: [ main ]
+  push:
     branches: [ main ]
 
 jobs:
@@ -12,14 +12,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore minitwit/backend
-    - name: Build
-      run: dotnet build minitwit/backend --no-restore
-    - name: Test
-      run: dotnet test minitwit/backend --no-build --verbosity normal
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+      - name: Restore dependencies
+        run: dotnet restore minitwit/backend
+      - name: Build
+        run: dotnet build minitwit/backend --no-restore
+      - name: Test
+        run: dotnet test minitwit/backend --no-build --verbosity normal
+
+      - name: use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+
+      - name: install dependencies
+        run: npm ci
+
+    #  - name: build frontend
+    #    run:
+    #      - cd minitwit/frontend
+    #      - npm install
+    #      - npm run build 

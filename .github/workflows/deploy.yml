@@ -1,0 +1,56 @@
+name: deploy
+
+#on:
+#  release:
+#    branches: [ main ]
+#
+#jobs:
+#  build:
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Setup .NET
+#      uses: actions/setup-dotnet@v1
+#      with:
+#        dotnet-version: 6.0.x
+#    - name: Restore dependencies
+#      run: dotnet restore minitwit/backend
+#    - name: Build
+#      run: dotnet build minitwit/backend --no-restore
+#    - name: Test
+#      run: dotnet test minitwit/backend --no-build --verbosity normal
+#
+#    - name: use Node.js
+#      uses: actions/setup-node@v1
+#      with:
+#        node-version: '16.x'
+#    
+#    - name: install dependencies
+#      run: npm ci
+#
+#    - name: build frontend
+#      run:
+#        - cd minitwit/frontend
+#        - npm install
+#        - npm run build 
+#
+#
+#  deployment:
+#    runs-on: ubuntu-20-04
+#    steps:
+#        - name: push to docker hub
+#          run: 
+#            - setup docker login and stuff
+#            - build docker things
+#            - docker push <hub-user>/<repo-name>:<tag>
+#
+#        - name: deploy
+#          run: | 
+#             ssh -o "StrictHostKeyChecking no" ${MT_USER}@${MT_SERVER} \
+#             "source /root/.bash_profile && \
+#             cd /vagrant && \
+#             docker-compose pull && \
+#             docker-compose up -d && \
+#             docker pull $DOCKER_USERNAME/flagtoolimage:latest"
