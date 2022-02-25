@@ -35,7 +35,7 @@ services:
       - 5432:5432
     environment:
       - POSTGRES_USER=sa
-      - POSTGRES_PASSWORD=/run/secrets/db_password #cb1d33c4-fdb6-4389-9a73-acfd4f83bf53
+      - POSTGRES_PASSWORD=cb1d33c4-fdb6-4389-9a73-acfd4f83bf53
       - POSTGRES_DB=Minitwit
     secrets:
       - db_password
