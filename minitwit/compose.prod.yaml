@@ -19,11 +19,9 @@ services:
 
   frontend:
 
-    container_name: react_frontend
+    image: virginity/minitwit_frontend:WEEK4
 
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile.dev
+    container_name: react_frontend
 
     ports:
       - 3000:3000
@@ -47,10 +45,8 @@ services:
 
   backend:
 
+    image: virginity/minitwit_backend:WEEK4
     container_name: dotnet_backend
-    build:
-      context: ./backend/MinitwitReact
-      dockerfile: Dockerfile.dev
     ports:
       - 5229:80
 
