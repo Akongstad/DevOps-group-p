@@ -18,27 +18,27 @@ services:
 
     restart: on-failure
   
-  db:
-    image: mcr.microsoft.com/azure-sql-edge
-    environment:
-      ACCEPT_EULA: 'Y'
-      MSSQL_SA_PASSWORD_FILE: /run/secrets/db_password
-    ports:
-      - 1433:1433
-    secrets:
-      - db_password
-
   # db:
-  #   image: postgres I could not get it to connect
-  #   restart: always
-  #   ports:
-  #     - 5432:5432
+  #   image: mcr.microsoft.com/azure-sql-edge
   #   environment:
-  #     POSTGRES_USER : sa
-  #     POSTGRES_PASSWORD : /run/secrets/db_password
-  #     POSTGRES_DB : Minitwit
+  #     ACCEPT_EULA: 'Y'
+  #     MSSQL_SA_PASSWORD_FILE: /run/secrets/db_password
+  #   ports:
+  #     - 1433:1433
   #   secrets:
   #     - db_password
+
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD=/run/secrets/db_password #cb1d33c4-fdb6-4389-9a73-acfd4f83bf53
+      - POSTGRES_DB=Minitwit
+    secrets:
+      - db_password
 
   backend:
 
