@@ -286,3 +286,4 @@ fabric.properties
 MinitwitReact/MinitwitReact.sln.DotSettings.user
 .DS_Store
 
+.gitignore
