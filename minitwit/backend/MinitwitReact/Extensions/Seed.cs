@@ -18,7 +18,7 @@ public static class Seed
     {
         await context.Database.MigrateAsync();
         
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123"};
+        /*var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123"};
         var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321"};
         var bill = new User {Username = "Bill Gates", Email = "Microsoft@gmail.com", PwHash = "321123"};
         var bruce = new User{Username = "Bruce Wayne", Email = "Gotham@gmail.com", PwHash = "321"};
@@ -45,7 +45,7 @@ public static class Seed
         };
         context.Messages.AddRange(hello, bye, batman, chip);
         context.Followers.Add(new Follower {WhoId = 2, WhomId = 1});
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync();*/
         
     }
 }
