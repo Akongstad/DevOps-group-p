@@ -65,7 +65,7 @@ jobs:
             SSH_HOST: ${{ secrets.MT_SERVER }}
         - name: Deploy to Digital Ocean
           run: |
-             ssh staging '
+             ssh staging 'source ~/.ssh/config && \
              cd /app/minitwit && \
              docker-compose pull && \
              docker-compose up -d'
