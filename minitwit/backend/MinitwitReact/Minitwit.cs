@@ -51,18 +51,17 @@ public class Minitwit : IMinitwit, IDisposable
        }
        return user.UserId;
     }
-    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> PublicTimeline()
+    public async Task<IEnumerable<MessageDto>> PublicTimeline()
     {
         var timeline = from m in _context.Messages
             join u in _context.Users on m.AuthorId equals u.UserId
             where m.Flagged == 0
             orderby m.PubDate descending
 
-            select new {m, u}; // had errors when changing this line, changing it to DTO's below seemed to compile
-        var reformat = timeline.Select(i => new Tuple<MessageDto, UserDto>(new MessageDto(i.m.MessageId, i.m.Author.Username, i.m.Text, i.m.PubDate), 
-                                                                                                                new UserDto(i.u.UserId, i.u.Username)));
+            select new {m}; // had errors when changing this line, changing it to DTO's below seemed to compile
+        var reformat = timeline.Select(i => new MessageDto(i.m.MessageId, i.m.Author.Username, i.m.Text, i.m.PubDate));
         var ordered = await reformat.ToListAsync();
-        return ordered.OrderByDescending(m => m.Item1.PubDate).Take(PER_PAGE);
+        return ordered.OrderByDescending(m => m.PubDate).Take(PER_PAGE);
     }
     
     public async Task<bool> Follows(long sessionId, UserDto user)
@@ -70,7 +69,7 @@ public class Minitwit : IMinitwit, IDisposable
         var follows = await _context.Followers.Where(f => f.WhoId == sessionId && f.WhomId == user.UserId).ToListAsync();
         return follows.Count > 0;
     }
-    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> UserTimeline(long sessionId, string username)
+    public async Task<IEnumerable<MessageDto>> UserTimeline(long sessionId, string username)
     {
         var users = from u in _context.Users
                    where u.Username == username
@@ -90,14 +89,13 @@ public class Minitwit : IMinitwit, IDisposable
             join u in _context.Users on m.AuthorId equals u.UserId
             where u.UserId == m.AuthorId
             where u.UserId == user.UserId
-            select new {m, u};
+            select new {m};
 
-        var reformat = timeline.Select(i => new Tuple<MessageDto, UserDto>(new MessageDto(i.m.MessageId, i.m.Author.Username, i.m.Text, i.m.PubDate), 
-                                                                                new UserDto(i.u.UserId, i.u.Username)));
+        var reformat = timeline.Select(i => new MessageDto(i.m.MessageId, i.m.Author.Username, i.m.Text, i.m.PubDate));
         var ordered = await reformat.ToListAsync();
-        return ordered.OrderByDescending(m => m.Item1.PubDate).Take(PER_PAGE);
+        return ordered.OrderByDescending(m => m.PubDate).Take(PER_PAGE);
     }
-    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> OwnTimeline(long sessionId)
+    public async Task<IEnumerable<MessageDto>> OwnTimeline(long sessionId)
     {
         var user = await GetUserById(sessionId);
         if (sessionId > 0 && user != null)

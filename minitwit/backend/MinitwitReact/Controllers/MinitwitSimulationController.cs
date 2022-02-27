@@ -49,9 +49,9 @@ public class MinitwitSimulationController : ControllerBase
         {
             var filtered_msg = new
             {
-                content = item.Item1.Text,
-                pub_date = item.Item1.PubDate,
-                user = item.Item1.Author,
+                content = item.Text,
+                pub_date = item.PubDate,
+                user = item.Author,
             };
             filtered_msgs.Add(filtered_msg);
         }
@@ -81,9 +81,9 @@ public class MinitwitSimulationController : ControllerBase
             {
                 var filtered_msg = new
                 {
-                    content = item.Item1.Text,
-                    pub_date = item.Item1.PubDate,
-                    user = item.Item1.Author,
+                    content = item.Text,
+                    pub_date = item.PubDate,
+                    user = item.Author,
                 };
                 filtered_msgs.Add(filtered_msg);
             }
@@ -99,6 +99,7 @@ public class MinitwitSimulationController : ControllerBase
         }
         return NotFound();
     }
+    
     [HttpGet("fllws/{username}")]
     [HttpPost("fllws/{username}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
