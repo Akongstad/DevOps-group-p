@@ -30,10 +30,11 @@ jobs:
 
     steps:
         - name: Docker login
-          run: 
+          run: |
             - echo "LOGIN"
             - echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        -name: Docker Build and Push
+        - name: Docker Build and Push
+          run: |
             - echo "BUILD"
             - docker build -t virginity/minitwit_frontend:latest . -f ./minitwit/backend/MinitwitReact/Dockerfile.dev
             - docker build -t virginity/minitwit_backend:latest . -f ./minitwit/frontend/Dockerfile.dev
