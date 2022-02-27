@@ -1,5 +1,7 @@
 
 
+using MinitwitReact.Core;
+
 namespace Minitwit.Tests;
 
 
@@ -23,55 +25,56 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
         // await using var app = new WebApplicationFactory<Program>();
         // using var _client = app.CreateClient();
         var response = await _client.GetAsync("minitwit/Users");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Should().BeSuccessful();
     }
 
     [Fact]
     public async Task HTTP_GET_Msgs_Success(){
         var response = await _client.GetAsync("minitwit/msgs");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Should().BeSuccessful();
     }
 
+    //fails if the route is minitwit/msgs/{id} - changed in controller
     [Fact]
     public async Task HTTP_GET_Timeline_Success(){
-        var response = await _client.GetAsync("minitwit/1");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var response = await _client.GetAsync("minitwit/msgs1/1/");
+        response.Should().BeSuccessful();
     }
     
     [Fact]
     public async Task HTTP_GET_UserTimeline_Success(){
-        var response = await _client.GetAsync("minitwit/1/Jeff Bezos");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var response = await _client.GetAsync("minitwit/msgs/Jeff Bezos");
+        response.Should().BeSuccessful();
     }
     
     [Fact]
     public async Task HTTP_POST_Follow_Success(){
-        var response = await _client.PostAsJsonAsync("minitwit/follow/1/Jeff Bezos", "");
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        var response = await _client.PostAsJsonAsync("minitwit/follow", new FollowerDTO(1, "Jeff Bezos"));
+        response.Should().BeSuccessful();
     }
     
     [Fact]
     public async Task HTTP_POST_Unfollow_Success(){
-        var response = await _client.PostAsJsonAsync("minitwit/unfollow/2/Elon Musk", "");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var response = await _client.PostAsJsonAsync("minitwit/unfollow", new FollowerDTO(2, "Elon Musk"));
+        response.Should().BeSuccessful();
     }
     
-    [Fact]
+    /*[Fact]
     public async Task HTTP_GET_Login_Success(){
-        var response = await _client.GetAsync("minitwit/login/Elon Musk/123");
+        var response = await _client.GetAsync("minitwit/login");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
+    }*/
     
     [Fact]
     public async Task HTTP_POST_Message_Success(){
-        var response = await _client.PostAsJsonAsync("minitwit/1/some message", "");
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        var response = await _client.PostAsJsonAsync("minitwit/msg/1", new MessageCreateDto() {Text = "some message", PubDate = 2022});
+        response.Should().BeSuccessful();
     }
     
     [Fact]
     public async Task HTTP_POST_Register_Success(){
-        var response = await _client.PostAsJsonAsync("minitwit/apiTestUsername/apitest@email.com/yeet","");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var response = await _client.PostAsJsonAsync("minitwit/register",new UserCreateDto() {Username = "apiTestUsername", Email = "apitest@email.com", PwHash = "yeet"});
+        response.Should().BeSuccessful();
     }
 
     // TEST FOR ADD MESSAGES
