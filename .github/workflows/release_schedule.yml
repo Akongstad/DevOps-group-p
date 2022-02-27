@@ -1,13 +1,12 @@
+name: release_schedule
+
 on:
+
   schedule:
   - cron: "0 20 * * 0"
-  displayName: Weekly Sunday build
-  branches: [ main ]
-  always: true
 
-  name: Create Release
+jobs:
   #From: https://github.com/actions/create-release
-  jobs:
   build:
     name: Create Release
     runs-on: ubuntu-latest
