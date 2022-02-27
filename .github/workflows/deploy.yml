@@ -50,17 +50,15 @@ jobs:
              
         - name: Setup SSH
           run: |
-             echo "$SSH_KEY" > /tmp/git_deploy_key
-             chmod 600 /tmp/git_deploy_key
-             eval "$(ssh-agent -s)"
-             DISPLAY=":0.0" setsid ssh-add /tmp/git_deploy_key < /dev/null
+             echo "$SSH_KEY" > ~/.ssh/ourkey && echo "SUCCESS"
+             
           env:
             SSH_USER: ${{ secrets.MT_USER }}
             SSH_KEY: ${{ secrets.SSH_KEY }}
             SSH_HOST: ${{ secrets.MT_SERVER }}
         - name: Deploy to Digital Ocean
           run: |
-             ssh -o "StrictHostKeyChecking no" "$SSH_USER"@"$SSH_HOST" \
+             ssh -o "StrictHostKeyChecking no" -i ~/.ssh/ourkey "$SSH_USER"@"$SSH_HOST" \
              'source /root/.bash_profile && \
              cd /app/minitwit && \
              docker-compose pull && \
