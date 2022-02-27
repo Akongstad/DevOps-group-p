@@ -53,7 +53,7 @@ jobs:
              echo "$SSH_KEY" > /tmp/git_deploy_key
              chmod 600 /tmp/git_deploy_key
              eval "$(ssh-agent -s)"
-             DISPLAY=":0.0" setsid ssh-add /tmp/git_deploy_key </dev/null
+             DISPLAY=":0.0" setsid ssh-add /tmp/git_deploy_key
           env:
             SSH_USER: ${{ secrets.MT_USER }}
             SSH_KEY: ${{ secrets.SSH_KEY }}
