@@ -1,3 +1,5 @@
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -60,3 +62,6 @@ app.Use((context, next) =>
 await app.SeedAsync();
 
 app.Run();
+
+
+public partial class Program { }

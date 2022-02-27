@@ -1,13 +1,19 @@
 using MinitwitReact.Core;
+using System.Net;
 
 namespace Minitwit.Tests;
+
 
 public class MinitwitTests : IDisposable
 {
     private readonly IMinitwit _minitwit;
     private readonly IMinitwitContext _context;
+
+
     public MinitwitTests()
     {
+
+
         //Setup for EF Core
         var conn = new SqliteConnection("Filename=:memory:");
         conn.Open();
@@ -50,6 +56,8 @@ public class MinitwitTests : IDisposable
         _context = context;
         _minitwit = new MinitwitReact.Minitwit(context);
     }
+
+
     [Theory]
     [InlineData("Elon Musk", 1)]
     [InlineData("Jeff Bezos", 2)]
@@ -241,6 +249,7 @@ public class MinitwitTests : IDisposable
         var actual = await _minitwit.GetFollowers(elon, 5);
         Assert.Empty(actual);
     }
+
 
     // TEST FOR ADD MESSAGES
     private bool _disposed;

@@ -10,6 +10,8 @@ public static class Extensions
         Status.Deleted => new NoContentResult(),
         Status.NotFound => new NotFoundResult(),
         Status.Conflict => new ConflictResult(),
+        Status.BadRequest => new BadRequestResult(),
+        Status.Created => new NoContentResult(),
         _ => throw new NotSupportedException($"{status} not recognised")
     };
 }

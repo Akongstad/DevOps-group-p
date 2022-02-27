@@ -281,6 +281,8 @@ fabric.properties
 
 .fake
 
+.local
+
 .DotSettings.user
 # End of https://www.toptal.com/developers/gitignore/api/rider,dotnetcore
 MinitwitReact/MinitwitReact.sln.DotSettings.user
