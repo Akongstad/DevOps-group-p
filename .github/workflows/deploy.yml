@@ -30,6 +30,7 @@ jobs:
       - build
 
     steps:
+        - uses: actions/checkout@v2
         - name: Docker login
           run: |
              echo "LOGIN"
