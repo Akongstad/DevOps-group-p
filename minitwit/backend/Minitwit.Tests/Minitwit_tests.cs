@@ -1,13 +1,22 @@
 using MinitwitReact.Core;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Testing;
+using System.Net;
 
 namespace Minitwit.Tests;
 
-public class MinitwitTests : IDisposable
+
+public class MinitwitTests : IDisposable, IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly IMinitwit _minitwit;
     private readonly IMinitwitContext _context;
-    public MinitwitTests()
+    private readonly HttpClient _client;
+
+    public MinitwitTests(WebApplicationFactory<Program> app)
     {
+        // Create an httpclient for api tests
+        _client = app.CreateClient();
+
         //Setup for EF Core
         var conn = new SqliteConnection("Filename=:memory:");
         conn.Open();
@@ -50,6 +59,8 @@ public class MinitwitTests : IDisposable
         _context = context;
         _minitwit = new MinitwitReact.Minitwit(context);
     }
+
+
     [Theory]
     [InlineData("Elon Musk", 1)]
     [InlineData("Jeff Bezos", 2)]
@@ -240,6 +251,13 @@ public class MinitwitTests : IDisposable
         var elon = "Elon Musk";
         var actual = await _minitwit.GetFollowers(elon, 5);
         Assert.Empty(actual);
+    }
+
+    // API TESTS
+    [Fact]
+    public async Task HTTPGET_Users_Success(){
+        var response = await _client.GetAsync("minitwit/Users");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     // TEST FOR ADD MESSAGES
