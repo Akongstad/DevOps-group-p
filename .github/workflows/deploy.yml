@@ -37,8 +37,11 @@ jobs:
         - name: Docker Build and Push
           run: |
              echo "BUILD"
-             docker build -t virginity/minitwit_frontend:latest -f minitwit/frontend/Dockerfile.dev .
-             docker build -t virginity/minitwit_backend:latest -f minitwit/backend/MinitwitReact/Dockerfile.dev .
+             cd minitwit/frontend
+             docker build -t virginity/minitwit_frontend:latest . -f Dockerfile.dev
+             cd ../backend/MinitwitReact
+             docker build -t virginity/minitwit_backend:latest . -f Dockerfile.dev
+             cd ../../../
              echo "PUSH"
              docker push virginity/minitwit_frontend:latest
              docker push virginity/minitwit_backend:latest
