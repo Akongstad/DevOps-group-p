@@ -22,79 +22,105 @@ public class MinitwitController : ControllerBase
     }
     //[AutoValidateAntiforgeryToken]
     [HttpGet("msgs")]
-    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> GetPublicTimeline()
+    public async Task<ActionResult<string>> GetPublicTimeline()
     {
-       return  await _minitwit.PublicTimeline();
+       var timeline = await _minitwit.PublicTimeline();
+       return await SerializeTimeline(timeline);
     } 
    
     // Get User's timeline
-    [HttpGet("{id}")]
-    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> GetTimeline(int id)
+    [HttpGet("msgs1/{sessionId}")]
+    public async Task<ActionResult<string>> GetTimeline(int sessionId)
     {
-        if (await ValidateId(id)){
+        if (await ValidateId(sessionId)){
             throw new ArgumentException("user not logged in");
         }
-        return await _minitwit.OwnTimeline(id);
+        var timeline = await _minitwit.OwnTimeline(sessionId);
+
+        return await SerializeTimeline(timeline);
     }
 
     // Get other users' timeline
-    [HttpGet("{id}/{username}")]
-    public async Task<IEnumerable<Tuple<MessageDto, UserDto>>> GetUserTimeline(int id,string username)
+    [HttpGet("msgs/{username}")]
+    public async Task<ActionResult<string>> GetUserTimeline(string username)
     {
-        if (await ValidateId(id)){
+        var userId = await _minitwit.GetUserId(username);
+        if (await ValidateId(userId)){
             throw new ArgumentException("user not logged in");
         }
-        return await _minitwit.UserTimeline(id, username);
+        var timeline = await _minitwit.UserTimeline(userId, username);
+        return await SerializeTimeline(timeline);
     }
 
     // Follow
-    [HttpPost("follow/{id}/{username}")]
-    public async Task<IActionResult> Follow(int id, string username){
-        if (await ValidateId(id)){
+    // follower.userid = user's own id, follower.username = the other user's name
+    [HttpPost("follow")]
+    public async Task<IActionResult> Follow([FromBody] FollowerDTO follower)
+    {
+
+        if (await ValidateId(follower.UserId)){
             throw new ArgumentException("user not logged in");
         }
-        var result = await _minitwit.FollowUser(id, username);
+        var result = await _minitwit.FollowUser(follower.UserId, follower.Username);
         return result.ToActionResult();
     }
     //Unfollow
-    [HttpPost("/unfollow/{id}/{username}")]
-    public async Task<IActionResult>  Unfollow(int id, string username){
-        if (await ValidateId(id)){
+    [HttpPost("unfollow")]
+    public async Task<IActionResult> UnFollow([FromBody] FollowerDTO follower)
+    {
+        if (await ValidateId(follower.UserId)){
             throw new ArgumentException("user not logged in");
         }
-        var result = await _minitwit.FollowUser(id, username);
+        var result = await _minitwit.UnfollowUser(follower.UserId, follower.Username);
         return result.ToActionResult();
     }
 
     // Login
-    [HttpGet("login/{username}/{pw_hash}")]
-    public async Task<long>GetLogin(string username, string pw_hash)
+    [HttpGet("login")]
+    public async Task<long>GetLogin([FromBody] UserDetailsDto user)
     {
-        return await _minitwit.Login(username, pw_hash);
+        return await _minitwit.Login(user.Username, user.PwHash);
     }
     
     // Add message
-    [HttpPost("{id}/{message}")]
-    public async Task<IActionResult> Message(long id, string message)
+    [HttpPost("msg/{id}")]
+    public async Task<IActionResult> Message(long id, [FromBody] MessageCreateDto message)
     {        
         if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
 
-        var result = await _minitwit.PostMessage(id, message);
+        var result = await _minitwit.PostMessage(id, message.Text);
          return result.ToActionResult();
     }
 
     //Register
-    [HttpPost("{username}/{email}/{pw}")]
-    public async Task<long> PostRegister (string username, string email, string pw)
+    [HttpPost("register")]
+    public async Task<long> PostRegister ([FromBody] UserCreateDto user)
     {
-        return await _minitwit.Register(username, email, pw);
+        return await _minitwit.Register(user.Username, user.Email, user.PwHash);
     }
 
 
     //validate user
     private async Task<bool> ValidateId(long id){
         return await _minitwit.GetUserDetialsById(id) == null;
+    }
+
+    private async Task<ActionResult<string>> SerializeTimeline (IEnumerable<MessageDto> timeline)
+    {
+        var msgs = new List<Object>();
+        foreach (var item in timeline)
+        {
+            var msg = new
+            {
+                content = item.Text,
+                pub_date = item.PubDate,
+                user = item.Author,
+            };
+            msgs.Add(msg);
+        }
+        return JsonSerializer.Serialize(msgs);
+      
     }
 }

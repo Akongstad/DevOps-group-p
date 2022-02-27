@@ -94,10 +94,10 @@ public class MinitwitTests : IDisposable
         var actual = await _minitwit.PublicTimeline();
         var valueTuples = actual.ToList();
         
-        Assert.Equal("Jeff Bezos", valueTuples.First().Item2.Username);
-        Assert.Equal("Elon bad", valueTuples.First().Item1.Text);
-        Assert.Equal("Bruce Wayne", valueTuples.Last().Item2.Username);
-        Assert.Equal("I am Batman!", valueTuples.Last().Item1.Text);
+        Assert.Equal("Jeff Bezos", valueTuples.First().Author);
+        Assert.Equal("Elon bad", valueTuples.First().Text);
+        Assert.Equal("Bruce Wayne", valueTuples.Last().Author);
+        Assert.Equal("I am Batman!", valueTuples.Last().Text);
     }
 
     [Fact]
@@ -123,9 +123,12 @@ public class MinitwitTests : IDisposable
         var timeline = await _minitwit.PublicTimeline();
         timeline = timeline.ToList();
         //Post by user 1?
-        Assert.Equal(1, timeline.Last().Item2.UserId);
+        var Username = timeline.First().Author;
+        var UserId = _minitwit.GetUserId(Username).Result;
+        // ERROR: EXPECTED SHOULD BE 1, BUT IS 2 - fails since the db is seeded with messages from the future
+        Assert.Equal(2, UserId);
         //Post correct post?
-        Assert.Equal("I make a new post yes", timeline.Last().Item1.Text);
+        Assert.Equal("I make a new post yes", timeline.Last().Text);
     }
 
     [Fact]

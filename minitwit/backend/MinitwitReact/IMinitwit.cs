@@ -13,10 +13,10 @@ public interface IMinitwit
     Task<Status> UnfollowUser(long sessionId ,string username);
     Task<long> Login(string username, string pw);
     Task<long> Register(string username, string email, string pw);
-    Task<IEnumerable<Tuple<MessageDto, UserDto>>> PublicTimeline();
-    Task<IEnumerable<Tuple<MessageDto, UserDto>>> UserTimeline(long sessionId, string username);
+    Task<IEnumerable<MessageDto>> PublicTimeline();
+    Task<IEnumerable<MessageDto>> UserTimeline(long sessionId, string username);
     Task<bool> Follows(long sessionId, UserDto user);
-    Task<IEnumerable<Tuple<MessageDto, UserDto>>> OwnTimeline(long sessionId);
+    Task<IEnumerable<MessageDto>> OwnTimeline(long sessionId);
 
     Task<IEnumerable<UserDto>> GetFollowers(string username, int limit);
 }
