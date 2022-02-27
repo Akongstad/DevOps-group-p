@@ -3,7 +3,7 @@ name: deploy
 on:
 #   release:
 #     types: [published]
-  push:
+  pull_request:
     branches: [ main ]
 
 jobs:
@@ -50,7 +50,7 @@ jobs:
              
         - name: Setup SSH
           run: |
-             cp $SSH_KEY /tmp/git_deploy_key
+             cp "$SSH_KEY" /tmp/git_deploy_key
              chmod 600 /tmp/git_deploy_key
              eval "$(ssh-agent -s)"
              DISPLAY=":0.0" setsid ssh-add /tmp/git_deploy_key </dev/null
@@ -60,8 +60,8 @@ jobs:
             SSH_HOST: ${{ secrets.MT_SERVER }}
         - name: Deploy to Digital Ocean
           run: |
-             ssh -o "StrictHostKeyChecking no" -i $SSH_KEY $SSH_USER@$SSH_HOST \
-             "source /root/.bash_profile && \
+             ssh -o "StrictHostKeyChecking no" -i "$SSH_KEY" "$SSH_USER"@"$SSH_HOST" \
+             'source /root/.bash_profile && \
              cd /app/minitwit && \
              docker-compose pull && \
-             docker-compose up -d"
+             docker-compose up -d'
