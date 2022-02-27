@@ -50,23 +50,18 @@ jobs:
              
         - name: Setup SSH
           run: |
-             mkdir -p ~/.ssh/
-             echo "$SSH_KEY" > ~/.ssh/staging.key
-             chmod 600 ~/.ssh/staging.key
-             cat >>~/.ssh/config <<END
-             Host staging
-               HostName $SSH_HOST
-               User $SSH_USER
-               IdentityFile ~/.ssh/staging.key
-               StrictHostKeyChecking no
-             END
+             cp $SSH_KEY /tmp/git_deploy_key
+             chmod 600 /tmp/git_deploy_key
+             eval "$(ssh-agent -s)"
+             DISPLAY=":0.0" setsid ssh-add /tmp/git_deploy_key </dev/null
           env:
             SSH_USER: ${{ secrets.MT_USER }}
             SSH_KEY: ${{ secrets.SSH_KEY }}
             SSH_HOST: ${{ secrets.MT_SERVER }}
         - name: Deploy to Digital Ocean
           run: |
-             ssh staging 'source ~/.ssh/config && \
+             ssh -o "StrictHostKeyChecking no" -i $SSH_KEY $SSH_USER@$SSH_HOST \
+             "source /root/.bash_profile && \
              cd /app/minitwit && \
              docker-compose pull && \
-             docker-compose up -d'
+             docker-compose up -d"
