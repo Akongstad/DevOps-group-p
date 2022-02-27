@@ -3,7 +3,7 @@ name: deploy
 on:
 #   release:
 #     types: [published]
-  push:
+  pull_request:
     branches: [ main ]
 
 jobs:
@@ -50,23 +50,20 @@ jobs:
              
         - name: Setup SSH
           run: |
-             mkdir -p ~/.ssh/
-             echo "$SSH_KEY" > ~/.ssh/staging.key
-             chmod 600 ~/.ssh/staging.key
-             cat >>~/.ssh/config <<END
-             Host staging
-               HostName $SSH_HOST
-               User $SSH_USER
-               IdentityFile ~/.ssh/staging.key
-               StrictHostKeyChecking no
-             END
+             echo "$SSH_KEY" > /tmp/git_deploy_key
+             chmod 600 /tmp/git_deploy_key
+             echo 'echo ${SSH_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass
+             eval "$(ssh-agent -s)"
+             DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
+ 
           env:
             SSH_USER: ${{ secrets.MT_USER }}
             SSH_KEY: ${{ secrets.SSH_KEY }}
             SSH_HOST: ${{ secrets.MT_SERVER }}
         - name: Deploy to Digital Ocean
           run: |
-             ssh staging 'source ~/.ssh/config && \
+             ssh -o "StrictHostKeyChecking no" ${{ secrets.MT_USER }}@${{ secrets.MT_SERVER }} \
+             'source /root/.bash_profile && \
              cd /app/minitwit && \
              docker-compose pull && \
              docker-compose up -d'
