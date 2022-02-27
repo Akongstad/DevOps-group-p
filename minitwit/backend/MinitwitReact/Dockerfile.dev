@@ -12,10 +12,18 @@ WORKDIR /source
 
 RUN dotnet restore
 
+FROM build AS tests
+LABEL test=true
+COPY ["../Minitwit.Tests/Minitwit.Tests.csproj", "Minitwit.Tests/"]
+RUN dotnet test Minitwit.Tests/Minitwit.Tests.csproj
+# RUN dotnet test -c Release --results-directory /testresults --logger "trx;LogFileName=test_results.txt" Minitwit.Tests/Minitwit.Tests.csproj
+# CMD cat testsresults/test_results.txt
+
+FROM build AS publish
 RUN dotnet publish --configuration Release --output /app
+
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-COPY --from=build /app ./
-
+COPY --from=publish /app ./
 ENTRYPOINT ["dotnet", "MinitwitReact.dll"]
