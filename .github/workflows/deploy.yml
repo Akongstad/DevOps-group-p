@@ -46,11 +46,26 @@ jobs:
              echo "PUSH"
              docker push virginity/minitwit_frontend:latest
              docker push virginity/minitwit_backend:latest
-
+             
+        - name: Setup SSH
+          run: |
+             mkdir -p ~/.ssh/
+             echo "$SSH_KEY" > ~/.ssh/staging.key
+             chmod 600 ~/.ssh/staging.key
+             cat >>~/.ssh/config <<END
+             Host staging
+               HostName $SSH_HOST
+               User $SSH_USER
+               IdentityFile ~/.ssh/staging.key
+               StrictHostKeyChecking no
+             END
+          env:
+            SSH_USER: ${{ secrets.STAGING_SSH_USER }}
+            SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+            SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
         - name: Deploy to Digital Ocean
           run: |
-             ssh -o "StrictHostKeyChecking no" ${{ secrets.MT_USER }}@${{ secrets.MT_SERVER }} -i ${{ secrets.SSH_KEY }}
-             "source /root/.bash_profile && \
+             ssh staging 'source /root/.bash_profile && \
              cd /app/minitwit && \
              docker-compose pull && \
-             docker-compose up -d"
+             docker-compose up -d'
