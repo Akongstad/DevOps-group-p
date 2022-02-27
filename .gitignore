@@ -3,7 +3,13 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode
 ### production ###
 .gitignore
-letsencrypt/
+minitwit/letsencrypt/*
+!minitwit/letsencrypt/nginx/
+minitwit/letsencrypt/nginx/*
+!minitwit/letsencrypt/nginx/proxy-confs/
+minitwit/letsencrypt/nginx/proxy-confs/*
+!minitwit/letsencrypt/nginx/proxy-confs/minitwit.subfolder.conf
+!minitwit/letsencrypt/nginx/site-confs/
 
 ### secrets ###
 .local/
