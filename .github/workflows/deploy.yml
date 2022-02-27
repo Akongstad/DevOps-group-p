@@ -44,8 +44,8 @@ jobs:
 
         - name: deploy
           run: | 
-             ssh -o "StrictHostKeyChecking no" ${{ secrets.MT_USER }}@${{ secrets.MT_SERVER }} -i ${{ secrets.SSH_KEY }  \
-             "source /root/.bash_profile && \
-             cd /app/minitwit && \
-             docker-compose pull && \
-             docker-compose up -d && \
+             ssh -o "StrictHostKeyChecking no" ${{ secrets.MT_USER }}@${{ secrets.MT_SERVER }} -i ${{ secrets.SSH_KEY }} \
+             "source /root/.bash_profile \
+             cd /app/minitwit \
+             docker-compose pull \
+             docker-compose up -d \
