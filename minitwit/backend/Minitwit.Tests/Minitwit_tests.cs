@@ -1,21 +1,18 @@
 using MinitwitReact.Core;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 
 namespace Minitwit.Tests;
 
 
-public class MinitwitTests : IDisposable, IClassFixture<WebApplicationFactory<Program>>
+public class MinitwitTests : IDisposable
 {
     private readonly IMinitwit _minitwit;
     private readonly IMinitwitContext _context;
-    private readonly HttpClient _client;
 
-    public MinitwitTests(WebApplicationFactory<Program> app)
+
+    public MinitwitTests()
     {
-        // Create an httpclient for api tests
-        _client = app.CreateClient();
+
 
         //Setup for EF Core
         var conn = new SqliteConnection("Filename=:memory:");
@@ -253,60 +250,6 @@ public class MinitwitTests : IDisposable, IClassFixture<WebApplicationFactory<Pr
         Assert.Empty(actual);
     }
 
-    // API TESTS
-    [Fact]
-    public async Task HTTP_GET_Users_Success(){
-        var response = await _client.GetAsync("minitwit/Users");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-
-    [Fact]
-    public async Task HTTP_GET_Msgs_Success(){
-        var response = await _client.GetAsync("minitwit/msgs");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-
-    [Fact]
-    public async Task HTTP_GET_Timeline_Success(){
-        var response = await _client.GetAsync("minitwit/1");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-    
-    [Fact]
-    public async Task HTTP_GET_UserTimeline_Success(){
-        var response = await _client.GetAsync("minitwit/1/Jeff Bezos");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-    
-    [Fact]
-    public async Task HTTP_POST_Follow_Success(){
-        var response = await _client.GetAsync("minitwit/follow/1/Jeff Bezos");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-    
-    [Fact]
-    public async Task HTTP_POST_Unfollow_Success(){
-        var response = await _client.GetAsync("minitwit/unfollow/1/Jeff Bezos");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-    
-    [Fact]
-    public async Task HTTP_GET_Login_Success(){
-        var response = await _client.GetAsync("minitwit/login/Elon Musk/123");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-    
-    [Fact]
-    public async Task HTTP_POST_Message_Success(){
-        var response = await _client.GetAsync("minitwit/1/some message");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-    
-    [Fact]
-    public async Task HTTP_POST_Register_Success(){
-        var response = await _client.GetAsync("minitwit/apiTestUsername/apitest@email.com/yeet");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
 
     // TEST FOR ADD MESSAGES
     private bool _disposed;
