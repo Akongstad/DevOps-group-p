@@ -1,0 +1,84 @@
+services:
+
+  letsencrypt:
+    image: linuxserver/swag:version-1.23.0
+
+    container_name: letsencrypt
+
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Copenhagen
+      - URL=minitwit.online
+      - SUBDOMAINS=wildcard,
+      - VALIDATION=dns
+      - DNSPLUGIN=digitalocean
+      - EMAIL=eythor108@gmail.com
+      - DHLEVEL=4096
+
+    volumes:
+      - ./letsencrypt:/config
+
+    restart: unless-stopped
+
+    ports:
+      - 80:80
+      - 443:443
+
+  test:
+    image: nginx
+    volumes:
+      - ./test:/usr/share/nginx/html
+    ports:
+      - "80"
+
+  frontend:
+
+    image: virginity/minitwit_frontend:WEEK4
+
+    container_name: react_frontend
+
+    ports:
+      - 3000:3000
+
+    command: serve -s build -l 3000
+
+    depends_on:
+      - backend
+
+    restart: on-failure
+  
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+      - POSTGRES_DB=Minitwit
+    secrets:
+      - db_password
+
+  backend:
+
+    image: virginity/minitwit_backend:WEEK4
+    container_name: dotnet_backend
+    ports:
+      - 5229:80
+
+    environment:
+      ConnectionStrings__Minitwit:
+    depends_on:
+      - db
+    secrets:
+      - source: connection_string
+        target: ConnectionStrings__Minitwit
+    restart: on-failure
+    
+secrets:
+  db_password:
+    file: .local/db_password.txt
+  connection_string:
+    file: .local/connection_string.txt
+  
