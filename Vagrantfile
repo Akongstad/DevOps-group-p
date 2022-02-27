@@ -27,8 +27,14 @@ Vagrant.configure("2") do |config|
       sudo curl -L "https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
       sudo chmod +x /usr/local/bin/docker-compose
 
+      #echo -e "\nConfiguring credentials as environment variables...\n"
+      #echo "export DOCKER_USERNAME='<your_dockerhub_id>'" >> $HOME/.bash_profile
+      #echo "export DOCKER_PASSWORD='<your_dockerhub_pwd>'" >> $HOME/.bash_profile
+      #source $HOME/.bash_profile
+
       docker pull virginity/minitwit_backend:latest
       docker pull virginity/minitwit_frontend:latest
+      echo -e "\nVagrant setup done ..."
 
       docker-compose -f /app/compose.dev.yaml up
     SHELL
