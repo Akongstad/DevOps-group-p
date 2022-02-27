@@ -56,6 +56,7 @@ jobs:
              eval "$(ssh-agent -s)"
              DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
  
+
           env:
             SSH_USER: ${{ secrets.MT_USER }}
             SSH_KEY: ${{ secrets.SSH_KEY }}
@@ -64,6 +65,7 @@ jobs:
           run: |
              ssh -o "StrictHostKeyChecking no" ${{ secrets.MT_USER }}@${{ secrets.MT_SERVER }} \
              'source /root/.bash_profile && \
+
              cd /app/minitwit && \
              docker-compose pull && \
-             docker-compose up -d'
+             docker-compose up -d"
