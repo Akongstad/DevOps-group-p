@@ -36,17 +36,17 @@ jobs:
           run: |
              echo "LOGIN"
              echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        - name: Docker Build and Push
-          run: |
-             echo "BUILD"
-             cd minitwit/frontend
-             docker build -t virginity/minitwit_frontend:latest . -f Dockerfile.dev
-             cd ../backend/MinitwitReact
-             docker build -t virginity/minitwit_backend:latest . -f Dockerfile.dev
-             cd ../../../
-             echo "PUSH"
-             docker push virginity/minitwit_frontend:latest
-             docker push virginity/minitwit_backend:latest
+        #- name: Docker Build and Push
+         # run: |
+          #   echo "BUILD"
+           #  cd minitwit/frontend
+            # docker build -t virginity/minitwit_frontend:latest . -f Dockerfile.dev
+             #cd ../backend/MinitwitReact
+             #docker build -t virginity/minitwit_backend:latest . -f Dockerfile.dev
+             #cd ../../../
+             #echo "PUSH"
+             #docker push virginity/minitwit_frontend:latest
+             #docker push virginity/minitwit_backend:latest
              
         - name: Setup SSH
           run: |
@@ -65,7 +65,6 @@ jobs:
           run: |
              ssh -o "StrictHostKeyChecking no" ${{ secrets.MT_USER }}@${{ secrets.MT_SERVER }} \
              'source /root/.bash_profile && \
-
              cd /app/minitwit && \
              docker-compose pull && \
-             docker-compose up -d"
+             docker-compose up -d'
