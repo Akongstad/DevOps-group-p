@@ -60,8 +60,8 @@ jobs:
             SSH_HOST: ${{ secrets.MT_SERVER }}
         - name: Deploy to Digital Ocean
           run: |
-             ssh -o "StrictHostKeyChecking no" -i ~/.ssh/ourkey "$SSH_USER"@"$SSH_HOST" \
-             'source /root/.bash_profile && \
+             ssh -o "StrictHostKeyChecking no" -i ~/.ssh/ourkey "$SSH_USER"@"$SSH_HOST" '\
+             source /root/.bash_profile && \
              cd /app/minitwit && \
              docker-compose pull && \
              docker-compose up -d'
