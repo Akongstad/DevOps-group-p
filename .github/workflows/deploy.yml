@@ -36,6 +36,20 @@ jobs:
           run: |
              echo "LOGIN"
              echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        
+        - name: multiple command
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.MT_SERVER }}
+            username: ${{ secrets.MT_USER }}
+            key: ${{ secrets.SSH_KEY }}
+            port: 22
+            script: |
+              source /root/.bash_profile 
+              cd /app/minitwit
+              docker-compose pull
+              docker-compose up -d
+              
         #- name: Docker Build and Push
          # run: |
           #   echo "BUILD"
@@ -48,23 +62,24 @@ jobs:
              #docker push virginity/minitwit_frontend:latest
              #docker push virginity/minitwit_backend:latest
              
-        - name: Setup SSH
-          run: |
-             echo "$SSH_KEY" > /tmp/git_deploy_key
-             chmod 600 /tmp/git_deploy_key
-             echo 'echo ${SSH_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass
-             eval "$(ssh-agent -s)"
-             DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
+       # - name: Setup SSH
+        #  run: |
+         #    echo "$SSH_KEY" > /tmp/git_deploy_key
+          #   chmod 600 /tmp/git_deploy_key
+          #   echo 'echo ${SSH_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass
+          #   eval "$(ssh-agent -s)"
+          #   DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
  
 
-          env:
-            SSH_USER: ${{ secrets.MT_USER }}
-            SSH_KEY: ${{ secrets.SSH_KEY }}
-            SSH_HOST: ${{ secrets.MT_SERVER }}
-        - name: Deploy to Digital Ocean
-          run: |
-             ssh -o "StrictHostKeyChecking no" "$SSH_USER"@"$SSH_HOST" \
-             'source /root/.bash_profile && \
-             cd /app/minitwit && \
-             docker-compose pull && \
-             docker-compose up -d'
+         # env:
+         #   SSH_USER: ${{ secrets.MT_USER }}
+         #   SSH_KEY: ${{ secrets.SSH_KEY }}
+         #   SSH_HOST: ${{ secrets.MT_SERVER }}
+       # - name: Deploy to Digital Ocean
+       #   run: |
+       #      ssh -o "StrictHostKeyChecking no" "$SSH_USER"@"$SSH_HOST" \
+        #     'source /root/.bash_profile && \
+         #    cd /app/minitwit && \
+         #    docker-compose pull && \
+         #    docker-compose up -d'
+ 
