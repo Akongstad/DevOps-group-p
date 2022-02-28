@@ -45,7 +45,6 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             port: 22
             script: |
-              source /root/.bash_profile 
               cd /app/minitwit
               docker-compose pull
               docker-compose up -d
