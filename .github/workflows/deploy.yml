@@ -53,6 +53,7 @@ jobs:
              mkdir ~/.ssh
              touch ~/.ssh/ourkey && \
              echo "$SSH_KEY" > ~/.ssh/ourkey && echo "SUCCESS"
+             chmod 600 ~/.ssh/ourkey
              
           env:
             SSH_USER: ${{ secrets.MT_USER }}
