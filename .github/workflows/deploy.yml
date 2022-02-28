@@ -50,7 +50,7 @@ jobs:
              
         - name: Setup SSH
           run: |
-             mkidr ~/.ssh
+             mkdir ~/.ssh
              touch ~/.ssh/ourkey && \
              echo "$SSH_KEY" > ~/.ssh/ourkey && echo "SUCCESS"
              
