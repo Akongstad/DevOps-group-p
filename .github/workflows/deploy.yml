@@ -1,10 +1,9 @@
 name: deploy
 
 on:
-#   release:
-#     types: [published]
-  push:
-    branches: [ main ]
+   release:
+     types: [published]
+     branches: [ main ]
 
 jobs:
   build:
@@ -36,6 +35,7 @@ jobs:
           run: |
              echo "LOGIN"
              echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+             
         - name: Docker Build and Push
           run: |
              echo "BUILD"
@@ -48,20 +48,15 @@ jobs:
              docker push virginity/minitwit_frontend:latest
              docker push virginity/minitwit_backend:latest
              
-        - name: Setup SSH
-          run: |
-             cp $SSH_KEY /tmp/git_deploy_key
-             chmod 600 /tmp/git_deploy_key
-             eval "$(ssh-agent -s)"
-             DISPLAY=":0.0" setsid ssh-add /tmp/git_deploy_key </dev/null
-          env:
-            SSH_USER: ${{ secrets.MT_USER }}
-            SSH_KEY: ${{ secrets.SSH_KEY }}
-            SSH_HOST: ${{ secrets.MT_SERVER }}
-        - name: Deploy to Digital Ocean
-          run: |
-             ssh -o "StrictHostKeyChecking no" -i $SSH_KEY $SSH_USER@$SSH_HOST \
-             "source /root/.bash_profile && \
-             cd /app/minitwit && \
-             docker-compose pull && \
-             docker-compose up -d"
+        - name: Deploy to Digital ocean
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.MT_SERVER }}
+            username: ${{ secrets.MT_USER }}
+            key: ${{ secrets.SSH_KEY }}
+            port: 22
+            script: |
+              cd /app/minitwit
+              docker-compose -f compose.prod.yaml pull
+              docker-compose -f compose.prod.yaml up -d
+              echo "BIG CLAPS GG Friends"
