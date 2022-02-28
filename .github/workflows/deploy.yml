@@ -65,3 +65,7 @@ jobs:
              cd /app/minitwit && \
              docker-compose pull && \
              docker-compose up -d'
+          env:
+            SSH_USER: ${{ secrets.MT_USER }}
+            SSH_KEY: ${{ secrets.SSH_KEY }}
+            SSH_HOST: ${{ secrets.MT_SERVER }}
