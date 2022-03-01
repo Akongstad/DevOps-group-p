@@ -27,7 +27,7 @@ services:
 
   frontend:
 
-    image: virginity/minitwit_frontend:WEEK4
+    image: virginity/minitwit_frontend:latest
 
     container_name: react_frontend
 
@@ -55,7 +55,7 @@ services:
 
   backend:
 
-    image: virginity/minitwit_backend:WEEK4
+    image: virginity/minitwit_backend:latest
     container_name: dotnet_backend
     ports:
       - 5229:80
