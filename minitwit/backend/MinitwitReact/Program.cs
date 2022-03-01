@@ -57,7 +57,11 @@ app.Use((context, next) =>
 
     return next(context);
 });
-await app.SeedAsync();
+
+if (!app.Environment.IsEnvironment("Integration"))
+{
+    await app.SeedAsync();
+}
 
 app.Run();
 
