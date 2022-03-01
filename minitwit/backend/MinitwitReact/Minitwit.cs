@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using BCrypt.Net;
 
 namespace MinitwitReact;
 
@@ -199,27 +200,32 @@ public class Minitwit : IMinitwit, IDisposable
 
     public async Task<long> Login(string username, string pw)
     {
-        var userid = await GetUserId(username);
-        if (userid <= 0)
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (user == null)
         {
             return 0;
         }
-        var user = await GetUserDetialsById(userid);
-        if (pw != user.PwHash)
+
+        if (!BCrypt.Net.BCrypt.Verify( pw, user.PwHash))
         {
             return -1;
         }
-        return userid;
+        return user.UserId;
     }
 
     public async Task<long> Register(string username, string email, string pw)
     {
-        var conflict = await GetUserId(username);
-        if (conflict > 0)
+        var conflict = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (conflict != null)
         {
             return 0;
         }
-        var user = new User {Username = username, Email = email, PwHash = pw};
+
+        if (String.IsNullOrEmpty(pw))
+        {
+            return -1;
+        }
+        var user = new User {Username = username, Email = email, PwHash = BCrypt.Net.BCrypt.HashPassword(pw)};
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
         var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);

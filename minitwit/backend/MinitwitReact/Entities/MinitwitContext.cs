@@ -15,6 +15,7 @@ namespace MinitwitReact.Entities
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.EnableSensitiveDataLogging();
             if (!optionsBuilder.IsConfigured)
             { 
                 optionsBuilder.UseSqlite("Data Source=./minitwit.db");
