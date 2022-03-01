@@ -16,15 +16,9 @@ public class MinitwitSimulationController : ControllerBase
 
     private void UpdateLatest(JsonObject? request)
     {
-        if (request == null)
-        {
-            _latest = -1;
-            return;
-        }
-        var no = request["latest"];
+        var no = request?["latest"];
         if (no ==null)
         {
-            _latest = -1;
             return;
                 
         }
@@ -44,7 +38,8 @@ public class MinitwitSimulationController : ControllerBase
         var request = await Request.ReadFromJsonAsync<JsonObject>();
         UpdateLatest(request);
         var timeline = await _minitwit.PublicTimeline();
-        var filtered_msgs = new List<Object>();
+        
+        var filteredMsgs = new List<Object>();
         foreach (var item in timeline)
         {
             var filtered_msg = new
@@ -53,10 +48,9 @@ public class MinitwitSimulationController : ControllerBase
                 pub_date = item.PubDate,
                 user = item.Author,
             };
-            filtered_msgs.Add(filtered_msg);
+            filteredMsgs.Add(filtered_msg);
         }
-        
-        return JsonSerializer.Serialize(filtered_msgs);
+        return JsonSerializer.Serialize(filteredMsgs);
     }
 
     // Get other users' timeline
@@ -64,7 +58,7 @@ public class MinitwitSimulationController : ControllerBase
     [HttpPost("msgs/{username}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<string>> GetUserTimeline(string username)
+    public async Task<ActionResult<string>> GetUserTimeline([FromRoute]string username)
     {
         var request =await Request.ReadFromJsonAsync<JsonObject>();
         UpdateLatest(request);
@@ -76,25 +70,22 @@ public class MinitwitSimulationController : ControllerBase
         if (Request.Method == "GET")
         {
             var timeline = await _minitwit.UserTimeline(0, username);
-            var filtered_msgs = new List<Object>();
+            var filteredMsgs = new List<Object>();
             foreach (var item in timeline)
             {
-                var filtered_msg = new
+                var filteredMsg = new
                 {
                     content = item.Text,
                     pub_date = item.PubDate,
                     user = item.Author,
                 };
-                filtered_msgs.Add(filtered_msg);
+                filteredMsgs.Add(filteredMsg);
             }
-
-            return JsonSerializer.Serialize(filtered_msgs);
-        }
-
+            return JsonSerializer.Serialize(filteredMsgs);
+        } 
         if (Request.Method == "POST")
         {
-            var sessionId = await _minitwit.GetUserId(username);
-            var result = await _minitwit.PostMessage(sessionId, request!["content"]!.ToString());
+            var result = await _minitwit.PostMessage(userId, request!["content"]!.ToString());
             return NoContent();
         }
         return NotFound();
@@ -107,7 +98,7 @@ public class MinitwitSimulationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<string>> Follow(string username)
     {
-        var request =await Request.ReadFromJsonAsync<JsonObject>();
+        var request = await Request.ReadFromJsonAsync<JsonObject>();
         UpdateLatest(request);
         var userId = await _minitwit.GetUserId(username);
         if (userId <= 0)
@@ -125,25 +116,15 @@ public class MinitwitSimulationController : ControllerBase
             limit = int.Parse(no.ToString());
         }
 
-        if (Request.Method == "POST" & request!.ContainsKey("follow"))
+        if (Request.Method == "POST" & request.ContainsKey("follow"))
         {
             var followUsername = request["follow"]!.ToString();
-            var followsUserId = await _minitwit.GetUserId(followUsername);
-            if(followsUserId <= 0)
-            {
-                return NotFound();
-            }
             var result = await _minitwit.FollowUser(userId, followUsername);
             return NoContent();
         }
         if(Request.Method =="POST" && request.ContainsKey("unfollow"))
         {
             var unfollowUsername = request["unfollow"]!.ToString();
-            var unfollowsUserId = await _minitwit.GetUserId(unfollowUsername);
-            if (unfollowsUserId <= 0)
-            {
-                return NotFound();
-            }
             var result = await _minitwit.UnfollowUser(userId, unfollowUsername);
             return NoContent();
         }
@@ -180,7 +161,7 @@ public class MinitwitSimulationController : ControllerBase
         {
             error = "you have to enter a username";
         }
-        else if(!request.ContainsKey("email") || !request["email"].ToString().Contains("@"))
+        else if(!request.ContainsKey("email") || !request["email"]!.ToString().Contains("@"))
         {
             error = "You have to enter a valid email address";
         }
@@ -194,13 +175,12 @@ public class MinitwitSimulationController : ControllerBase
         }
         else
         {
-            _minitwit.Register(request["username"].ToString(),
+            await _minitwit.Register(request["username"].ToString(),
                 request["email"].ToString(), request["pwd"].ToString());
         }
 
         if (error != "")
         {
-
             return JsonSerializer.Serialize(new {status = 400, error_msg = error});
         }
         return NoContent();

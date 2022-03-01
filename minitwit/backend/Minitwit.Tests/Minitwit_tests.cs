@@ -82,7 +82,7 @@ public class MinitwitTests : IDisposable
     public async Task GetUserDetailsById_returns_User_given_valid_id()
     {
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
-        var actual = await _minitwit.GetUserDetialsById(1);
+        var actual = await _minitwit.GetUserDetailsById(1);
         Assert.Equal(elon.Username, actual.Username);
         Assert.Equal(elon.Email, actual.Email);
         Assert.Equal(elon.UserId, actual.UserId);
