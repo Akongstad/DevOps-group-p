@@ -64,20 +64,13 @@ public class Minitwit : IMinitwit, IDisposable
     }
     public async Task<IEnumerable<MessageDto>> UserTimeline(long sessionId, string username)
     {
-        var users = from u in _context.Users
-                   where u.Username == username
-                   select new UserDto(u.UserId, u.Username);
-        
-        var user = await users.FirstOrDefaultAsync<UserDto>(u => u.Username == username);
+
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null)
         {
             return null!;
         }
-        var follows = await Follows(sessionId, user);
-        /*if (!follows)
-        {
-            return await PublicTimelineEf();
-        }*/
         var timeline = await (from m in _context.Messages
             where user.UserId == m.AuthorId
             select new MessageDto(m.MessageId, m.Author.Username, m.Text, m.PubDate)).ToListAsync();
