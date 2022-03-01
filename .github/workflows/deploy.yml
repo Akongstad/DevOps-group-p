@@ -57,6 +57,7 @@ jobs:
             port: 22
             script: |
               cd /app/minitwit
-              docker-compose -f compose.prod.yaml pull
-              docker-compose -f compose.prod.yaml up -d
+              git pull
+              docker-compose -f compose.prod.yaml down
+              docker-compose -f compose.prod.yaml up --build -d
               echo "BIG CLAPS GG Friends"
