@@ -27,6 +27,8 @@ public class MinitwitTests : IDisposable
         var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321", UserId = 2};
         var bill = new User {Username = "Bill Gates", Email = "Microsoft@gmail.com", PwHash = "321123", UserId = 3};
         var bruce = new User{Username = "Bruce Wayne", Email = "Gotham@gmail.com", PwHash = "321", UserId = 4};
+        var hashman = new User
+            {Username = "Hash Tester", Email = "Hash@live.com", PwHash = BCrypt.Net.BCrypt.HashPassword("hashed"), UserId = 5};
         
         var hello = new Message
         {
@@ -48,7 +50,11 @@ public class MinitwitTests : IDisposable
             Author = bill, AuthorId = 3, Flagged = 0, Text = "Get microsoft chip. Very good, very niice",
             PubDate = DateTime.UtcNow.AddDays(2).Ticks
         };
-        context.Messages.AddRange(hello, bye, batman, chip);
+        var strong = new Message
+        {
+            Author = hashman, Flagged = 0, Text = "I have strong password", PubDate = DateTime.UtcNow.AddHours(1).Ticks
+        };
+        context.Messages.AddRange(hello, bye, batman, chip, strong);
         context.Followers.Add(new Follower {WhoId = 2, WhomId = 1});
 
         context.SaveChanges();
@@ -194,9 +200,11 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task Login_given_valid_username_and_pw_returns_id()
     {
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
-        var login = await _minitwit.Login(elon.Username, elon.PwHash);
-        Assert.Equal(1, login);
+        var hashman = new User
+            {Username = "Hash Tester", Email = "Hash@live.com", PwHash = "hashed"};
+        
+        var login = await _minitwit.Login(hashman.Username, hashman.PwHash);
+        Assert.Equal(5, login);
     }
 
     [Fact]
@@ -209,8 +217,7 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task Login_given_valid_username_and_invalid_pw_returns_minus1()
     {
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
-        var login = await _minitwit.Login(elon.Username, "Tesla->Moon");
+        var login = await _minitwit.Login("Hash Tester", "Tesla->Moon");
         Assert.Equal(-1, login);
     }
 
@@ -218,12 +225,12 @@ public class MinitwitTests : IDisposable
     public async Task register_returns_id_given_nonExisting_user()
     {
         var register = await _minitwit.Register("New User", "user@user.com", "SafePassword");
-        Assert.Equal(5, register);
+        Assert.Equal(6, register);
     }
     [Fact]
     public async Task register_returns_0_given_Existing_user()
     {
-        var register = await _minitwit.Register("Elon Musk", "user@user.com", "SafePassword");
+        var register = await _minitwit.Register("Elon Musk", "Tesla@gmail.com", "SafePassword");
         Assert.Equal(0, register);
     }
     
