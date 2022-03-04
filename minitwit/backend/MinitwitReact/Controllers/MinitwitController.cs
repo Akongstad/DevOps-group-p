@@ -104,7 +104,7 @@ public class MinitwitController : ControllerBase
 
     //validate user
     private async Task<bool> ValidateId(long id){
-        return await _minitwit.GetUserDetialsById(id) == null;
+        return await _minitwit.GetUserDetailsById(id) == null;
     }
 
     private async Task<ActionResult<string>> SerializeTimeline (IEnumerable<MessageDto> timeline)
