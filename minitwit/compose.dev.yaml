@@ -38,6 +38,8 @@ services:
       - POSTGRES_DB=Minitwit
     secrets:
       - db_password
+    volumes:
+      - /var/lib/docker/volume/data:/var/lib/postgresql/data
 
   backend:
 
