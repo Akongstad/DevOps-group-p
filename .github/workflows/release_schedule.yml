@@ -18,13 +18,11 @@ jobs:
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
       - name: Get week num
         id: week
-        run: 
-            FIRST=$( echo $(date +%W) | awk '{ print substr( $0, 1, 1 ) }')
-            if [[ "$FIRST" = "0" ]]; then
-                echo $"::set-output name=week::$( (( $( echo $(date +%W) | awk '{ print substr( $0, 2, 1 ) }')-4 )) )"
-            else
-                echo $"::set-output name=week::$( (( $(date +%W)-4 )) )"
-            fi
+        run: |
+          FIRST=$( echo $(date +%W) | awk '{ print substr( $0, 1, 1 ) }'); \
+          if [[ "$FIRST" = "0" ]]; \
+          then echo $(( $( echo $(date +%W) | awk '{ print substr( $0, 2, 1 ) }')-4 )); \
+          else echo $(( $(date +%W)-4 )); fi
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
