@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
         builder =>
         {
             builder.WithOrigins("https://minitwit.online",
-                "http://localhost:3000")
+                "http://localhost:3000", "*")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
