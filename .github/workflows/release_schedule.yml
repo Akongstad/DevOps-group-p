@@ -22,8 +22,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: Tag-${{ steps.date.outputs.date }}
-          release_name: Release-${{ steps.date.outputs.date }}
+          tag_name: ${{ steps.date.outputs.date }}
+          release_name: ${{ steps.date.outputs.date }}
           body: |
             Weekly release of TBD minitwit.
           draft: false
