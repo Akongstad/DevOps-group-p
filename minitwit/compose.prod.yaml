@@ -43,7 +43,7 @@ services:
   
   db:
     container_name: postgres_database
-    image: postgres
+    image: postgres:14.2
     ports:
       - 5432:5432
     environment:
