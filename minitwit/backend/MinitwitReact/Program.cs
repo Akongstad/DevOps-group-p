@@ -1,5 +1,5 @@
 
-
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -12,6 +12,20 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MinitwitContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Minitwit")));
 builder.Services.AddScoped<IMinitwitContext, MinitwitContext>();
 builder.Services.AddScoped<IMinitwit, Minitwit>();
+
+//Cors policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        builder =>
+        {
+            builder.WithOrigins("https://minitwit.online",
+                "http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 
 
 // csrf configuration
@@ -31,6 +45,7 @@ var app = builder.Build();
     //app.UseHsts();
 //}
 //app.UseHttpsRedirection();
+app.UseCors(MyAllowSpecificOrigins);
 app.UseStaticFiles();
 app.UseRouting();
 
