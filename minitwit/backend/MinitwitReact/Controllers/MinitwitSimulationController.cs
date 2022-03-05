@@ -32,7 +32,7 @@ public class MinitwitSimulationController : ControllerBase
 
     //[AutoValidateAntiforgeryToken]
     [HttpGet("msgs")]
-    public async Task<ActionResult<string>> GetPublicTimeline()
+    public async Task<ActionResult> GetPublicTimeline()
     {
         UpdateLatest(Request);
         var timeline = await _minitwit.PublicTimeline();
@@ -43,12 +43,12 @@ public class MinitwitSimulationController : ControllerBase
             var filtered_msg = new
             {
                 content = item.Text,
-                pub_date = item.PubDate,
+                pub_date = new DateTime(item.PubDate).ToString("HH:mm tt"),
                 user = item.Author,
             };
             filteredMsgs.Add(filtered_msg);
         }
-        return JsonSerializer.Serialize(filteredMsgs);
+        return Ok(filteredMsgs);
     }
 
     // Get other users' timeline
