@@ -58,10 +58,14 @@ jobs:
             script: |
               cd /app/minitwit
               git pull
-              echo "Taking down containers"
-              docker-compose -f compose.prod.yaml down
+              echo "Taking down frontend"
+              docker stop react_frontend
+              docker rm react_frontend
+              echo "Taking down backend"
+              docker stop dotnet_backend
+              docker rm dotnet_backend
               echo "Pulling from hub"
               docker-compose -f compose.prod.yaml pull
               echo "Building containers"
               docker-compose -f compose.prod.yaml up --build -d
-              echo "BIG CLAPS GG Friends"
+              echo "BIG CLAPS GJ Friends"
