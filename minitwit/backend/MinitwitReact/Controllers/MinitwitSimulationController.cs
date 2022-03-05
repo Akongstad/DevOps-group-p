@@ -14,15 +14,14 @@ public class MinitwitSimulationController : ControllerBase
         _minitwit = minitwit;
     }
 
-    private void UpdateLatest(JsonObject? request)
+    private void UpdateLatest(HttpRequest request)
     {
-        var no = request?["latest"];
-        if (no ==null)
+        var no = request.Query["latest"];
+        int.TryParse(no.ToString(), out var tmpLast);
+        if (tmpLast > 0)
         {
-            return;
-                
+            _latest = tmpLast;
         }
-        _latest = Int32.Parse(no.ToString());
     }
 
     [HttpGet("latest")]
@@ -35,8 +34,7 @@ public class MinitwitSimulationController : ControllerBase
     [HttpGet("msgs")]
     public async Task<ActionResult<string>> GetPublicTimeline()
     {
-        var request = await Request.ReadFromJsonAsync<JsonObject>();
-        UpdateLatest(request);
+        UpdateLatest(Request);
         var timeline = await _minitwit.PublicTimeline();
         
         var filteredMsgs = new List<Object>();
@@ -61,7 +59,7 @@ public class MinitwitSimulationController : ControllerBase
     public async Task<ActionResult<string>> GetUserTimeline([FromRoute]string username)
     {
         var request =await Request.ReadFromJsonAsync<JsonObject>();
-        UpdateLatest(request);
+        UpdateLatest(Request);
         var userId = await _minitwit.GetUserId(username);
         if (userId <= 0)
         {
@@ -99,7 +97,7 @@ public class MinitwitSimulationController : ControllerBase
     public async Task<ActionResult<string>> Follow(string username)
     {
         var request = await Request.ReadFromJsonAsync<JsonObject>();
-        UpdateLatest(request);
+        UpdateLatest(Request);
         var userId = await _minitwit.GetUserId(username);
         if (userId <= 0)
         {
@@ -151,7 +149,7 @@ public class MinitwitSimulationController : ControllerBase
     public async Task<ActionResult<string>> Register()
     {
         var request = await Request.ReadFromJsonAsync<JsonObject>();
-        UpdateLatest(request);
+        UpdateLatest(Request);
         
         
         var id = await _minitwit.GetUserId(request["username"].ToString());
