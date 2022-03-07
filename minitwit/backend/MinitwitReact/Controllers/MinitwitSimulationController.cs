@@ -36,14 +36,14 @@ public class MinitwitSimulationController : ControllerBase
     {
         UpdateLatest(Request);
         var timeline = await _minitwit.PublicTimeline();
-        
+        var timeZone = TimeZoneInfo.Local;
         var filteredMsgs = new List<Object>();
         foreach (var item in timeline)
         {
             var filtered_msg = new
             {
                 content = item.Text,
-                pub_date = new DateTime(item.PubDate).ToString("HH:mm tt"),
+                pub_date = TimeZoneInfo.ConvertTimeFromUtc(new DateTime(item.PubDate), TimeZoneInfo.Local).ToString("hh:mm tt ddd"),
                 user = item.Author,
             };
             filteredMsgs.Add(filtered_msg);
