@@ -31,6 +31,13 @@ jobs:
 
     steps:
         - uses: actions/checkout@v2
+        - name: Get week num
+          id: week
+          run: |
+            FIRST=$( echo $(date +%W) | awk '{ print substr( $0, 1, 1 ) }'); \
+            if [[ "$FIRST" = "0" ]]; \
+            then echo "::set-output name=week::$(echo $(( $( echo $(date +%W) | awk '{ print substr( $0, 2, 1 ) }')-4 ))"; \
+            else echo "::set-output name=week::$(echo $(( $(date +%W)-4 ))"; fi
         - name: Docker login
           run: |
              echo "LOGIN"
@@ -40,13 +47,13 @@ jobs:
           run: |
              echo "BUILD"
              cd minitwit/frontend
-             docker build -t virginity/minitwit_frontend:latest . -f Dockerfile.dev
+             docker build -t virginity/minitwit_frontend:${{ steps.week.outputs.week }} . -f Dockerfile.dev
              cd ../backend/MinitwitReact
-             docker build -t virginity/minitwit_backend:latest . -f Dockerfile.dev
+             docker build -t virginity/minitwit_backend:${{ steps.week.outputs.week }} . -f Dockerfile.dev
              cd ../../../
              echo "PUSH"
-             docker push virginity/minitwit_frontend:latest
-             docker push virginity/minitwit_backend:latest
+             docker push virginity/minitwit_frontend:${{ steps.week.outputs.week }}
+             docker push virginity/minitwit_backend:${{ steps.week.outputs.week }}
              
         - name: Deploy to Digital ocean
           uses: appleboy/ssh-action@master
