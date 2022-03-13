@@ -1,7 +1,7 @@
 name: release_schedule
 
 on:
-
+  workflow_dispatch:
   schedule:
   - cron: "0 20 * * 0"
 
