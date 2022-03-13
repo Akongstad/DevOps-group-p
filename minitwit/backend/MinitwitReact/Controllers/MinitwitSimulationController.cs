@@ -1,3 +1,5 @@
+using Prometheus;
+
 namespace MinitwitReact.Controllers;
 
 [ApiController]
@@ -14,8 +16,13 @@ public class MinitwitSimulationController : ControllerBase
         _minitwit = minitwit;
     }
 
+    private readonly Counter _userNotFoundCounter =
+        Metrics.CreateCounter("minitwit_user_not_found_count", "Calls resulting in user not found");
+    private readonly Counter _updateLatestCounter =
+        Metrics.CreateCounter("minitwit_update_latest_count", "Calls to update latest/requests served");
     private void UpdateLatest(HttpRequest request)
     {
+        _updateLatestCounter.Inc();
         var no = request.Query["latest"];
         int.TryParse(no.ToString(), out var tmpLast);
         if (tmpLast > 0)
@@ -23,17 +30,22 @@ public class MinitwitSimulationController : ControllerBase
             _latest = tmpLast;
         }
     }
-
+    private readonly Counter _latestCounter =
+        Metrics.CreateCounter("minitwit_latest_count", "Calls to latest");
     [HttpGet("latest")]
     public async Task<string> GetLatest()
     {
+        _latestCounter.Inc();
         return JsonSerializer.Serialize(new {latest = _latest});
     }
 
     //[AutoValidateAntiforgeryToken]
+    private readonly Counter _publicTimelineCounter = 
+        Metrics.CreateCounter("minitwit_public_timeline_count", "Calls to public timeline get");
     [HttpGet("msgs")]
     public async Task<ActionResult> GetPublicTimeline()
     {
+        _publicTimelineCounter.Inc();
         UpdateLatest(Request);
         var timeline = await _minitwit.PublicTimeline();
         var timeZone = TimeZoneInfo.Local;
@@ -51,6 +63,10 @@ public class MinitwitSimulationController : ControllerBase
         return Ok(filteredMsgs);
     }
 
+    private readonly Counter _tweetCounter = 
+        Metrics.CreateCounter("minitwit_tweet_count", "Amount of calls to post message");
+    private readonly Counter _tweetUserNotFoundCounter = 
+        Metrics.CreateCounter("minitwit_tweet_user_not_found_count", "Amount of calls to post message resulting in user not found");
     // Get other users' timeline
     [HttpGet("msgs/{username}")]
     [HttpPost("msgs/{username}")]
@@ -63,6 +79,8 @@ public class MinitwitSimulationController : ControllerBase
         var userId = await _minitwit.GetUserId(username);
         if (userId <= 0)
         {
+            _userNotFoundCounter.Inc();
+            _tweetUserNotFoundCounter.Inc();
             return NotFound();
         }
         if (Request.Method == "GET")
@@ -83,24 +101,30 @@ public class MinitwitSimulationController : ControllerBase
         } 
         if (Request.Method == "POST")
         {
+            _tweetCounter.Inc();
             var result = await _minitwit.PostMessage(userId, request!["content"]!.ToString());
             return NoContent();
         }
         return NotFound();
     }
     
+    private readonly Counter _followCounter = 
+        Metrics.CreateCounter("minitwit_follow_count", "Amount of calls to follow");
+    private readonly Counter _unfollowCounter = 
+        Metrics.CreateCounter("minitwit_unfollow_count", "Amount of calls to unfollow");
     [HttpGet("fllws/{username}")]
     [HttpPost("fllws/{username}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<string>> Follow(string username)
+    public async Task<IActionResult> Follow(string username)
     {
         var request = await Request.ReadFromJsonAsync<JsonObject>();
         UpdateLatest(Request);
         var userId = await _minitwit.GetUserId(username);
         if (userId <= 0)
         {
+            _userNotFoundCounter.Inc();
             return NotFound();
         }
         var limit = 100;
@@ -116,15 +140,17 @@ public class MinitwitSimulationController : ControllerBase
 
         if (Request.Method == "POST" & request.ContainsKey("follow"))
         {
+            _followCounter.Inc();
             var followUsername = request["follow"]!.ToString();
             var result = await _minitwit.FollowUser(userId, followUsername);
-            return NoContent();
+            return result.ToActionResult();
         }
         if(Request.Method =="POST" && request.ContainsKey("unfollow"))
         {
+            _unfollowCounter.Inc();
             var unfollowUsername = request["unfollow"]!.ToString();
             var result = await _minitwit.UnfollowUser(userId, unfollowUsername);
-            return NoContent();
+            return result.ToActionResult();
         }
         if (Request.Method == "GET")
         {
@@ -138,16 +164,22 @@ public class MinitwitSimulationController : ControllerBase
                 };
                 filtered_msgs.Add(filtered_msg);
             }
-            return JsonSerializer.Serialize(filtered_msgs);
+            return Ok(filtered_msgs);
         }
         return Conflict();
     }
-
+    
+    
+    private readonly Counter _registerCounter =
+        Metrics.CreateCounter("minitwit_register_count", "Calls to register");
+    private readonly Counter _registerErrorCounter =
+        Metrics.CreateCounter("minitwit_register_error_count", "Calls to registern resulting in error");
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<string>> Register()
     {
+        _registerCounter.Inc();
         var request = await Request.ReadFromJsonAsync<JsonObject>();
         UpdateLatest(Request);
         
@@ -179,6 +211,7 @@ public class MinitwitSimulationController : ControllerBase
 
         if (error != "")
         {
+            _registerErrorCounter.Inc();
             return JsonSerializer.Serialize(new {status = 400, error_msg = error});
         }
         return NoContent();
