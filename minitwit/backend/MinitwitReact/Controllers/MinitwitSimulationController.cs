@@ -72,7 +72,7 @@ public class MinitwitSimulationController : ControllerBase
     [HttpPost("msgs/{username}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<string>> GetUserTimeline([FromRoute]string username)
+    public async Task<ActionResult> GetUserTimeline([FromRoute]string username)
     {
         var request =await Request.ReadFromJsonAsync<JsonObject>();
         UpdateLatest(Request);
@@ -97,7 +97,7 @@ public class MinitwitSimulationController : ControllerBase
                 };
                 filteredMsgs.Add(filteredMsg);
             }
-            return JsonSerializer.Serialize(filteredMsgs);
+            return Ok(filteredMsgs);
         } 
         if (Request.Method == "POST")
         {
