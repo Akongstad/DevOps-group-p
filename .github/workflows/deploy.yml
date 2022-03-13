@@ -48,13 +48,13 @@ jobs:
           run: |
              echo "BUILD"
              cd minitwit/frontend
-             docker build -t virginity/minitwit_frontend:${{ steps.week.outputs.week }} . -f Dockerfile.dev
+             docker build -t virginity/minitwit_frontend:latest . -f Dockerfile.dev
              cd ../backend/MinitwitReact
-             docker build -t virginity/minitwit_backend:${{ steps.week.outputs.week }} . -f Dockerfile.dev
+             docker build -t virginity/minitwit_backend:latest . -f Dockerfile.dev
              cd ../../../
              echo "PUSH"
-             docker push virginity/minitwit_frontend:${{ steps.week.outputs.week }}
-             docker push virginity/minitwit_backend:${{ steps.week.outputs.week }}
+             docker push virginity/minitwit_frontend:latest
+             docker push virginity/minitwit_backend:latest
              
         - name: Deploy to Digital ocean
           uses: appleboy/ssh-action@master
