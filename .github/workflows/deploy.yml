@@ -2,8 +2,9 @@ name: deploy
 
 on:
    release:
-     types: [published]
-     branches: [ main ]
+      workflow_dispatch:
+      types: [published]
+      branches: [ main ]
 
 jobs:
   build:
