@@ -1,5 +1,10 @@
 services:
 
+  networks:
+
+    main:
+      name: minitwit-internal
+
   letsencrypt:
     image: linuxserver/swag:version-1.23.0
 
@@ -40,6 +45,9 @@ services:
       - backend
 
     restart: on-failure
+
+    networks:
+      - main
   
   db:
     container_name: postgres_database
@@ -63,6 +71,8 @@ services:
       - 9090:9090
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - main
   
   grafana:
     image: grafana/grafana
@@ -71,6 +81,8 @@ services:
       - 3001:3000
     volumes:
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+    networks:
+      - main
       
   backend:
 
@@ -89,6 +101,8 @@ services:
       - source: connection_string
         target: ConnectionStrings__Minitwit
     restart: on-failure
+    networks:
+      - main
     
 secrets:
   db_password:
