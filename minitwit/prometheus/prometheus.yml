@@ -24,6 +24,6 @@ scrape_configs:
     scrape_interval: 5s
 
     static_configs:
-      - targets: ['host.docker.internal:5229']
+      - targets: ['dotnet_backend']
         labels:
           group: 'production'
