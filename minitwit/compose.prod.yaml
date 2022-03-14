@@ -62,6 +62,8 @@ services:
       - db_password
     volumes:
       - /var/lib/docker/volume/data:/var/lib/postgresql/data
+    networks:
+      - main
 
 
   prometheus:
