@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using BCrypt.Net;
-
 namespace MinitwitReact;
 
 public class Minitwit : IMinitwit, IDisposable
@@ -99,9 +96,9 @@ public class Minitwit : IMinitwit, IDisposable
             select new UserDto(u.UserId, u.Username)).Take(limit).ToListAsync();
     }
 
-    public async Task<DateTime> FormatDatetime(string timestamp)
+    public Task<DateTime> FormatDatetime(string timestamp)
     {
-        return DateTime.Parse(timestamp);
+        return Task.FromResult(DateTime.Parse(timestamp));
         //.utcfromtimestamp(timestamp).strftime('%Y-%m-%d @ %H:%M')
     }
     // TODO: Make a Datetime convert from Datetime.Now to string
@@ -143,7 +140,7 @@ public class Minitwit : IMinitwit, IDisposable
             return Status.NotFound;
         }
         var whomUser = await GetUserDetailsById(whomId);
-        if ( await Follows(sessionId, whomUser) || whomId == sessionId)
+        if ( await Follows(sessionId, whomUser!) || whomId == sessionId)
         {
             return Status.Conflict;
         }
@@ -165,7 +162,7 @@ public class Minitwit : IMinitwit, IDisposable
             return Status.NotFound;
         }
         var whomUser = await GetUserDetailsById(whomId);
-        if ( !await Follows(sessionId, whomUser) || whomId == sessionId)
+        if ( !await Follows(sessionId, whomUser!) || whomId == sessionId)
         {
             return Status.Conflict;
         }

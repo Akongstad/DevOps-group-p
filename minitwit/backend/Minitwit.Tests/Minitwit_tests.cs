@@ -1,5 +1,4 @@
 using MinitwitReact.Core;
-using System.Net;
 
 namespace Minitwit.Tests;
 
@@ -83,7 +82,7 @@ public class MinitwitTests : IDisposable
     {
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
         var actual = await _minitwit.GetUserDetailsById(1);
-        Assert.Equal(elon.Username, actual.Username);
+        Assert.Equal(elon.Username, actual!.Username);
         Assert.Equal(elon.Email, actual.Email);
         Assert.Equal(elon.UserId, actual.UserId);
         Assert.Equal(elon.PwHash, actual.PwHash);
@@ -129,10 +128,10 @@ public class MinitwitTests : IDisposable
         var timeline = await _minitwit.PublicTimeline();
         timeline = timeline.ToList();
         //Post by user 1?
-        var Username = timeline.First().Author;
-        var UserId = _minitwit.GetUserId(Username).Result;
+        var username = timeline.First().Author;
+        var userId = _minitwit.GetUserId(username).Result;
         // ERROR: EXPECTED SHOULD BE 1, BUT IS 2 - fails since the db is seeded with messages from the future
-        Assert.Equal(2, UserId);
+        Assert.Equal(2, userId);
         //Post correct post?
         Assert.Equal("I make a new post yes", timeline.Last().Text);
     }
@@ -161,10 +160,10 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task FollowUser_add_follow_to_database()
     {
-        var response = await _minitwit.FollowUser(1, "Jeff Bezos");
+        var unused = await _minitwit.FollowUser(1, "Jeff Bezos");
         var jeff = new UserDto( 2, "Jeff Bezos");
         var follows = await _minitwit.Follows(1, jeff);
-        Assert.True(follows);
+        Assert.True(follows); 
     }
 
     [Fact]
@@ -192,7 +191,7 @@ public class MinitwitTests : IDisposable
         var follows = await _minitwit.Follows(2, elon);
         Assert.True(follows);
         
-        var response = await _minitwit.UnfollowUser(2, "Elon Musk");
+        var unused = await _minitwit.UnfollowUser(2, "Elon Musk");
         var unfollows = await _minitwit.Follows(2, elon);
         Assert.False(unfollows);
     }
@@ -239,7 +238,7 @@ public class MinitwitTests : IDisposable
     {
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
         var actual = await _minitwit.GetUserById(1);
-        Assert.Equal(elon.Username, actual.Username);
+        Assert.Equal(elon.Username, actual!.Username);
         Assert.Equal(elon.UserId, actual.UserId);
     }
 
@@ -254,7 +253,6 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task GetFollowers_returns_EmptyList_of_followers_if_no_follows()
     {
-        var bezos = "Jeff Bezos";
         var elon = "Elon Musk";
         var actual = await _minitwit.GetFollowers(elon, 5);
         Assert.Empty(actual);
