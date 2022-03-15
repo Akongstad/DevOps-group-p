@@ -1,0 +1,25 @@
+name: .Net analyzers  
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ 159-add-net-analyzers-githubaction ]
+steps:
+- uses: actions/checkout@v2
+- name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+# Run NuGet restore for each project/solution to analyze
+- name: Run NuGet restore
+  run: dotnet restore minitwit/backend #can also be solution file
+
+# Run code analysis for all projects/solutions, such that code analysis violations break the build.
+- name: Run .NET Code Analysis
+  uses: dotnet/code-analysis@v1
+  id: code-analysis
+  with:
+    project: minitwit/backend/MinitwitReact.csproj
+    build-breaking: true
+    all-categories: all
