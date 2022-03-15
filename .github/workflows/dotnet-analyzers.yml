@@ -25,4 +25,4 @@ jobs:
         with:
           project: minitwit/backend/MinitwitReact.csproj
           build-breaking: true
-          all-categories: all
+          all-categories: 6.0-all
