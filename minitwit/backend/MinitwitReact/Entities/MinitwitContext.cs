@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-
-namespace MinitwitReact.Entities
+﻿namespace MinitwitReact.Entities
 {
-    public partial class MinitwitContext : DbContext, IMinitwitContext
+    public class MinitwitContext : DbContext, IMinitwitContext
     {
         public MinitwitContext(DbContextOptions<MinitwitContext> options) : base(options) { }
 

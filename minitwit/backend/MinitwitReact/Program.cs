@@ -18,9 +18,9 @@ builder.Services.AddScoped<IMinitwit, Minitwit>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-        builder =>
+        corsPolicyBuilder =>
         {
-            builder.WithOrigins("https://minitwit.online",
+            corsPolicyBuilder.WithOrigins("https://minitwit.online",
                 "http://localhost:3000", "*")
                 .AllowAnyHeader()
                 .AllowAnyMethod();

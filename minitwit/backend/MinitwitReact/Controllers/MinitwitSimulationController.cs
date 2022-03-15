@@ -20,6 +20,7 @@ public class MinitwitSimulationController : ControllerBase
         Metrics.CreateCounter("minitwit_user_not_found_count", "Calls resulting in user not found");
     private readonly Counter _updateLatestCounter =
         Metrics.CreateCounter("minitwit_update_latest_count", "Calls to update latest/requests served");
+    
     private void UpdateLatest(HttpRequest request)
     {
         _updateLatestCounter.Inc();
@@ -112,6 +113,9 @@ public class MinitwitSimulationController : ControllerBase
         Metrics.CreateCounter("minitwit_follow_count", "Amount of calls to follow");
     private readonly Counter _unfollowCounter = 
         Metrics.CreateCounter("minitwit_unfollow_count", "Amount of calls to unfollow");
+    private readonly Counter _followUserNofFoundCounter = 
+        Metrics.CreateCounter("minitwit_follow_user_not_found_count", "Amount of calls to to follow/unfollow resulting in user not found");
+    
     [HttpGet("fllws/{username}")]
     [HttpPost("fllws/{username}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -124,6 +128,7 @@ public class MinitwitSimulationController : ControllerBase
         var userId = await _minitwit.GetUserId(username);
         if (userId <= 0)
         {
+            _followUserNofFoundCounter.Inc();
             _userNotFoundCounter.Inc();
             return NotFound();
         }

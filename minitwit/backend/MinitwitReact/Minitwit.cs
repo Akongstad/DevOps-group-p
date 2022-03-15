@@ -43,19 +43,16 @@ public class Minitwit : IMinitwit, IDisposable
        }
        return user.UserId;
     }
-    public async Task<IEnumerable<MessageDto>> PublicTimeline()
-    {
-        var timeline = await (from m in _context.Messages
-            where m.Flagged == 0
-            orderby m.PubDate descending
-            select new MessageDto(
+    public async Task<IEnumerable<MessageDto>> PublicTimeline() => await _context.Messages
+            .Where(m => m.Flagged == 0)
+            .Take(PageLimit)
+            .OrderByDescending(m => m.PubDate)
+            .Select(m => new MessageDto(
                 m.MessageId,
-                m.Author.Username,
-                m.Text,
+                m.Author!.Username,
+                m.Text!,
                 m.PubDate)).ToListAsync();
-        
-        return timeline.Take(PageLimit);
-    }
+    
     
     public async Task<bool> Follows(long sessionId, UserDto user)
     {
@@ -64,18 +61,20 @@ public class Minitwit : IMinitwit, IDisposable
     }
     public async Task<IEnumerable<MessageDto>> UserTimeline(long sessionId, string username)
     {
-
-
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null)
         {
             return null!;
         }
-        var timeline = await (from m in _context.Messages
-            where user.UserId == m.AuthorId
-            select new MessageDto(m.MessageId, m.Author.Username, m.Text, m.PubDate)).ToListAsync();
-
-        return timeline.Take(PageLimit);
+        return await _context.Messages
+            .Where(m => m.AuthorId == user.UserId)
+            .Take(PageLimit)
+            .OrderByDescending(m => m.PubDate)
+            .Select(m => new MessageDto(
+                m.MessageId,
+                m.Author!.Username,
+                m.Text!,
+                m.PubDate)).ToListAsync();
     }
     public async Task<IEnumerable<MessageDto>> OwnTimeline(long sessionId)
     {
@@ -94,12 +93,10 @@ public class Minitwit : IMinitwit, IDisposable
         {
             return new List<UserDto>();
         }
-
-        var followers = from u in _context.Users
+        return await (from u in _context.Users
             join f in _context.Followers on u.UserId equals f.WhomId
             where f.WhoId == userId
-            select new UserDto(u.UserId, u.Username);
-        return await followers.Take(limit).ToListAsync();
+            select new UserDto(u.UserId, u.Username)).Take(limit).ToListAsync();
     }
 
     public async Task<DateTime> FormatDatetime(string timestamp)
