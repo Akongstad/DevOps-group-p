@@ -4,18 +4,19 @@ on:
   pull_request:
     branches: [ main ]
   push:
-    branches: [ 159-add-net-analyzers-githubaction ]
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-2019 # build would break if on windows latest
 
     steps:
       - uses: actions/checkout@v2
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.x
+          dotnet-version: 3.1.x #scuffed, but won't work on later versions as it's built on this.
+          # can still use rule sets from later .net releases.
       - name: Run dependencies restore
         run: dotnet restore minitwit/backend #can also be solution file
     # Run code analysis for all projects/solutions, such that code analysis violations break the build.
@@ -26,3 +27,5 @@ jobs:
           project: minitwit/backend/MinitwitReact.csproj
           build-breaking: true
           all-categories: 6.0-all
+          # supposed to run all the categories through and check if something is too bad
+          # that it needs to break: this should be build-breaking: true
