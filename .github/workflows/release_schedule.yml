@@ -23,6 +23,17 @@ jobs:
           if [[ "$FIRST" = "0" ]]; \
           then echo "::set-output name=week::$(echo $(( $( echo $(date +%W) | awk '{ print substr( $0, 2, 1 ) }')-4 )))"; \
           else echo "::set-output name=week::$(echo $(( $(date +%W)-4 )))"; fi
+      - name: Generate Release Notes
+        id: notes
+        run: |
+          NOTES_PATH="~/release_notes_v${{ steps.week.outputs.week }}.md"; \
+          echo 'Automated weekly release with all **accepted changes to main**' > $NOTES_PATH; \
+          LAST_WEEK=$(( ${{ steps.week.outputs.week }} - 1 )); \
+          LAST_MAJOR_VERSION="v$LAST_WEEK.0"; \
+          echo "What's changed" >> $NOTES_PATH; \
+          echo "---" >> $NOTES_PATH; \
+          git log --pretty="- %h - %s (%an)" $LAST_MAJOR_VERSION..HEAD >> $NOTES_PATH; \
+          echo "::set-output name=notes::$(echo $NOTES_PATH)"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -31,5 +42,6 @@ jobs:
         with:
           tag_name: v${{ steps.week.outputs.week }}.0
           release_name: "Weekly Release: ${{ steps.date.outputs.date }}"
+          body_path: ${{ steps.notes.outputs.notes }}
           draft: false
           prerelease: false
