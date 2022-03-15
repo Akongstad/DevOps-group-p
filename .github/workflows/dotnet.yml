@@ -24,16 +24,18 @@ jobs:
       - name: Test
         run: dotnet test minitwit/backend --no-build --verbosity normal
 
-#      - name: use Node.js
-#        uses: actions/setup-node@v1
-#        with:
-#          node-version: '16.x'
-#
-#      - name: install dependencies
-#        run: npm ci
-
-    #  - name: build frontend
-    #    run:
-    #      - cd minitwit/frontend
-    #      - npm install
-    #      - npm run build 
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/dotnet@master
+        continue-on-error: true # To make sure that SARIF upload gets called
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --sarif-file-output=snyk.sarif
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: snyk.sarif
