@@ -1,15 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
-
-namespace MinitwitReact.Entities
+﻿namespace MinitwitReact.Entities
 {
     public class User
     {
-        public long UserId { get; set; }
-        public string Username { get; set; } = null!;
+        public long UserId { get; init; }
+        public string Username { get; init; } = null!;
         
         [EmailAddress]
-        public string Email { get; set; } = null!;
-        public string PwHash { get; set; } = null!;
+        public string Email { get; init; } = null!;
+        public string PwHash { get; init; } = null!;
     }
 }

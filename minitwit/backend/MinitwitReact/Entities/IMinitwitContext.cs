@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace MinitwitReact.Entities;
 
 public interface IMinitwitContext : IDisposable
