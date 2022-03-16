@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Hosting;
+namespace Minitwit.IntegrationTests;
 
 public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
 {
@@ -34,7 +33,8 @@ public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
 
         return base.CreateHost(builder);
     }
-    public void SeedProjects(MinitwitContext context)
+
+    private void SeedProjects(MinitwitContext context)
     {
         //Seed some stuff
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
