@@ -55,7 +55,20 @@ jobs:
              echo "PUSH"
              docker push virginity/minitwit_frontend:latest
              docker push virginity/minitwit_backend:latest
-             
+        - name: Run Snyk to check backend for vulnerabilities
+          uses: snyk/actions/docker@master
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          with:
+            image: virginity/minitwit_backend:latest
+            args: --severity-threshold=high
+        - name: Run Snyk to check frontend for vulnerabilities
+          uses: snyk/actions/docker@master
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          with:
+            image: virginity/minitwit_frontend:latest
+            args: --severity-threshold=high     
         - name: Deploy to Digital ocean
           uses: appleboy/ssh-action@master
           with:
