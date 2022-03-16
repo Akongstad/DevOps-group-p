@@ -39,12 +39,12 @@ builder.Services.AddCors(options =>
     options.SuppressXFrameOptionsHeader = false;
 });*/
 
-
+var secret = builder.Configuration.GetSection("AppSettings:Secret");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => 
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Secret").Value)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Secret").Value ?? "integration")),
         ValidateIssuer = false,
         ValidateAudience = false,
     });
