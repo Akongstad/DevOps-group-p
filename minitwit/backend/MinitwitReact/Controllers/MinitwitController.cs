@@ -22,7 +22,6 @@ public class MinitwitController : ControllerBase
     }
 
     // Get Public timeline'
-    [Authorize]
     [HttpGet("Users")]
     public Task<IEnumerable<UserDto>> Get(){
         return _minitwit.GetAllUsers();
