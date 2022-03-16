@@ -1,8 +1,5 @@
 //reference: https://jasonwatmore.com/post/2022/01/07/net-6-user-registration-and-login-tutorial-with-example-api
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-namespace MinitwitReact.Extensions;
+namespace MinitwitReact.Authentication;
 
 
 

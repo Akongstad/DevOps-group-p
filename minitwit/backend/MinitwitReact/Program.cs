@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using MinitwitReact.Authentication;
 using Prometheus;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

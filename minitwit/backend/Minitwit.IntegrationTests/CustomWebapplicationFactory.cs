@@ -34,7 +34,7 @@ public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
         return base.CreateHost(builder);
     }
 
-    private void SeedProjects(MinitwitContext context)
+    private static void SeedProjects(MinitwitContext context)
     {
         //Seed some stuff
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
