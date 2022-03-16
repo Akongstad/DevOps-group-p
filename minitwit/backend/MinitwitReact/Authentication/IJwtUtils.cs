@@ -4,5 +4,4 @@ namespace MinitwitReact.Authentication;
 public interface IJwtUtils
 {
     public string GenerateToken(UserDetailsDto user);
-    public int? ValidateToken(string token);
 }

@@ -5,11 +5,8 @@ using Prometheus;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 builder.Configuration.AddKeyPerFile("/run/secrets", optional: true);
-//For temp databases
-//var tempFile = Path.GetTempFileName();
+
 
 //------
 builder.Services.AddControllersWithViews();
@@ -34,23 +31,25 @@ builder.Services.AddCors(options =>
 
 
 // csrf configuration
-builder.Services.AddAntiforgery(options =>
+/*builder.Services.AddAntiforgery(options =>
 {
     // Set Cookie properties using CookieBuilder properties†.
     options.FormFieldName = "AntiforgeryFieldname";
     options.HeaderName = "X-CSRF-TOKEN-HEADERNAME";
     options.SuppressXFrameOptionsHeader = false;
-});
+});*/
 
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
-builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => 
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Secret").Value)),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+    });
 
 var app = builder.Build();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
 //Prometheus
 app.UseMetricServer();
 app.UseHttpMetrics();
@@ -58,6 +57,8 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
@@ -65,9 +66,9 @@ app.MapControllerRoute(
     
 app.MapFallbackToFile("index.html");
 
+
 //generate csrf tokens
-app.UseAuthorization();
-var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
+/*var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
 app.Use((context, next) =>
 {
     var requestPath = context.Request.Path.Value;
@@ -81,7 +82,7 @@ app.Use((context, next) =>
     }
 
     return next(context);
-});
+});*/
 
 if (!app.Environment.IsEnvironment("Integration"))
 {
