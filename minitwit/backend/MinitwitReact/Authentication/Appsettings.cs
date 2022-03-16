@@ -3,10 +3,5 @@ namespace MinitwitReact.Authentication;
 
 public class AppSettings
 {
-    public AppSettings(string secret)
-    {
-        Secret = secret;
-    }
-
-    public string Secret { get;}
+    public string Secret { get; set; } = null!;
 }
