@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Prometheus;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -11,9 +12,11 @@ builder.Configuration.AddKeyPerFile("/run/secrets", optional: true);
 
 //------
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.AddDbContext<MinitwitContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Minitwit")));
 builder.Services.AddScoped<IMinitwitContext, MinitwitContext>();
 builder.Services.AddScoped<IMinitwit, Minitwit>();
+builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 //Cors policy
 builder.Services.AddCors(options =>
 {
@@ -37,15 +40,16 @@ builder.Services.AddAntiforgery(options =>
     options.HeaderName = "X-CSRF-TOKEN-HEADERNAME";
     options.SuppressXFrameOptionsHeader = false;
 });
+
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
-    
-// Configure the HTTP request pipeline.
-//if (!app.Environment.IsDevelopment())
-//{
-    //// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    //app.UseHsts();
-//}
-//app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 //Prometheus
 app.UseMetricServer();
 app.UseHttpMetrics();

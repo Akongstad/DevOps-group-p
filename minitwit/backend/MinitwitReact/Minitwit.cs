@@ -152,12 +152,12 @@ public class Minitwit : IMinitwit, IDisposable
     public async Task<Status> UnfollowUser(long sessionId ,string username)
     {
         var ownUser = await GetUserDetailsById(sessionId);
-        if (ownUser == null)
+        if (ownUser is null)
         {
             return Status.NotFound;
         }
         var whomId = await GetUserId(username);
-        if (whomId == 0)
+        if (whomId is 0)
         {
             return Status.NotFound;
         }
@@ -176,12 +176,11 @@ public class Minitwit : IMinitwit, IDisposable
     public async Task<long> Login(string username, string pw)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-        if (user == null)
+        if (user is null)
         {
             return 0;
         }
-
-        if (!BCrypt.Net.BCrypt.Verify( pw, user.PwHash))
+        if (!BCrypt.Net.BCrypt.Verify(pw, user.PwHash))
         {
             return -1;
         }
@@ -191,7 +190,7 @@ public class Minitwit : IMinitwit, IDisposable
     public async Task<long> Register(string username, string email, string pw)
     {
         var conflict = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-        if (conflict != null)
+        if (conflict is not null)
         {
             return 0;
         }
@@ -201,7 +200,18 @@ public class Minitwit : IMinitwit, IDisposable
         await _context.SaveChangesAsync();
         var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         return savedUser!.UserId;
-    } 
+    }
+
+    public async Task<UserDetailsDto?> UserByName(string name)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == name);
+        if (user is null)
+        {
+            return null;
+        }
+        return new UserDetailsDto(user.UserId, user.Username, user.Email, user.PwHash);
+    }
+
     public void Dispose()
     {
         _context.Dispose();

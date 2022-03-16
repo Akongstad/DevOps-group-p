@@ -22,31 +22,6 @@ const sections = [
     { title: 'Style', url: '#' },
     { title: 'Travel', url: '#' },*/
 ];
-
-const demoMessage = {
-    username: 'Elon Musk',
-    content:
-        "Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.",
-    linkText: 'Continue reading…',
-};
-
-const posts1 = [
-    {
-        username: 'Elon Musk',
-        date: 'Nov 12',
-        content:
-            'This is a wider card with supporting text below as a natural lead-in to additional content.',
-        avatar: '',
-    },
-    {
-        username: 'Jeff Bezos',
-        date: 'Nov 12',
-        content:
-            'This is a wider card with supporting text below as a natural lead-in to additional content.',
-        avatar: '',
-    },
-];
-
 const theme = createTheme();
 
 export default function Timeline() {

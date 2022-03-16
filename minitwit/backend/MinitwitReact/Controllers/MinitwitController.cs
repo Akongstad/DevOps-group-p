@@ -1,4 +1,7 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MinitwitReact.Controllers;
 
@@ -8,14 +11,16 @@ public class MinitwitController : ControllerBase
 {
     private readonly ILogger<MinitwitController> _logger;
     private readonly IMinitwit _minitwit;
+    private readonly IJwtUtils _jwtUtils;
 
-    public MinitwitController(ILogger<MinitwitController> logger, IMinitwit minitwit)
+    public MinitwitController(ILogger<MinitwitController> logger, IMinitwit minitwit, IJwtUtils jwtUtils)
     {
         _logger = logger;
         _minitwit = minitwit;
+        _jwtUtils = jwtUtils;
     }
 
-    // Get Public timeline
+    // Get Public timeline'
     [HttpGet("Users")]
     public Task<IEnumerable<UserDto>> Get(){
         return _minitwit.GetAllUsers();
@@ -76,11 +81,29 @@ public class MinitwitController : ControllerBase
     }
 
     // Login
-    [HttpGet("login")]
-    public async Task<long>GetLogin([FromBody] UserDetailsDto user)
+    [HttpPost("login")]
+    public async Task<IActionResult> GetLogin([FromBody] UserLoginDto login)
     {
-        return await _minitwit.Login(user.Username, user.PwHash);
+        var user = await  _minitwit.UserByName(login.Username);
+        if (user is null) return BadRequest(new {message = "Invalid Username"});
+        
+        var id = await _minitwit.Login(user.Username, login.PwHash);
+        if(id < 1) return BadRequest(new {message = "Invalid Password"});
+
+        var jwt = _jwtUtils.GenerateToken(user);
+        
+        return Ok(new UserLoginResponseDto(user.UserId, user.Username, user.Email, jwt));
     }
+    
+    //Register                                                                      
+    [HttpPost("register")]                                                          
+    public async Task<IActionResult> PostRegister ([FromBody] UserCreateDto user)
+    {
+        var id = await _minitwit.Register(user.Username, user.Email, user.PwHash);
+        if (id < 1)
+            return Conflict(new {message = "Invalid username"});
+        return Created("success", await _minitwit.GetUserById(id));    
+    }                                                                               
     
     // Add message
     [HttpPost("msg/{id}")]
@@ -93,13 +116,13 @@ public class MinitwitController : ControllerBase
         var result = await _minitwit.PostMessage(id, message.Text);
          return result.ToActionResult();
     }
-
-    //Register
-    [HttpPost("register")]
-    public async Task<long> PostRegister ([FromBody] UserCreateDto user)
-    {
-        return await _minitwit.Register(user.Username, user.Email, user.PwHash);
-    }
+                                  
+    
+    
+    
+    
+    
+    
 
 
     //validate user

@@ -23,6 +23,7 @@
         <PackageReference Include="App.Metrics.Formatters.Prometheus" Version="4.3.0" />
         <PackageReference Include="AspNetCore.HealthChecks.Prometheus.Metrics" Version="6.0.2" />
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.3" />
         <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.2" />
         <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.2">
@@ -35,6 +36,7 @@
         <PackageReference Include="prometheus-net" Version="6.0.0" />
         <PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0" />
         <PackageReference Include="Prometheus.Client.HttpRequestDurations" Version="3.4.1" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.16.0" />
 
     </ItemGroup>
 
