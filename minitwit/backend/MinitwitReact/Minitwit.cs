@@ -65,7 +65,6 @@ public class Minitwit : IMinitwit, IDisposable
         }
         return await _context.Messages
             .Where(m => m.AuthorId == user.UserId)
-            .Reverse()
             .OrderByDescending(m => m.PubDate)
             .Take(PageLimit)
             .Select(m => new MessageDto(
