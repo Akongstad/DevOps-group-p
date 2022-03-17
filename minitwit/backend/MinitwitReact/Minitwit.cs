@@ -42,8 +42,8 @@ public class Minitwit : IMinitwit, IDisposable
     }
     public async Task<IEnumerable<MessageDto>> PublicTimeline() => await _context.Messages
             .Where(m => m.Flagged == 0)
-            .Take(PageLimit)
             .OrderByDescending(m => m.PubDate)
+            .Take(PageLimit)
             .Select(m => new MessageDto(
                 m.MessageId,
                 m.Author!.Username,
@@ -65,8 +65,9 @@ public class Minitwit : IMinitwit, IDisposable
         }
         return await _context.Messages
             .Where(m => m.AuthorId == user.UserId)
-            .Take(PageLimit)
+            .Reverse()
             .OrderByDescending(m => m.PubDate)
+            .Take(PageLimit)
             .Select(m => new MessageDto(
                 m.MessageId,
                 m.Author!.Username,

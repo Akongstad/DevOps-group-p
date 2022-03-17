@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MinitwitReact.Authentication;
 using Prometheus;
@@ -28,17 +27,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-
-
-// csrf configuration
-/*builder.Services.AddAntiforgery(options =>
-{
-    // Set Cookie properties using CookieBuilder properties†.
-    options.FormFieldName = "AntiforgeryFieldname";
-    options.HeaderName = "X-CSRF-TOKEN-HEADERNAME";
-    options.SuppressXFrameOptionsHeader = false;
-});*/
-
 var secret = builder.Configuration.GetSection("AppSettings:Secret");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => 
     options.TokenValidationParameters = new TokenValidationParameters
@@ -65,24 +53,6 @@ app.MapControllerRoute(
     pattern: "{controller}/{action=Index}/{id?}");
     
 app.MapFallbackToFile("index.html");
-
-
-//generate csrf tokens
-/*var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
-app.Use((context, next) =>
-{
-    var requestPath = context.Request.Path.Value;
-
-    if (string.Equals(requestPath, "/", StringComparison.OrdinalIgnoreCase)
-        || string.Equals(requestPath, "/index.html", StringComparison.OrdinalIgnoreCase))
-    {
-        var tokenSet = antiforgery.GetAndStoreTokens(context);
-        context.Response.Cookies.Append("XSRF-TOKEN", tokenSet.RequestToken!,
-            new CookieOptions { HttpOnly = false });
-    }
-
-    return next(context);
-});*/
 
 if (!app.Environment.IsEnvironment("Integration"))
 {
