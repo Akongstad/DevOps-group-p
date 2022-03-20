@@ -1,19 +1,16 @@
 
 using MinitwitReact.Core;
 
-namespace Minitwit.Tests;
-
+namespace Minitwit.IntegrationTests;
 
 public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFactory>
 {
-    private readonly CustomWebApplicationFactory _factory;
     private readonly HttpClient _client;
 
     public MinitwitTests(CustomWebApplicationFactory factory)
     {
-        _factory = factory;
         // Create an httpclient for api tests
-        _client = _factory.CreateClient();
+        _client = factory.CreateClient();
     }
 
 

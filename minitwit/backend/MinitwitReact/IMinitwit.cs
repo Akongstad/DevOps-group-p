@@ -17,6 +17,7 @@ public interface IMinitwit
     Task<IEnumerable<MessageDto>> UserTimeline(long sessionId, string username);
     Task<bool> Follows(long sessionId, UserDto user);
     Task<IEnumerable<MessageDto>> OwnTimeline(long sessionId);
+    Task<UserDetailsDto?> UserByName(string name);
 
     Task<IEnumerable<UserDto>> GetFollowers(string username, int limit);
 }

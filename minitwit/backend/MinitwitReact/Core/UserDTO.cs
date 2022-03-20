@@ -5,6 +5,8 @@ namespace MinitwitReact.Core;
 // string Email, should maybe not be in the normal Dto like below
 public record UserDto(long UserId, string Username);
 
+public record UserLoginDto(string Username, string PwHash);
+public record UserLoginResponseDto(long UserId, string Username, string Email, string Token);
 public record UserDetailsDto(long UserId, string Username, string Email, string PwHash) : UserDto(UserId, Username);
 
 public record UserCreateDto
