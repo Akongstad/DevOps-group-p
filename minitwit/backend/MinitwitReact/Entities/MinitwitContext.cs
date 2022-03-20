@@ -8,19 +8,15 @@
         public virtual DbSet<Message> Messages => Set<Message>();
         public virtual DbSet<User> Users  => Set<User>();
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.EnableSensitiveDataLogging();
-            if (!optionsBuilder.IsConfigured)
-            { 
-                optionsBuilder.UseSqlite("Data Source=./minitwit.db");
-            }
-        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .Entity<Follower>().HasKey(nameof(Follower.WhoId), nameof(Follower.WhomId));
+            modelBuilder.Entity<User>().HasIndex(u => u.UserId);
+
+            modelBuilder.Entity<Message>().HasIndex(m => m.PubDate);
         }
     }
 }

@@ -2,7 +2,7 @@ namespace MinitwitReact;
 
 public class Minitwit : IMinitwit, IDisposable
 {
-    private const int PageLimit = 30;
+    private const int PageLimit = 100;
 
     private readonly IMinitwitContext _context;
     public Minitwit(IMinitwitContext context)
@@ -43,11 +43,11 @@ public class Minitwit : IMinitwit, IDisposable
 
     public async Task<IEnumerable<MessageDto>> PublicTimeline()
     {
-        var count = _context.Messages.Count();
         var messages = await _context.Messages
+            .AsNoTracking()
             .Where(m => m.Flagged == 0)
-            .Skip(count > PageLimit ? count-PageLimit : 0)
             .OrderByDescending(m => m.PubDate)
+            .Take(PageLimit)
             .Select(m => new MessageDto(
                 m.MessageId,
                 m.Author!.Username,
@@ -68,11 +68,11 @@ public class Minitwit : IMinitwit, IDisposable
         {
             return null!;
         }
-        var count = _context.Messages.Count();
         return await _context.Messages
+            .AsNoTracking()
             .Where(m => m.AuthorId == user.UserId)
-            .Skip(count > PageLimit ? count-PageLimit : 0)
             .OrderByDescending(m => m.PubDate)
+            .Take(PageLimit)
             .Select(m => new MessageDto(
                 m.MessageId,
                 m.Author!.Username,
