@@ -1,10 +1,6 @@
-global using System.Data;
 global using Microsoft.EntityFrameworkCore;
-global using Microsoft.VisualBasic;
 global using MinitwitReact.Core;
 global using MinitwitReact.Entities;
-global using Microsoft.Data.Sqlite;
-global using Microsoft.AspNetCore.Antiforgery;
 global using Microsoft.AspNetCore.Mvc;
 global using System.Text.Json;
 global using System.Text.Json.Nodes;
@@ -14,9 +10,6 @@ global using System.Security.Claims;
 global using System.Text;
 global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Tokens;
-global using Microsoft.AspNetCore.Authorization;
-global using Microsoft.AspNetCore.Mvc.Filters;
-
 global using MinitwitReact;
 global using MinitwitReact.Core;
 global using MinitwitReact.Extensions;

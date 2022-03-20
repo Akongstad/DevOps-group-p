@@ -1,8 +1,6 @@
 namespace MinitwitReact.Core;
 
-public record FollowerDTO(int UserId, string Username);
-
-public record FollowerDetailsDto(int UserId, string Username, string Email, string PwHash);
+public record FollowerDto(int UserId, string Username);
 
 public record FollowerCreateDto
 {

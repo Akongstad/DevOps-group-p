@@ -6,8 +6,6 @@ public interface IMinitwit
     Task<UserDto?> GetUserById(long userId);
     Task<long> GetUserId(string username);
     Task<UserDetailsDto?> GetUserDetailsById(long userid);
-    Task<DateTime> FormatDatetime(string timestamp); //Can probably be done using datetime
-    Uri gravatar_url(string email, int size = 80);
     Task<Status> PostMessage(long userid, string message);
     Task<Status> FollowUser(long sessionId ,string username);
     Task<Status> UnfollowUser(long sessionId ,string username);

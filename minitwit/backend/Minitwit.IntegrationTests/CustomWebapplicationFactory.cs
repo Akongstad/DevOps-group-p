@@ -2,10 +2,16 @@ namespace Minitwit.IntegrationTests;
 
 public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
 {
+    public string DefaultUserId { get; set; } = "1";
     protected override IHost CreateHost(IHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
+            //Setup Test Auth handler
+            services.Configure<TestAuthHandlerOptions>(options => options.DefaultUserId = DefaultUserId);
+            services.AddAuthentication(TestAuthHandler.AuthenticationScheme)
+                .AddScheme<TestAuthHandlerOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, options => { });
+            
             var dbContext = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<MinitwitContext>));
 
             if (dbContext != null)

@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MinitwitReact.Authentication;
 using Prometheus;
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddKeyPerFile("/run/secrets", optional: true);
 
-
+ 
 //------
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
@@ -17,17 +17,15 @@ builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 //Cors policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
+    options.AddPolicy(name: myAllowSpecificOrigins,
         corsPolicyBuilder =>
         {
             corsPolicyBuilder.WithOrigins("https://minitwit.online",
-                "http://localhost:3000", "*")
+                "http://localhost:3000")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
 });
-
-var secret = builder.Configuration.GetSection("AppSettings:Secret");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => 
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -41,7 +39,7 @@ var app = builder.Build();
 //Prometheus
 app.UseMetricServer();
 app.UseHttpMetrics();
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(myAllowSpecificOrigins);
 app.UseStaticFiles();
 app.UseRouting();
 
@@ -60,6 +58,5 @@ if (!app.Environment.IsEnvironment("Integration"))
 }
 
 app.Run();
-
-
+//Used for integration testing
 public partial class Program { }
