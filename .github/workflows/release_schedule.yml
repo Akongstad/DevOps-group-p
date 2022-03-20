@@ -33,7 +33,7 @@ jobs:
           echo 'Automated weekly release with all **accepted changes to main**' > $NOTES_PATH; \
           LAST_WEEK=$(( ${{ steps.week.outputs.week }} - 1 )); \
           LAST_MAJOR_VERSION=v$LAST_WEEK.0; \
-          echo "What's changed" >> $NOTES_PATH; \
+          printf "\nWhat's changed" >> $NOTES_PATH; \
           echo "---" >> $NOTES_PATH; \
           git log --pretty="- %h - %s (%an)" $LAST_MAJOR_VERSION..HEAD >> $NOTES_PATH; \
           echo "::set-output name=notes::$(echo $NOTES_PATH)"
