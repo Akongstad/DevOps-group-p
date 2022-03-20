@@ -26,7 +26,7 @@ jobs:
       - name: Generate Release Notes
         id: notes
         run: |
-          NOTES_PATH="~/release_notes_v${{ steps.week.outputs.week }}.md"; \
+          NOTES_PATH=~/release_notes_v${{ steps.week.outputs.week }}.md; \
           touch $NOTES_PATH; \
           echo 'Automated weekly release with all **accepted changes to main**' > $NOTES_PATH; \
           LAST_WEEK=$(( ${{ steps.week.outputs.week }} - 1 )); \
