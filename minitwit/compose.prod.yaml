@@ -25,6 +25,9 @@ services:
       - 80:80
       - 443:443
 
+    networks:
+      - main
+
   frontend:
 
     image: virginity/minitwit_frontend:latest
