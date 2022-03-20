@@ -86,7 +86,7 @@ public class MinitwitSimulationController : ControllerBase
         if (Request.Method == "GET")
         {
             var timeline = await _minitwit.UserTimeline(0, username);
-            var filteredMsgs = new List<Object>();
+            var filteredMsgs = new List<object>();
             foreach (var item in timeline)
             {
                 var filteredMsg = new
@@ -102,12 +102,12 @@ public class MinitwitSimulationController : ControllerBase
         if (Request.Method == "POST")
         {
             _tweetCounter.Inc();
-            var unused = await _minitwit.PostMessage(userId, request!["content"]!.ToString());
+            await _minitwit.PostMessage(userId, request!["content"]!.ToString());
             return NoContent();
         }
         return NotFound();
     }
-    
+
     private readonly Counter _followCounter = 
         Metrics.CreateCounter("minitwit_follow_count", "Amount of calls to follow");
     private readonly Counter _unfollowCounter = 
@@ -146,31 +146,35 @@ public class MinitwitSimulationController : ControllerBase
         {
             _followCounter.Inc();
             var followUsername = request["follow"]!.ToString();
-            var unused = await _minitwit.FollowUser(userId, followUsername);
+            await _minitwit.FollowUser(userId, followUsername);
             return NoContent();
         }
         if(Request.Method =="POST" && request.ContainsKey("unfollow"))
         {
             _unfollowCounter.Inc();
             var unfollowUsername = request["unfollow"]!.ToString();
-            var unused = await _minitwit.UnfollowUser(userId, unfollowUsername);
+            await _minitwit.UnfollowUser(userId, unfollowUsername);
             return NoContent();
         }
 
         if (Request.Method != "GET") return Conflict();
         {
-            var followers = await _minitwit.GetFollowers(username, limit);
-            var filteredMsgs = new List<object>();
-            foreach (var item in followers)
-            {
-                var filteredMsg = new
-                {
-                    follows = item.Username
-                };
-                filteredMsgs.Add(filteredMsg);
-            }
-            return Ok(filteredMsgs);
+            return await GetFollows(username, limit);
         }
+    }
+    private async Task<IActionResult> GetFollows(string username, int limit)
+    {
+        var followers = await _minitwit.GetFollowers(username, limit);
+        var filteredMsgs = new List<object>();
+        foreach (var item in followers)
+        {
+            var filteredMsg = new
+            {
+                follows = item.Username
+            };
+            filteredMsgs.Add(filteredMsg);
+        }
+        return Ok(filteredMsgs);
     }
     
     

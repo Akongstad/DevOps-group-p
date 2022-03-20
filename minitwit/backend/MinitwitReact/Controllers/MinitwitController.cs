@@ -109,7 +109,7 @@ public class MinitwitController : ControllerBase
         return await _minitwit.GetUserDetailsById(id) == null;
     }
 
-    private Task<ActionResult<string>> SerializeTimeline (IEnumerable<MessageDto> timeline)
+    private static Task<ActionResult<string>> SerializeTimeline (IEnumerable<MessageDto> timeline)
     {
         var msgs = new List<object>();
         foreach (var item in timeline)

@@ -2,14 +2,11 @@
 {
     public class MinitwitContext : DbContext, IMinitwitContext
     {
-        public MinitwitContext(DbContextOptions<MinitwitContext> options) : base(options) { }
-
         public virtual DbSet<Follower> Followers => Set<Follower>();
         public virtual DbSet<Message> Messages => Set<Message>();
         public virtual DbSet<User> Users  => Set<User>();
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
-
+        
+        public MinitwitContext(DbContextOptions<MinitwitContext> options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
