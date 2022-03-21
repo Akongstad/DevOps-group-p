@@ -45,7 +45,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Infrastucture\Repositories" />
       <Folder Include="Server" />
     </ItemGroup>
 

@@ -14,3 +14,4 @@ global using Microsoft.IdentityModel.Tokens;
 global using MinitwitReact;
 global using MinitwitReact.Core;
 global using MinitwitReact.Extensions;
+global using MinitwitReact.Authentication;
