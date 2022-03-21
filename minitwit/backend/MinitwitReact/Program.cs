@@ -20,8 +20,8 @@ builder.Host.UseSerilog((context, configuration) =>
 //------
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
-builder.Services.AddDbContext<MinitwitContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Minitwit")));
-builder.Services.AddScoped<IMinitwitContext, MinitwitContext>();
+builder.Services.AddDbContext<MiniTwitContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Minitwit")));
+builder.Services.AddScoped<IMiniTwitContext, MiniTwitContext>();
 builder.Services.AddScoped<IMinitwit, Minitwit>();
 builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 //Cors policy

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MinitwitReact.Entities;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -10,10 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace MinitwitReact.Migrations
 {
-    [DbContext(typeof(MinitwitContext))]
-    partial class MinitwitContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(MiniTwitContext))]
+    [Migration("20220301200954_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

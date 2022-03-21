@@ -44,6 +44,21 @@
 
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Infrastucture\Repositories" />
+      <Folder Include="Server" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\Error.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\_ViewImports.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Server\Pages\Error.cshtml" />
+      <AdditionalFiles Include="Server\Pages\_ViewImports.cshtml" />
+    </ItemGroup>
+
     <!--<ItemGroup>-->
         <!--[> Don't publish the SPA source files, but do show them in the project files list <]-->
         <!--<Content Remove="$(SpaRoot)**" />-->
