@@ -1,7 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Text.Json;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using MinitwitReact.Authentication;
 
 namespace MinitwitReact.Controllers;
@@ -35,33 +31,22 @@ public class MinitwitController : ControllerBase
     } 
    
     // Get User's timeline
-    [HttpGet("msgs1/{sessionId}")]
-    public async Task<ActionResult<string>> GetTimeline(int sessionId)
+    [HttpGet("msgs/{username}")]
+    public async Task<IActionResult> GetTimeline(string username)
     {
+        var sessionId = Convert.ToInt64(User.FindFirstValue(ClaimTypes.NameIdentifier));
         if (await ValidateId(sessionId)){
             throw new ArgumentException("user not logged in");
         }
-        var timeline = await _minitwit.OwnTimeline(sessionId);
+        var timeline = await _minitwit.UserTimeline(sessionId, username);
 
-        return await SerializeTimeline(timeline);
-    }
-
-    // Get other users' timeline
-    [HttpGet("msgs/{username}")]
-    public async Task<ActionResult<string>> GetUserTimeline(string username)
-    {
-        var userId = await _minitwit.GetUserId(username);
-        if (await ValidateId(userId)){
-            throw new ArgumentException("user not logged in");
-        }
-        var timeline = await _minitwit.UserTimeline(userId, username);
-        return await SerializeTimeline(timeline);
+        return Ok(timeline);
     }
 
     // Follow
     // follower.userid = user's own id, follower.username = the other user's name
     [HttpPost("follow")]
-    public async Task<IActionResult> Follow([FromBody] FollowerDTO follower)
+    public async Task<IActionResult> Follow([FromBody] FollowerDto follower)
     {
 
         if (await ValidateId(follower.UserId)){
@@ -72,7 +57,7 @@ public class MinitwitController : ControllerBase
     }
     //Unfollow
     [HttpPost("unfollow")]
-    public async Task<IActionResult> UnFollow([FromBody] FollowerDTO follower)
+    public async Task<IActionResult> UnFollow([FromBody] FollowerDto follower)
     {
         if (await ValidateId(follower.UserId)){
             throw new ArgumentException("user not logged in");
@@ -107,9 +92,10 @@ public class MinitwitController : ControllerBase
     }                                                                               
     
     // Add message
-    [HttpPost("msg/{id}")]
-    public async Task<IActionResult> Message(long id, [FromBody] MessageCreateDto message)
-    {        
+    [HttpPost("msg/{username}")]
+    public async Task<IActionResult> Message([FromBody] MessageCreateDto message)
+    {
+        var id = Convert.ToInt64(User.FindFirstValue(ClaimTypes.NameIdentifier));
         if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
@@ -117,23 +103,15 @@ public class MinitwitController : ControllerBase
         var result = await _minitwit.PostMessage(id, message.Text);
          return result.ToActionResult();
     }
-                                  
-    
-    
-    
-    
-    
-    
-
 
     //validate user
     private async Task<bool> ValidateId(long id){
         return await _minitwit.GetUserDetailsById(id) == null;
     }
 
-    private async Task<ActionResult<string>> SerializeTimeline (IEnumerable<MessageDto> timeline)
+    private static Task<ActionResult<string>> SerializeTimeline (IEnumerable<MessageDto> timeline)
     {
-        var msgs = new List<Object>();
+        var msgs = new List<object>();
         foreach (var item in timeline)
         {
             var msg = new
@@ -144,7 +122,7 @@ public class MinitwitController : ControllerBase
             };
             msgs.Add(msg);
         }
-        return JsonSerializer.Serialize(msgs);
+        return Task.FromResult<ActionResult<string>>(JsonSerializer.Serialize(msgs));
       
     }
 }
