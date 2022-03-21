@@ -7,3 +7,4 @@ global using Microsoft.Extensions.Hosting;
 global using System.Net.Http.Json;
 global using FluentAssertions;
 global using MinitwitReact.Entities;
+global using MinitwitReact.Core.DTO;
