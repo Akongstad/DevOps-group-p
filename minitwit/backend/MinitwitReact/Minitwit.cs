@@ -4,31 +4,31 @@ public class Minitwit : IMinitwit, IDisposable
 {
     private const int PageLimit = 100;
 
-    private readonly IMinitwitContext _context;
-    public Minitwit(IMinitwitContext context)
+    private readonly IMiniTwitContext _context;
+    public Minitwit(IMiniTwitContext context)
     {
         _context = context;
     }
-    public async Task<IEnumerable<UserDto>> GetAllUsers() => await _context.Users.Select(u => new UserDto(u.UserId, u.Username)).ToListAsync();
+    public async Task<IEnumerable<UserDto>> GetAllUsers() => await _context.Users.Select(u => new UserDto(u.Id, u.Username)).ToListAsync();
     public async Task<UserDto?> GetUserById(long userid)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userid);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userid);
         if (user == null)
         {
             return null;
         }
-        return new UserDto(user.UserId, user.Username);
+        return new UserDto(user.Id, user.Username);
     }
 
     public async Task<UserDetailsDto?> GetUserDetailsById(long userid)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userid);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userid);
         if (user == null)
         {
             return null;
         }
 
-        return new UserDetailsDto(user.UserId, user.Username, user.Email, user.PwHash);
+        return new UserDetailsDto(user.Id, user.Username, user.Email, user.PwHash);
     }
     
     public async Task<long> GetUserId(string username)
@@ -38,7 +38,7 @@ public class Minitwit : IMinitwit, IDisposable
        {
            return 0;
        }
-       return user.UserId;
+       return user.Id;
     }
 
     public async Task<IEnumerable<MessageDto>> PublicTimeline()
@@ -70,7 +70,7 @@ public class Minitwit : IMinitwit, IDisposable
         }
         return await _context.Messages
             .AsNoTracking()
-            .Where(m => m.AuthorId == user.UserId)
+            .Where(m => m.AuthorId == user.Id)
             .OrderByDescending(m => m.PubDate)
             .Take(PageLimit)
             .Select(m => new MessageDto(
@@ -97,14 +97,14 @@ public class Minitwit : IMinitwit, IDisposable
             return new List<UserDto>();
         }
         return await (from u in _context.Users
-            join f in _context.Followers on u.UserId equals f.WhomId
+            join f in _context.Followers on u.Id equals f.WhomId
             where f.WhoId == userId
-            select new UserDto(u.UserId, u.Username)).Take(limit).ToListAsync();
+            select new UserDto(u.Id, u.Username)).Take(limit).ToListAsync();
     }
     
     public async Task<Status> PostMessage(long userid, string text)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userid);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userid);
         if (user == null)
         {
             return Status.NotFound;
@@ -177,7 +177,7 @@ public class Minitwit : IMinitwit, IDisposable
         {
             return -1;
         }
-        return user.UserId;
+        return user.Id;
     }
 
     public async Task<long> Register(string username, string email, string pw)
@@ -192,7 +192,7 @@ public class Minitwit : IMinitwit, IDisposable
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
         var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        return savedUser!.UserId;
+        return savedUser!.Id;
     }
 
     public async Task<UserDetailsDto?> UserByName(string name)
@@ -202,7 +202,7 @@ public class Minitwit : IMinitwit, IDisposable
         {
             return null;
         }
-        return new UserDetailsDto(user.UserId, user.Username, user.Email, user.PwHash);
+        return new UserDetailsDto(user.Id, user.Username, user.Email, user.PwHash);
     }
 
     public void Dispose()

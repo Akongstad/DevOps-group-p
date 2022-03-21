@@ -12,7 +12,7 @@ public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
             services.AddAuthentication(TestAuthHandler.AuthenticationScheme)
                 .AddScheme<TestAuthHandlerOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, options => { });
             
-            var dbContext = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<MinitwitContext>));
+            var dbContext = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<MiniTwitContext>));
 
             if (dbContext != null)
             {
@@ -21,14 +21,14 @@ public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
 
             var connection = new SqliteConnection("Filename=:memory:");
 
-            services.AddDbContext<MinitwitContext>(options =>
+            services.AddDbContext<MiniTwitContext>(options =>
             {
                 options.UseSqlite(connection);
             });
 
             var provider = services.BuildServiceProvider();
             using var scope = provider.CreateScope();
-            using var appContext = scope.ServiceProvider.GetRequiredService<MinitwitContext>();
+            using var appContext = scope.ServiceProvider.GetRequiredService<MiniTwitContext>();
             appContext.Database.OpenConnection();
             appContext.Database.EnsureCreated();
 
@@ -40,13 +40,13 @@ public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
         return base.CreateHost(builder);
     }
 
-    private static void SeedProjects(MinitwitContext context)
+    private static void SeedProjects(MiniTwitContext context)
     {
         //Seed some stuff
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
-        var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321", UserId = 2};
-        var bill = new User {Username = "Bill Gates", Email = "Microsoft@gmail.com", PwHash = "321123", UserId = 3};
-        var bruce = new User{Username = "Bruce Wayne", Email = "Gotham@gmail.com", PwHash = "321", UserId = 4};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
+        var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321", Id = 2};
+        var bill = new User {Username = "Bill Gates", Email = "Microsoft@gmail.com", PwHash = "321123", Id = 3};
+        var bruce = new User{Username = "Bruce Wayne", Email = "Gotham@gmail.com", PwHash = "321", Id = 4};
         
         var hello = new Message
         {
