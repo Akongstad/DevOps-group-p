@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MinitwitReact.Core;
+namespace MinitwitReact.Core.DTO;
 
 // string Email, should maybe not be in the normal Dto like below
 public record UserDto(long UserId, string Username);
