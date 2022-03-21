@@ -8,7 +8,5 @@
         [EmailAddress]
         public string Email { get; init; } = null!;
         public string PwHash { get; init; } = null!;
-        
-        
     }
 }
