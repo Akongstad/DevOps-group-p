@@ -8,7 +8,6 @@ public interface IMinitwit
     Task<long> GetUserId(string username);
     Task<UserDetailsDto?> GetUserDetailsById(long userid);
     Task<UserDetailsDto?> UserByName(string name);
-    Task<Status> PostMessage(long userid, string message);
     
     // Follower
     Task<Status> FollowUser(long sessionId ,string username);
@@ -18,9 +17,12 @@ public interface IMinitwit
 
 
     
-    
+    // Authenticator
     Task<long> Login(string username, string pw);
     Task<long> Register(string username, string email, string pw);
+    
+    // Message
+    Task<Status> PostMessage(long userid, string message);
     Task<IEnumerable<MessageDto>> PublicTimeline();
     Task<IEnumerable<MessageDto>> UserTimeline(long sessionId, string username);
     Task<IEnumerable<MessageDto>> OwnTimeline(long sessionId);
