@@ -13,42 +13,9 @@ public class UserController : ControllerBase
         _repository = repository;
     }
 
-    // Get Public timeline'
     [HttpGet("Users")]
     public Task<IEnumerable<UserDto>> Get(){
         return _repository.GetAllUsers();
-    }
-    //[AutoValidateAntiForgeryToken]
-    [HttpGet("messages")]
-    public async Task<ActionResult<string>> GetPublicTimeline()
-    {
-        var timeline = await _repository.GetPublicTimeline();
-        return await SerializeTimeline(timeline);
-    } 
-   
-    // Get User's timeline
-    [HttpGet("messages/{username}")]
-    public async Task<IActionResult> GetTimeline(string username)
-    {
-        var sessionId = Convert.ToInt64(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        if (await ValidateId(sessionId)){
-            throw new ArgumentException("user not logged in");
-        }
-        var timeline = await _repository.GetTimeline(sessionId, username);
-
-        return Ok(timeline);
-    }
-
-    [HttpPost("message/{username}")]
-    public async Task<IActionResult> Message([FromBody] MessageCreateDto message)
-    {
-        var id = Convert.ToInt64(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        if (await ValidateId(id)){
-            throw new ArgumentException("user not logged in");
-        }
-
-        var result = await _repository.PostMessage(id, message.Text);
-        return result.ToActionResult();
     }
 
     private async Task<bool> ValidateId(long id){

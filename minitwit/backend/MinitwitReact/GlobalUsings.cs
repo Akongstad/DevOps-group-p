@@ -17,3 +17,4 @@ global using MinitwitReact.Extensions;
 global using MinitwitReact.Authentication;
 global using MinitwitReact.Core.IRepositories;
 global using MinitwitReact.Core.DTO;
+global using MinitwitReact.Infrastructure.Repositories;
