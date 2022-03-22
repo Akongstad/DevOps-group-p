@@ -1,6 +1,12 @@
 
 error_page 502 /502.html;
 
+# redirect access logs to stdout
+access_log /dev/stdout
+
+# redirect error logs to stderr
+error_log /dev/stderr
+
 # redirect all traffic to https
 server {
     listen 80 default_server;
