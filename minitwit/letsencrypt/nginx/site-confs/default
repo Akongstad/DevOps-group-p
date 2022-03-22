@@ -7,7 +7,7 @@ map $status $loggable {
 }
 
 # redirect access logs to stdout
-access_log /dev/stdout if=$loggable;
+access_log /dev/stdout combined if=$loggable;
 
 # redirect error logs to stderr
 error_log /dev/stderr;
