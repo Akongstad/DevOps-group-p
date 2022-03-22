@@ -1,8 +1,13 @@
 
 error_page 502 /502.html;
 
+map $status $loggable {
+    ~^[23]  0;
+    default 1;
+}
+
 # redirect access logs to stdout
-access_log /dev/stdout;
+access_log /dev/stdout if=$loggable;
 
 # redirect error logs to stderr
 error_log /dev/stderr;
