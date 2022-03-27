@@ -6,7 +6,7 @@ to requests
 
 | Covered Service | MUP  |
 |-----------------|------|
-| MiniTwitAPI     | 98%  |
+| MiniTwitApi     | 98%  |
 
 if Group O does not achieve and maintain the Service Levels for each metrics, 
 such as the MUP, as described in this SLA, the Customer can send an request or complaint formulated 
