@@ -4,9 +4,9 @@ Our Monthly Uptime Percentage (hereafter abbreviated as MUP)
 describes the percentage of time where the server responds
 to requests
 
-| Covered Service | MUP  |
-|-----------------|------|
-| MiniTwitApi     | 98%  |
+| Covered Service | MUP    |
+|-----------------|--------|
+| MiniTwitApi     | >= 98% |
 
 if Group O does not achieve and maintain the Service Levels for each metrics, 
 such as the MUP, as described in this SLA, the Customer can send an request or complaint formulated 
