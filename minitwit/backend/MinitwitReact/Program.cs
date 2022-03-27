@@ -74,7 +74,6 @@ void ConfigureLogging()
     Log.Logger = new LoggerConfiguration()
         .Enrich.FromLogContext()
         .Enrich.WithMachineName()
-        .WriteTo.Debug()
         .WriteTo.Console()
         .WriteTo.Elasticsearch(ConfigureElasticSink(configuration, environment ?? "Development"))
         .Enrich.WithProperty("Environment", environment)
@@ -82,7 +81,7 @@ void ConfigureLogging()
         .CreateLogger();
 }
 
-ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, string environment)
+ElasticsearchSinkOptions ConfigureElasticSink(IConfiguration configuration, string environment)
 {
     return new ElasticsearchSinkOptions(new Uri(configuration["ElasticConfiguration:Uri"]))
     {
@@ -93,4 +92,10 @@ ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, 
 }
 
 //Used for integration testing
-public partial class Program { }
+namespace MinitwitReact
+{
+
+    public abstract class Program
+    {
+    }
+}
