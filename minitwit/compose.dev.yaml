@@ -1,32 +1,16 @@
-services:
-
+  services:
   frontend:
-
     container_name: react_frontend
-
     build: 
       context: ./frontend
       dockerfile: Dockerfile.dev
-
     ports:
       - 3000:3000
-
     command: serve -s build -l 3000
-
     depends_on:
       - backend
-
     restart: on-failure
-  
-  # db:
-  #   image: mcr.microsoft.com/azure-sql-edge
-  #   environment:
-  #     ACCEPT_EULA: 'Y'
-  #     MSSQL_SA_PASSWORD_FILE: /run/secrets/db_password
-  #   ports:
-  #     - 1433:1433
-  #   secrets:
-  #     - db_password
+    networks: main
 
   db:
     image: postgres:14.2
@@ -40,6 +24,7 @@ services:
       - db_password
     volumes:
       - /var/lib/docker/volume/data:/var/lib/postgresql/data
+    networks: main
 
   prometheus:
     image: prom/prometheus:v2.33.5
@@ -48,22 +33,22 @@ services:
       - 9090:9090
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks: main
   
   grafana:
     image: grafana/grafana
     container_name: grafana
     ports:
       - 3001:3000
+    networks: main
 
   backend:
-
     container_name: dotnet_backend
     build:
       context: ./backend/MinitwitReact
       dockerfile: Dockerfile.dev
     ports:
       - 5229:80
-
     environment:
       ConnectionStrings__Minitwit:
     depends_on:
@@ -76,7 +61,42 @@ services:
       - source: jwt_key
         target: AppSettings__Secret
     restart: on-failure
+    networks: main
     
+  elasticsearch:
+    container_name: elasticsearch
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.1"
+    environment:
+      - xpack.monitoring.enabled=true
+      - xpack.watcher.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+    
+  kibana:
+    image: "docker.elastic.co/kibana/kibana:7.17.1"
+    ports: 
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+  
+networks:
+  main:
+  elastic:
+    driver: bridge
+       
+volumes:
+   elasticsearch_data:
+
 secrets:
   db_password:
     file: .local/db_password.txt

@@ -1,3 +1,5 @@
+using MinitwitReact;
+
 namespace Minitwit.IntegrationTests;
 
 public class CustomWebApplicationFactory :  WebApplicationFactory<Program>

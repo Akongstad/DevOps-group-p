@@ -58,8 +58,9 @@ public class Minitwit : IMinitwit, IDisposable
 
     public async Task<bool> Follows(long sessionId, UserDto user)
     {
-        var follows = await _context.Followers.Where(f => f.WhoId == sessionId && f.WhomId == user.UserId).ToListAsync();
-        return follows.Count > 0;
+        var follows =
+            await _context.Followers.FirstOrDefaultAsync(f => f.WhoId == sessionId && f.WhomId == user.UserId);
+        return follows != null;
     }
     public async Task<IEnumerable<MessageDto>> UserTimeline(long sessionId, string username)
     {
