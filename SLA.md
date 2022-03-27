@@ -18,14 +18,14 @@ The following definitions apply to this SLA:
 
 **Back-off requirements:** When an error occurs on a request, wait 15 seconds for each failed request.
 
-**Response time-frame:** the response time the Customer can expect on complaints is as followed:
+**Response time-frame:** The response time the Customer can expect on complaints is as followed:
 
 | Day      | Time |
 |----------|------|
 | Mon-Thur | 24h  |
 | Fri-Sun  | 72h  |
 
-The response time may vary, however the Customer should receive
+The response time may vary, however the Customer should receive a response within the time-frame given above.
 
 ***NOTE:*** The days are excluding Danish holidays.
 
