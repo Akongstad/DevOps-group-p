@@ -30,7 +30,7 @@ The response time may vary, however the Customer should receive a response withi
 ***NOTE:*** The days are excluding Danish holidays.
 
 ## Complaint Formulation
-If the Customer wants to state a complaint, or the service is not satisfactory, 
+If the Customer wants to make a complaint, or if the service is not satisfactory, 
 the Customer can write a complaint to Group O through a Github issue.
 The following describes how the issue should be formulated:
 
@@ -42,4 +42,8 @@ What caused the issue?*
 **Optionally**, screenshots of the given issue if the Customer finds this necessary can be included.*
 
 ## Exclusions:
-This SLA does not apply to (a) any Alpha or Beta services; (b) errors caused by factors outside of Group O’s reasonable control e.g. Client hardware or software (can be both); (c) Errors caused by the Customer not adhering to the documentation, e.g. invaild requests or unauthorized use of the Service.
+This SLA does not apply to (a) any Alpha or Beta services;
+(b) errors caused by factors outside of Group O’s reasonable control
+e.g. Client hardware or software (can be both);
+(c) Errors caused by the Customer not adhering to the documentation,
+e.g. invalid requests or unauthorized use of the Service.
