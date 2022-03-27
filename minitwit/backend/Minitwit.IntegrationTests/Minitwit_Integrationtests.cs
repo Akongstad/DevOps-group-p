@@ -30,7 +30,6 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
         response.Should().BeSuccessful();
     }
 
-    //fails if the route is minitwit/msgs/{id} - changed in controller
     [Fact]
     public async Task HTTP_GET_Timeline_Success(){
         var response = await _client.GetAsync("minitwit/msgs/Jeff Bezos/");
@@ -51,15 +50,9 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
     
     [Fact]
     public async Task HTTP_POST_Unfollow_Success(){
-        var response = await _client.PostAsJsonAsync("minitwit/unfollow", new FollowerDto(2, "Elon Musk"));
+        var response = await _client.PostAsJsonAsync("minitwit/unfollow", new FollowerDto(1, "Jeff Bezos"));
         response.Should().BeSuccessful();
     }
-    
-    /*[Fact]
-    public async Task HTTP_GET_Login_Success(){
-        var response = await _client.GetAsync("minitwit/login");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }*/
     
     [Fact]
     public async Task HTTP_POST_Message_Success(){
@@ -93,37 +86,37 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
 
     [Fact]
     public async Task HTTP_GET_Timeline_Simulation(){
-        var response = await _client.GetAsync("minitwitSimulation/msgs/Jeff Bezos/");
+        var response = await _client.GetAsync("minitwitSimulation/msgs/Elon Musk");
         response.Should().BeSuccessful();
     }
 
     [Fact]
     public async Task HTTP_POST_Message_Simulation(){
-        var response = await _client.PostAsJsonAsync("minitwitSimulation/msgs/Jeff Bezos/", new {content = "some message"});
+        var response = await _client.PostAsJsonAsync("minitwitSimulation/msgs/Jeff Bezos", new {content = "some message"});
         response.Should().BeSuccessful();
     }
     
     [Fact]
     public async Task HTTP_GET_Follows_Simulation(){
-        var response = await _client.GetAsync("minitwitSimulation/fllws/Jeff Bezos/");
+        var response = await _client.GetAsync("minitwitSimulation/fllws/Jeff Bezos");
         response.Should().BeSuccessful();
     }
 
     [Fact]
     public async Task HTTP_POST_Follow_Simulation(){
-        var response = await _client.PostAsJsonAsync("minitwitSimulation/fllws/Jeff Bezos/", new {follow = "Elon Musk"});
+        var response = await _client.PostAsJsonAsync("minitwitSimulation/fllws/Jeff Bezos", new {follow = "Elon Musk"});
         response.Should().BeSuccessful();
     }
 
     [Fact]
     public async Task HTTP_POST_UnFollow_Simulation(){
-        var response = await _client.PostAsJsonAsync("minitwitSimulation/fllws/Jeff Bezos/", new {unfollow = "Elon Musk"});
+        var response = await _client.PostAsJsonAsync("minitwitSimulation/fllws/Jeff Bezos", new {unfollow = "Elon Musk"});
         response.Should().BeSuccessful();
     }
 
     [Fact]
     public async Task HTTP_POST_Register_Simulation(){
-        var response = await _client.PostAsJsonAsync("minitwitSimulation/register/", new {username = "testusername", email = "test@email.com", pwd = "testpass"});
+        var response = await _client.PostAsJsonAsync("minitwitSimulation/register", new {username = "testusername", email = "test@email.com", pwd = "testpass"});
         response.Should().BeSuccessful();
     }
 
