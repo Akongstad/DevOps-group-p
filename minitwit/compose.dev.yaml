@@ -9,6 +9,8 @@ volumes:
   elk_elasticsearch_data:
 
 services:
+
+
   frontend:
     container_name: react_frontend
     build: 
@@ -22,6 +24,7 @@ services:
     restart: on-failure
     networks:
       - main
+
 
   db:
     image: postgres:14.2
@@ -37,6 +40,7 @@ services:
       - /var/lib/docker/volume/data:/var/lib/postgresql/data
     networks:
       - main
+
 
   prometheus:
     image: prom/prometheus:v2.33.5
@@ -55,6 +59,7 @@ services:
       - 3001:3000
     networks:
       - main
+
 
   backend:
     container_name: dotnet_backend
@@ -75,6 +80,7 @@ services:
       - source: jwt_key
         target: AppSettings__Secret
     restart: on-failure
+
     networks: 
       - main
     
