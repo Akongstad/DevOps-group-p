@@ -23,17 +23,3 @@ jobs:
         run: dotnet build minitwit/backend --no-restore
       - name: Test
         run: dotnet test minitwit/backend --no-build --verbosity normal
-      - name: Run Snyk to check backend for vulnerabilities
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: virginity/minitwit_backend:latest
-          args: --severity-threshold=high
-      - name: Run Snyk to check frontend for vulnerabilities
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: virginity/minitwit_frontend:latest
-          args: --severity-threshold=high
