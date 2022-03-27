@@ -73,6 +73,63 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
         response.Should().BeSuccessful();
     }
 
+
+
+
+
+
+    // API TESTS Simulation
+    [Fact]
+    public async Task HTTP_GET_Latest_Simulation(){
+        var response = await _client.GetAsync("minitwitSimulation/latest");
+        response.Should().BeSuccessful();
+    }
+
+    [Fact]
+    public async Task HTTP_GET_Msgs_Simulation(){
+        var response = await _client.GetAsync("minitwitSimulation/msgs");
+        response.Should().BeSuccessful();
+    }
+
+    [Fact]
+    public async Task HTTP_GET_Timeline_Simulation(){
+        var response = await _client.GetAsync("minitwitSimulation/msgs/Jeff Bezos/");
+        response.Should().BeSuccessful();
+    }
+
+    [Fact]
+    public async Task HTTP_POST_Message_Simulation(){
+        var response = await _client.PostAsJsonAsync("minitwitSimulation/msgs/Jeff Bezos/", new {content = "some message"});
+        response.Should().BeSuccessful();
+    }
+    
+    [Fact]
+    public async Task HTTP_GET_Follows_Simulation(){
+        var response = await _client.GetAsync("minitwitSimulation/fllws/Jeff Bezos/");
+        response.Should().BeSuccessful();
+    }
+
+    [Fact]
+    public async Task HTTP_POST_Follow_Simulation(){
+        var response = await _client.PostAsJsonAsync("minitwitSimulation/fllws/Jeff Bezos/", new {follow = "Elon Musk"});
+        response.Should().BeSuccessful();
+    }
+
+    [Fact]
+    public async Task HTTP_POST_UnFollow_Simulation(){
+        var response = await _client.PostAsJsonAsync("minitwitSimulation/fllws/Jeff Bezos/", new {unfollow = "Elon Musk"});
+        response.Should().BeSuccessful();
+    }
+
+    [Fact]
+    public async Task HTTP_POST_Register_Simulation(){
+        var response = await _client.PostAsJsonAsync("minitwitSimulation/register/", new {username = "testusername", email = "test@email.com", pwd = "testpass"});
+        response.Should().BeSuccessful();
+    }
+
+
+
+
     // TEST FOR ADD MESSAGES
     private bool _disposed;
 
