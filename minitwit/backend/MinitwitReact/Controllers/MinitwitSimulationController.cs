@@ -198,7 +198,7 @@ public class MinitwitSimulationController : ControllerBase
         {
             error = "you have to enter a username";
         }
-        else if(!request.ContainsKey("email") || !request["email"]!.ToString().Contains("@"))
+        else if(!request.ContainsKey("email") || !request["email"]!.ToString().Contains('@'))
         {
             error = "You have to enter a valid email address";
         }

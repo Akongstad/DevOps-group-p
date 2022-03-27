@@ -1,3 +1,5 @@
+using MinitwitReact;
+
 namespace Minitwit.IntegrationTests;
 
 public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
@@ -10,7 +12,7 @@ public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
             //Setup Test Auth handler
             services.Configure<TestAuthHandlerOptions>(options => options.DefaultUserId = DefaultUserId);
             services.AddAuthentication(TestAuthHandler.AuthenticationScheme)
-                .AddScheme<TestAuthHandlerOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, options => { });
+                .AddScheme<TestAuthHandlerOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, _ => { });
             
             var dbContext = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<MinitwitContext>));
 
