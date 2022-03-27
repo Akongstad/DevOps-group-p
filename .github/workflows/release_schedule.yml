@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Get current date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
@@ -26,11 +28,12 @@ jobs:
       - name: Generate Release Notes
         id: notes
         run: |
-          NOTES_PATH="~/release_notes_v${{ steps.week.outputs.week }}.md"; \
+          NOTES_PATH=~/release_notes_v${{ steps.week.outputs.week }}.md; \
+          touch $NOTES_PATH; \
           echo 'Automated weekly release with all **accepted changes to main**' > $NOTES_PATH; \
           LAST_WEEK=$(( ${{ steps.week.outputs.week }} - 1 )); \
-          LAST_MAJOR_VERSION="v$LAST_WEEK.0"; \
-          echo "What's changed" >> $NOTES_PATH; \
+          LAST_MAJOR_VERSION=v$LAST_WEEK.0; \
+          printf "\nWhat's changed" >> $NOTES_PATH; \
           echo "---" >> $NOTES_PATH; \
           git log --pretty="- %h - %s (%an)" $LAST_MAJOR_VERSION..HEAD >> $NOTES_PATH; \
           echo "::set-output name=notes::$(echo $NOTES_PATH)"
