@@ -1,19 +1,16 @@
 
 using MinitwitReact.Core;
 
-namespace Minitwit.Tests;
-
+namespace Minitwit.IntegrationTests;
 
 public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFactory>
 {
-    private readonly CustomWebApplicationFactory _factory;
     private readonly HttpClient _client;
 
     public MinitwitTests(CustomWebApplicationFactory factory)
     {
-        _factory = factory;
         // Create an httpclient for api tests
-        _client = _factory.CreateClient();
+        _client = factory.CreateClient();
     }
 
 
@@ -36,7 +33,7 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
     //fails if the route is minitwit/msgs/{id} - changed in controller
     [Fact]
     public async Task HTTP_GET_Timeline_Success(){
-        var response = await _client.GetAsync("minitwit/msgs1/1/");
+        var response = await _client.GetAsync("minitwit/msgs/Jeff Bezos/");
         response.Should().BeSuccessful();
     }
     
@@ -48,13 +45,13 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
     
     [Fact]
     public async Task HTTP_POST_Follow_Success(){
-        var response = await _client.PostAsJsonAsync("minitwit/follow", new FollowerDTO(1, "Jeff Bezos"));
+        var response = await _client.PostAsJsonAsync("minitwit/follow", new FollowerDto(1, "Jeff Bezos"));
         response.Should().BeSuccessful();
     }
     
     [Fact]
     public async Task HTTP_POST_Unfollow_Success(){
-        var response = await _client.PostAsJsonAsync("minitwit/unfollow", new FollowerDTO(2, "Elon Musk"));
+        var response = await _client.PostAsJsonAsync("minitwit/unfollow", new FollowerDto(2, "Elon Musk"));
         response.Should().BeSuccessful();
     }
     

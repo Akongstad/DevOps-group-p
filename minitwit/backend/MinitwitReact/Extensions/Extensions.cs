@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-
 namespace MinitwitReact.Extensions;
 
 public static class Extensions

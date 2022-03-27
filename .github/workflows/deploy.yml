@@ -1,9 +1,10 @@
 name: deploy
 
 on:
-   release:
-     types: [published]
-     branches: [ main ]
+  workflow_dispatch:
+  release:
+      types: [published]
+      branches: [ main ]
 
 jobs:
   build:
@@ -31,6 +32,13 @@ jobs:
 
     steps:
         - uses: actions/checkout@v2
+        - name: Get week num
+          id: week
+          run: |
+            FIRST=$( echo $(date +%W) | awk '{ print substr( $0, 1, 1 ) }'); \
+            if [[ "$FIRST" = "0" ]]; \
+            then echo "::set-output name=week::$(echo $(( $( echo $(date +%W) | awk '{ print substr( $0, 2, 1 ) }')-4 )))"; \
+            else echo "::set-output name=week::$(echo $(( $(date +%W)-4 )))"; fi
         - name: Docker login
           run: |
              echo "LOGIN"
@@ -47,7 +55,20 @@ jobs:
              echo "PUSH"
              docker push virginity/minitwit_frontend:latest
              docker push virginity/minitwit_backend:latest
-             
+        - name: Run Snyk to check backend for vulnerabilities
+          uses: snyk/actions/docker@master
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          with:
+            image: virginity/minitwit_backend:latest
+            args: --severity-threshold=high
+        - name: Run Snyk to check frontend for vulnerabilities
+          uses: snyk/actions/docker@master
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          with:
+            image: virginity/minitwit_frontend:latest
+            args: --severity-threshold=high     
         - name: Deploy to Digital ocean
           uses: appleboy/ssh-action@master
           with:
@@ -57,15 +78,15 @@ jobs:
             port: 22
             script: |
               cd /app/minitwit
-              git pull
-              echo "Taking down frontend"
-              docker stop react_frontend
-              docker rm react_frontend
-              echo "Taking down backend"
-              docker stop dotnet_backend
-              docker rm dotnet_backend
-              echo "Pulling from hub"
-              docker-compose -f compose.prod.yaml pull
-              echo "Building containers"
-              docker-compose -f compose.prod.yaml up --build -d
+              git pull &&
+              echo "Taking down frontend" &&
+              docker stop react_frontend &&
+              docker rm react_frontend &&
+              echo "Taking down backend" &&
+              docker stop dotnet_backend &&
+              docker rm dotnet_backend &&
+              echo "Pulling from hub" &&
+              docker-compose -f compose.prod.yaml pull &&
+              echo "Building containers" &&
+              docker-compose -f compose.prod.yaml up --build -d &&
               echo "BIG CLAPS GJ Friends"

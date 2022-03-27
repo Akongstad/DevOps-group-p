@@ -29,7 +29,7 @@ services:
   #     - db_password
 
   db:
-    image: postgres
+    image: postgres:14.2
     ports:
       - 5432:5432
     environment:
@@ -40,6 +40,20 @@ services:
       - db_password
     volumes:
       - /var/lib/docker/volume/data:/var/lib/postgresql/data
+
+  prometheus:
+    image: prom/prometheus:v2.33.5
+    container_name: prometheus
+    ports: 
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3001:3000
 
   backend:
 
@@ -54,9 +68,13 @@ services:
       ConnectionStrings__Minitwit:
     depends_on:
       - db
+      - prometheus
+      - grafana
     secrets:
       - source: connection_string
         target: ConnectionStrings__Minitwit
+      - source: jwt_key
+        target: AppSettings__Secret
     restart: on-failure
     
 secrets:
@@ -64,4 +82,6 @@ secrets:
     file: .local/db_password.txt
   connection_string:
     file: .local/connection_string.txt
+  jwt_key:
+    file: .local/jwt_key.txt
   

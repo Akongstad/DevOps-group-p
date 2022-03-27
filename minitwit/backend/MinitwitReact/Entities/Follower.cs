@@ -2,7 +2,7 @@
 {
     public class Follower
     {
-        public long? WhoId { get; set; }
-        public long? WhomId { get; set; }
+        public long? WhoId { get; init; }
+        public long? WhomId { get; init; }
     }
 }

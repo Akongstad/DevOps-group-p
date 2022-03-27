@@ -1,11 +1,8 @@
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using BCrypt.Net;
-
 namespace MinitwitReact;
 
 public class Minitwit : IMinitwit, IDisposable
 {
-    private const int PageLimit = 30;
+    private const int PageLimit = 100;
 
     private readonly IMinitwitContext _context;
     public Minitwit(IMinitwitContext context)
@@ -43,20 +40,22 @@ public class Minitwit : IMinitwit, IDisposable
        }
        return user.UserId;
     }
+
     public async Task<IEnumerable<MessageDto>> PublicTimeline()
     {
-        var timeline = await (from m in _context.Messages
-            where m.Flagged == 0
-            orderby m.PubDate descending
-            select new MessageDto(
+        var messages = await _context.Messages
+            .AsNoTracking()
+            .Where(m => m.Flagged == 0)
+            .OrderByDescending(m => m.PubDate)
+            .Take(PageLimit)
+            .Select(m => new MessageDto(
                 m.MessageId,
-                m.Author.Username,
-                m.Text,
+                m.Author!.Username,
+                m.Text!,
                 m.PubDate)).ToListAsync();
-        
-        return timeline.Take(PageLimit);
+        return messages;
     }
-    
+
     public async Task<bool> Follows(long sessionId, UserDto user)
     {
         var follows = await _context.Followers.Where(f => f.WhoId == sessionId && f.WhomId == user.UserId).ToListAsync();
@@ -64,18 +63,21 @@ public class Minitwit : IMinitwit, IDisposable
     }
     public async Task<IEnumerable<MessageDto>> UserTimeline(long sessionId, string username)
     {
-
-
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null)
         {
             return null!;
         }
-        var timeline = await (from m in _context.Messages
-            where user.UserId == m.AuthorId
-            select new MessageDto(m.MessageId, m.Author.Username, m.Text, m.PubDate)).ToListAsync();
-
-        return timeline.Take(PageLimit);
+        return await _context.Messages
+            .AsNoTracking()
+            .Where(m => m.AuthorId == user.UserId)
+            .OrderByDescending(m => m.PubDate)
+            .Take(PageLimit)
+            .Select(m => new MessageDto(
+                m.MessageId,
+                m.Author!.Username,
+                m.Text!,
+                m.PubDate)).ToListAsync();
     }
     public async Task<IEnumerable<MessageDto>> OwnTimeline(long sessionId)
     {
@@ -94,27 +96,12 @@ public class Minitwit : IMinitwit, IDisposable
         {
             return new List<UserDto>();
         }
-
-        var followers = from u in _context.Users
+        return await (from u in _context.Users
             join f in _context.Followers on u.UserId equals f.WhomId
             where f.WhoId == userId
-            select new UserDto(u.UserId, u.Username);
-        return await followers.Take(limit).ToListAsync();
+            select new UserDto(u.UserId, u.Username)).Take(limit).ToListAsync();
     }
-
-    public async Task<DateTime> FormatDatetime(string timestamp)
-    {
-        return DateTime.Parse(timestamp);
-        //.utcfromtimestamp(timestamp).strftime('%Y-%m-%d @ %H:%M')
-    }
-    // TODO: Make a Datetime convert from Datetime.Now to string
-
-    // Return the gravatar image for the given email address.
-    public Uri gravatar_url(string email, int size = 80)
-    {
-        var emailTrim = email.ToLower().Trim();
-        return new Uri($"http://www.gravatar.com/avatar/{emailTrim}?d=identicon&s={size}");
-    }
+    
     public async Task<Status> PostMessage(long userid, string text)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userid);
@@ -146,7 +133,7 @@ public class Minitwit : IMinitwit, IDisposable
             return Status.NotFound;
         }
         var whomUser = await GetUserDetailsById(whomId);
-        if ( await Follows(sessionId, whomUser) || whomId == sessionId)
+        if ( await Follows(sessionId, whomUser!) || whomId == sessionId)
         {
             return Status.Conflict;
         }
@@ -158,17 +145,17 @@ public class Minitwit : IMinitwit, IDisposable
     public async Task<Status> UnfollowUser(long sessionId ,string username)
     {
         var ownUser = await GetUserDetailsById(sessionId);
-        if (ownUser == null)
+        if (ownUser is null)
         {
             return Status.NotFound;
         }
         var whomId = await GetUserId(username);
-        if (whomId == 0)
+        if (whomId is 0)
         {
             return Status.NotFound;
         }
         var whomUser = await GetUserDetailsById(whomId);
-        if ( !await Follows(sessionId, whomUser) || whomId == sessionId)
+        if ( !await Follows(sessionId, whomUser!) || whomId == sessionId)
         {
             return Status.Conflict;
         }
@@ -182,12 +169,11 @@ public class Minitwit : IMinitwit, IDisposable
     public async Task<long> Login(string username, string pw)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-        if (user == null)
+        if (user is null)
         {
             return 0;
         }
-
-        if (!BCrypt.Net.BCrypt.Verify( pw, user.PwHash))
+        if (!BCrypt.Net.BCrypt.Verify(pw, user.PwHash))
         {
             return -1;
         }
@@ -197,7 +183,7 @@ public class Minitwit : IMinitwit, IDisposable
     public async Task<long> Register(string username, string email, string pw)
     {
         var conflict = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-        if (conflict != null)
+        if (conflict is not null)
         {
             return 0;
         }
@@ -207,9 +193,21 @@ public class Minitwit : IMinitwit, IDisposable
         await _context.SaveChangesAsync();
         var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         return savedUser!.UserId;
-    } 
+    }
+
+    public async Task<UserDetailsDto?> UserByName(string name)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == name);
+        if (user is null)
+        {
+            return null;
+        }
+        return new UserDetailsDto(user.UserId, user.Username, user.Email, user.PwHash);
+    }
+
     public void Dispose()
     {
         _context.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

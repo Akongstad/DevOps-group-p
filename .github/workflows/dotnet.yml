@@ -23,17 +23,17 @@ jobs:
         run: dotnet build minitwit/backend --no-restore
       - name: Test
         run: dotnet test minitwit/backend --no-build --verbosity normal
-
-#      - name: use Node.js
-#        uses: actions/setup-node@v1
-#        with:
-#          node-version: '16.x'
-#
-#      - name: install dependencies
-#        run: npm ci
-
-    #  - name: build frontend
-    #    run:
-    #      - cd minitwit/frontend
-    #      - npm install
-    #      - npm run build 
+      - name: Run Snyk to check backend for vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: virginity/minitwit_backend:latest
+          args: --severity-threshold=high
+      - name: Run Snyk to check frontend for vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: virginity/minitwit_frontend:latest
+          args: --severity-threshold=high

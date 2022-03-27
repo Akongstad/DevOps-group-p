@@ -1,31 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-
-namespace MinitwitReact.Entities
+﻿namespace MinitwitReact.Entities
 {
-    public partial class MinitwitContext : DbContext, IMinitwitContext
+    public class MinitwitContext : DbContext, IMinitwitContext
     {
-        public MinitwitContext(DbContextOptions<MinitwitContext> options) : base(options) { }
-
         public virtual DbSet<Follower> Followers => Set<Follower>();
         public virtual DbSet<Message> Messages => Set<Message>();
         public virtual DbSet<User> Users  => Set<User>();
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.EnableSensitiveDataLogging();
-            if (!optionsBuilder.IsConfigured)
-            { 
-                optionsBuilder.UseSqlite("Data Source=./minitwit.db");
-            }
-        }
-
+        
+        public MinitwitContext(DbContextOptions<MinitwitContext> options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .Entity<Follower>().HasKey(nameof(Follower.WhoId), nameof(Follower.WhomId));
+            modelBuilder.Entity<User>().HasIndex(u => u.UserId);
+
+            modelBuilder.Entity<Message>().HasIndex(m => m.PubDate);
         }
     }
 }

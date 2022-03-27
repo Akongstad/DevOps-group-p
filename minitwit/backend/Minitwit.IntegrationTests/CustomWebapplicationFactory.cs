@@ -1,12 +1,17 @@
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Hosting;
+namespace Minitwit.IntegrationTests;
 
 public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
 {
+    public string DefaultUserId { get; set; } = "1";
     protected override IHost CreateHost(IHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
+            //Setup Test Auth handler
+            services.Configure<TestAuthHandlerOptions>(options => options.DefaultUserId = DefaultUserId);
+            services.AddAuthentication(TestAuthHandler.AuthenticationScheme)
+                .AddScheme<TestAuthHandlerOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, options => { });
+            
             var dbContext = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<MinitwitContext>));
 
             if (dbContext != null)
@@ -34,7 +39,8 @@ public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
 
         return base.CreateHost(builder);
     }
-    public void SeedProjects(MinitwitContext context)
+
+    private static void SeedProjects(MinitwitContext context)
     {
         //Seed some stuff
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};

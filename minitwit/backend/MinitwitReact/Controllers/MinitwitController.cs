@@ -1,4 +1,4 @@
-using System.Text.Json;
+using MinitwitReact.Authentication;
 
 namespace MinitwitReact.Controllers;
 
@@ -8,14 +8,16 @@ public class MinitwitController : ControllerBase
 {
     private readonly ILogger<MinitwitController> _logger;
     private readonly IMinitwit _minitwit;
+    private readonly IJwtUtils _jwtUtils;
 
-    public MinitwitController(ILogger<MinitwitController> logger, IMinitwit minitwit)
+    public MinitwitController(ILogger<MinitwitController> logger, IMinitwit minitwit, IJwtUtils jwtUtils)
     {
         _logger = logger;
         _minitwit = minitwit;
+        _jwtUtils = jwtUtils;
     }
 
-    // Get Public timeline
+    // Get Public timeline'
     [HttpGet("Users")]
     public Task<IEnumerable<UserDto>> Get(){
         return _minitwit.GetAllUsers();
@@ -29,33 +31,22 @@ public class MinitwitController : ControllerBase
     } 
    
     // Get User's timeline
-    [HttpGet("msgs1/{sessionId}")]
-    public async Task<ActionResult<string>> GetTimeline(int sessionId)
+    [HttpGet("msgs/{username}")]
+    public async Task<IActionResult> GetTimeline(string username)
     {
+        var sessionId = Convert.ToInt64(User.FindFirstValue(ClaimTypes.NameIdentifier));
         if (await ValidateId(sessionId)){
             throw new ArgumentException("user not logged in");
         }
-        var timeline = await _minitwit.OwnTimeline(sessionId);
+        var timeline = await _minitwit.UserTimeline(sessionId, username);
 
-        return await SerializeTimeline(timeline);
-    }
-
-    // Get other users' timeline
-    [HttpGet("msgs/{username}")]
-    public async Task<ActionResult<string>> GetUserTimeline(string username)
-    {
-        var userId = await _minitwit.GetUserId(username);
-        if (await ValidateId(userId)){
-            throw new ArgumentException("user not logged in");
-        }
-        var timeline = await _minitwit.UserTimeline(userId, username);
-        return await SerializeTimeline(timeline);
+        return Ok(timeline);
     }
 
     // Follow
     // follower.userid = user's own id, follower.username = the other user's name
     [HttpPost("follow")]
-    public async Task<IActionResult> Follow([FromBody] FollowerDTO follower)
+    public async Task<IActionResult> Follow([FromBody] FollowerDto follower)
     {
 
         if (await ValidateId(follower.UserId)){
@@ -66,7 +57,7 @@ public class MinitwitController : ControllerBase
     }
     //Unfollow
     [HttpPost("unfollow")]
-    public async Task<IActionResult> UnFollow([FromBody] FollowerDTO follower)
+    public async Task<IActionResult> UnFollow([FromBody] FollowerDto follower)
     {
         if (await ValidateId(follower.UserId)){
             throw new ArgumentException("user not logged in");
@@ -76,16 +67,35 @@ public class MinitwitController : ControllerBase
     }
 
     // Login
-    [HttpGet("login")]
-    public async Task<long>GetLogin([FromBody] UserDetailsDto user)
+    [HttpPost("login")]
+    public async Task<IActionResult> GetLogin([FromBody] UserLoginDto login)
     {
-        return await _minitwit.Login(user.Username, user.PwHash);
+        var user = await  _minitwit.UserByName(login.Username);
+        if (user is null) return BadRequest(new {message = "Invalid Username"});
+        
+        var id = await _minitwit.Login(user.Username, login.PwHash);
+        if(id < 1) return BadRequest(new {message = "Invalid Password"});
+
+        var jwt = _jwtUtils.GenerateToken(user);
+        
+        return Ok(new UserLoginResponseDto(user.UserId, user.Username, user.Email, jwt));
     }
     
+    //Register                                                                      
+    [HttpPost("register")]                                                          
+    public async Task<IActionResult> PostRegister ([FromBody] UserCreateDto user)
+    {
+        var id = await _minitwit.Register(user.Username, user.Email, user.PwHash);
+        if (id < 1)
+            return Conflict(new {message = "Invalid username"});
+        return Created("success", await _minitwit.GetUserById(id));    
+    }                                                                               
+    
     // Add message
-    [HttpPost("msg/{id}")]
-    public async Task<IActionResult> Message(long id, [FromBody] MessageCreateDto message)
-    {        
+    [HttpPost("msg/{username}")]
+    public async Task<IActionResult> Message([FromBody] MessageCreateDto message)
+    {
+        var id = Convert.ToInt64(User.FindFirstValue(ClaimTypes.NameIdentifier));
         if (await ValidateId(id)){
             throw new ArgumentException("user not logged in");
         }
@@ -94,22 +104,14 @@ public class MinitwitController : ControllerBase
          return result.ToActionResult();
     }
 
-    //Register
-    [HttpPost("register")]
-    public async Task<long> PostRegister ([FromBody] UserCreateDto user)
-    {
-        return await _minitwit.Register(user.Username, user.Email, user.PwHash);
-    }
-
-
     //validate user
     private async Task<bool> ValidateId(long id){
         return await _minitwit.GetUserDetailsById(id) == null;
     }
 
-    private async Task<ActionResult<string>> SerializeTimeline (IEnumerable<MessageDto> timeline)
+    private static Task<ActionResult<string>> SerializeTimeline (IEnumerable<MessageDto> timeline)
     {
-        var msgs = new List<Object>();
+        var msgs = new List<object>();
         foreach (var item in timeline)
         {
             var msg = new
@@ -120,7 +122,7 @@ public class MinitwitController : ControllerBase
             };
             msgs.Add(msg);
         }
-        return JsonSerializer.Serialize(msgs);
+        return Task.FromResult<ActionResult<string>>(JsonSerializer.Serialize(msgs));
       
     }
 }
