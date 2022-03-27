@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MinitwitReact.Authentication;
 using Prometheus;
 using Serilog;
-using Serilog.Sinks.Elasticsearch;
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -13,13 +12,6 @@ builder.Host.UseSerilog((context, configuration) =>
     configuration.Enrich.FromLogContext()
         .Enrich.WithMachineName()
         .WriteTo.Console()
-        .WriteTo.Elasticsearch(
-            new ElasticsearchSinkOptions(new Uri(context.Configuration["ElasticConfiguration:Uri"]))
-            {
-                AutoRegisterTemplate = true,
-                IndexFormat =
-                    $"{context.Configuration["ApplicationName"]}-logs-{context.HostingEnvironment.EnvironmentName.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}",
-            })
         .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
         .ReadFrom.Configuration(context.Configuration);
 });
