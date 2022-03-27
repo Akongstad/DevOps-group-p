@@ -35,10 +35,11 @@ the Customer can write a complaint to Group O through a Github issue.
 The following describes how the issue should be formulated:
 
 **Title:** *What is the main issue? Short and precise - e.g. Register seemingly not working*
+
 **Description:** *What is the issue? details provided on the given problem.
 What caused the issue?*  
-*If given any error codes provide these here as well.
-Optionally, screenshots of the given issue if the Customer finds this necessary can be included.*
+*If given any error codes provide these here as well.  
+**Optionally**, screenshots of the given issue if the Customer finds this necessary can be included.*
 
 ## Exclusions:
 This SLA does not apply to (a) any Alpha or Beta services; (b) errors caused by factors outside of Group O’s reasonable control e.g. Client hardware or software (can be both); (c) Errors caused by the Customer not adhering to the documentation, e.g. invaild requests or unauthorized use of the Service.
