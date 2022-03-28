@@ -18,6 +18,12 @@ services:
 
     volumes:
       - ./letsencrypt:/config
+      - type: bind
+        source: ${ELK_DIR}/nginx.conf
+        target: /etc/nginx/nginx.conf
+      - type: bind
+        source: ${ELK_DIR}/.htpasswd
+        target: /etc/nginx/.htpasswd
 
     restart: unless-stopped
 
@@ -100,14 +106,51 @@ services:
     secrets:
       - source: connection_string
         target: ConnectionStrings__Minitwit
+      - source: jwt_key
+        target: AppSettings__Secret
     restart: on-failure
     networks:
       - main
-
+  
+  elasticsearch:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.1"
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+    volumes:
+      - elk_elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+    
+  kibana:
+    image: "docker.elastic.co/kibana/kibana:7.17.1"
+    ports:
+      - 5601:5601
+    environment:
+      elasticsearch.hosts: '["http://elasticsearch:9200"]'
+    networks:
+      - elastic
+  
+  filebeat:
+    image: "docker.elastic.co/beats/filebeat:7.17.1"
+    environment:
+      - "ELK_USER=${ELK_USER}"
+    user: root
+    volumes:
+      - ${ELK_DIR}/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - elastic
+  
 networks:
 
   main:
     name: minitwit-internal
+  elastic:
+  
+  volumes:
+  elk_elasticsearch_data:
 
     
 secrets:
@@ -115,4 +158,5 @@ secrets:
     file: .local/db_password.txt
   connection_string:
     file: .local/connection_string.txt
-  
+  jwt_key:
+    file: .local/jwt_key.txt
