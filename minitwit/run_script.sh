@@ -1,9 +1,9 @@
 #!/bin/bash
 
 sudo chmod +x logging/setup_elk.sh
-source setup_elk.sh
+source logging/setup_elk.sh
 
-sudo htpasswd -c .htpasswd devops22
+#sudo htpasswd -c .htpasswd devops22
 
 git pull 
 echo "Taking down frontend" 
