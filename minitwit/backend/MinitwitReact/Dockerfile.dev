@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+﻿FROM mcr.microsoft.com/dotnet/sdk:6.0.3-bullseye-slim-amd64 AS build
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
