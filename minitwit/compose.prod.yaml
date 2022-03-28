@@ -19,10 +19,7 @@ services:
     volumes:
       - ./letsencrypt:/config
       - type: bind
-        source: ${ELK_DIR}/nginx.conf
-        target: /etc/nginx/nginx.conf
-      - type: bind
-        source: ${ELK_DIR}/.htpasswd
+        source: ${ELK_DIR}/logging/.htpasswd
         target: /etc/nginx/.htpasswd
 
     restart: unless-stopped
