@@ -27,3 +27,11 @@ scrape_configs:
       - targets: ['dotnet_backend']
         labels:
           group: 'production'
+
+  - job_name: 'docker'
+
+    scrape_interval: 5s
+
+    static_configs:
+      # Manually set endpoint for docker metrics, see docker documentation
+      - targets: ['172.17.0.1:9323']
