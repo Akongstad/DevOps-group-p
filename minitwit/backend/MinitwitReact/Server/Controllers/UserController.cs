@@ -1,7 +1,7 @@
 namespace MinitwitReact.Server.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]/user")]
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger; //??
