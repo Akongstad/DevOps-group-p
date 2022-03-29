@@ -146,7 +146,7 @@ networks:
     name: minitwit-internal
   elastic:
   
-  volumes:
+volumes:
   elk_elasticsearch_data:
 
     
