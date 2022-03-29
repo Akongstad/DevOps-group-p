@@ -1,6 +1,6 @@
 using Prometheus;
 
-namespace MinitwitReact.Controllers;
+namespace MinitwitReact.Server.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -181,7 +181,7 @@ public class MinitwitSimulationController : ControllerBase
     private readonly Counter _registerCounter =
         Metrics.CreateCounter("minitwit_register_count", "Calls to register");
     private readonly Counter _registerErrorCounter =
-        Metrics.CreateCounter("minitwit_register_error_count", "Calls to registern resulting in error");
+        Metrics.CreateCounter("minitwit_register_error_count", "Calls to register resulting in error");
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
