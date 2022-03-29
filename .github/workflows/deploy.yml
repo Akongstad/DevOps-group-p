@@ -77,16 +77,10 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             port: 22
             script: |
-              cd /app/minitwit
-              git pull &&
-              echo "Taking down frontend" &&
-              docker stop react_frontend &&
-              docker rm react_frontend &&
-              echo "Taking down backend" &&
-              docker stop dotnet_backend &&
-              docker rm dotnet_backend &&
-              echo "Pulling from hub" &&
-              docker-compose -f compose.prod.yaml pull &&
-              echo "Building containers" &&
-              docker-compose -f compose.prod.yaml up --build -d &&
+              cd /app/minitwit &&
+              echo "${{ secrets.DB_PASSWORD }}" > .local/db_password.txt  &&
+              echo "${{ secrets.DB_CONNECTION_STRING }}" > .local/connection_string.txt  &&
+              echo "${{ secrets.JWT_KEY }}" > .local/jwt_key.txt  &&
+              echo "${{ secrets.HT_PASSWD }}" > .local/.htpasswd &&
+              ./run_script.sh &&
               echo "BIG CLAPS GJ Friends"
