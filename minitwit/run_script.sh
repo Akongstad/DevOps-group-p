@@ -3,6 +3,8 @@
 sudo chmod +x logging/setup_elk.sh
 source logging/setup_elk.sh
 
+cd .. 
+
 git pull 
 
 for service in {frontend,backend}; do
