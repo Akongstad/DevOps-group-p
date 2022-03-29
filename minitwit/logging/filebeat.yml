@@ -27,6 +27,8 @@ output.elasticsearch:
       when.or:
         - equals:
             container.image.name: minitwit_backend
+        - equals:
+            container.image.name: minitwit_frontend
     - index: "filebeat-ngix-%{[agent.version]}-%{+yyyy.MM.dd}"
       when.equals:
         container.image.name: nginx
