@@ -1,18 +1,18 @@
 namespace MinitwitReact.Server.Controllers;
 
+[Route("follows/{username}")]
 public class FollowerController : ControllerBase
 {
     private readonly IFollowerRepository _followerRepository;
     private readonly IUserRepository _userRepository;
-
-    public FollowerController(ILogger<FollowerController> logger, IFollowerRepository followerRepository, IUserRepository userRepository)
+    public FollowerController(IFollowerRepository followerRepository, IUserRepository userRepository)
     {
         _followerRepository = followerRepository;
         _userRepository = userRepository;
     }
     
-    [HttpGet("fllws/{username}")]
-    [HttpPost("fllws/{username}")]
+    [HttpGet("")]
+    [HttpPost("")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
