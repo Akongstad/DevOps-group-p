@@ -52,8 +52,4 @@ public class FollowerController : ControllerBase
         var filteredMessages = followers.Select(item => new {follows = item.Username}).Cast<object>().ToList();
         return Ok(filteredMessages);
     }
-    
-
-    
-    
 }
