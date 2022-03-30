@@ -43,7 +43,7 @@ const theme = createTheme();
 
 export default function SignIn() {
     const navigate = useNavigate();
-    const { token, setToken } = useToken();
+    const { setToken } = useToken();
 
     const validationSchema =
         Yup.object().shape({

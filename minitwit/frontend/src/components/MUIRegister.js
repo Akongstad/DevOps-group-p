@@ -11,13 +11,10 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Alert from '@mui/material/Alert';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {useState} from "react";
-import {useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router'
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import {AlertTitle} from "@mui/material";
 //import {useNavigate} from "react-router";
 
 
@@ -80,7 +77,7 @@ export default function SignUp() {
                 Email: values.email,
                 Pwhash: values.password,}
             const response = await register(newUser);
-            if(response.statusCode === 400 &&  response.statusCode === 409) {
+            if(response.statusCode === 400 || response.statusCode === 409) {
                 alert("Something went wrong. Could not register" + response.statusCode)
             } else {
                 navigate('/signin');
