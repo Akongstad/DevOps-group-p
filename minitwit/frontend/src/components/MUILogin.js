@@ -69,7 +69,7 @@ export default function SignIn() {
                 Username: values.username,
                 Pwhash: values.password,}
             const response = await login(userLogin);
-            if(response.statusCode === 400 &&  response.statusCode === 409) {
+            if(response.statusCode === 400 || response.statusCode === 409) {
                 alert("Something went wrong. Could not login" + response.statusCode)
             } else {
                 response.json().then(data => {
