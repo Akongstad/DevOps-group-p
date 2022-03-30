@@ -11,7 +11,15 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Alert from '@mui/material/Alert';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {useState} from "react";
+import {useNavigate} from 'react-router-dom'
+import * as Yup from "yup";
+import {useFormik} from "formik";
+import {AlertTitle} from "@mui/material";
+//import {useNavigate} from "react-router";
+
 
 function Copyright(props) {
     return (
@@ -25,28 +33,60 @@ function Copyright(props) {
         </Typography>
     );
 }
+async function register(credentials) {
+    return fetch('https://minitwit.online/backend/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+    })
+        //.then(data => data.json())
+}
 
 const theme = createTheme();
 
 export default function SignUp() {
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        // eslint-disable-next-line no-console
-        const newUser = {
-            username: data.get('username'),
-            email: data.get('email'),
-            password: data.get('password'),
-        };
-        console.log({
-            username: data.get('username'),
-            email: data.get('email'),
-            password: data.get('password'),
+
+    const navigate = useNavigate();
+
+    const validationSchema =
+        Yup.object().shape({
+            username: Yup.string()
+                .required('Username is required')
+                .min(6, 'Username must be at least 6 characters')
+                .max(20, 'Username must not exceed 20 characters'),
+            email: Yup.string()
+                .required('Email is required')
+                .email('Email is invalid'),
+            password: Yup.string()
+                .required('Password is required')
+                .min(6, 'Password must be at least 6 characters')
+                .max(40, 'Password must not exceed 40 characters'),
+            acceptTerms: Yup.bool().oneOf([true], 'Accept Terms is required'),
         });
-        window.location = '.';
-    };
     
 
+    const formik = useFormik({
+        initialValues: {
+            username: '',
+            email: '',
+            password: '',
+        },
+        validationSchema: validationSchema,
+        onSubmit: async (values) => {
+            const newUser = {
+                Username: values.username,
+                Email: values.email,
+                Pwhash: values.password,}
+            const response = await register(newUser);
+            if(response.statusCode === 400 &&  response.statusCode === 409) {
+                alert("Something went wrong. Could not register" + response.statusCode)
+            } else {
+                navigate('/signin');
+            }
+        },
+    });
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -65,7 +105,7 @@ export default function SignUp() {
                     <Typography component="h1" variant="h5">
                         Register
                     </Typography>
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                    <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
@@ -76,6 +116,9 @@ export default function SignUp() {
                                     id="username"
                                     label="Username"
                                     autoFocus
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.username && Boolean(formik.errors.username)}
+                                    helperText={formik.touched.username && formik.errors.username}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -87,6 +130,9 @@ export default function SignUp() {
                                     type="email"
                                     name="email"
                                     autoComplete="email"
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.email && Boolean(formik.errors.email)}
+                                    helperText={formik.touched.email && formik.errors.email}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -98,6 +144,9 @@ export default function SignUp() {
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.password && Boolean(formik.errors.password)}
+                                    helperText={formik.touched.password && formik.errors.password}
                                 />
                             </Grid>
                             <Grid item xs={12}>

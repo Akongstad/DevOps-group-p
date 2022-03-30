@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Extensions;
 using Prometheus;
 
 namespace MinitwitReact.Controllers;
@@ -123,7 +124,10 @@ public class MinitwitSimulationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Follow(string username)
     {
-        
+        _logger.LogDebug("Uri: {Uri}", Request.GetDisplayUrl());
+        _logger.LogDebug("Follow request {Headers}\n" +
+                         "{@Body}", Request.Headers, Request.Body );
+
         UpdateLatest(Request);
         var userId = await _minitwit.GetUserId(username);
         if (userId <= 0)

@@ -12,6 +12,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import useToken from './App/UseToken';
+import {useNavigate} from "react-router";
+import * as Yup from "yup";
+import {useFormik} from "formik";
 
 function Copyright(props) {
     return (
@@ -25,24 +29,56 @@ function Copyright(props) {
         </Typography>
     );
 }
+async function login(credentials) {
+    return fetch('https://minitwit.online/backend/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+    })
+}
 
 const theme = createTheme();
 
 export default function SignIn() {
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        // eslint-disable-next-line no-console
-        const user = {
-            username: data.get('username'),
-            password: data.get('password')
-        };
-        console.log({
-            username: data.get('username'),
-            password: data.get('password'),
+    const navigate = useNavigate();
+    const { token, setToken } = useToken();
+
+    const validationSchema =
+        Yup.object().shape({
+            username: Yup.string()
+                .required('Username is required')
+                .min(6, 'Username must be at least 6 characters')
+                .max(20, 'Username must not exceed 20 characters'),
+            password: Yup.string()
+                .required('Password is required')
+                .min(6, 'Password must be at least 6 characters')
+                .max(40, 'Password must not exceed 40 characters'),
         });
-        window.location = '.';
-    };
+
+
+    const formik = useFormik({
+        initialValues: {
+            username: '',
+            password: '',
+        },
+        validationSchema: validationSchema,
+        onSubmit: async (values) => {
+            const userLogin = {
+                Username: values.username,
+                Pwhash: values.password,}
+            const response = await login(userLogin);
+            if(response.statusCode === 400 &&  response.statusCode === 409) {
+                alert("Something went wrong. Could not login" + response.statusCode)
+            } else {
+                response.json().then(data => {
+                    setToken(data.token);
+                    navigate('/');
+                })
+            }
+        },
+    });
 
     return (
         <ThemeProvider theme={theme}>
@@ -62,16 +98,18 @@ export default function SignIn() {
                     <Typography component="h1" variant="h5">
                         Sign in
                     </Typography>
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                    <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 1 }}>
                         <TextField
-                            margin="normal"
+                            autoComplete="given-name"
+                            name="username"
                             required
                             fullWidth
                             id="username"
                             label="Username"
-                            name="Username"
-                            autoComplete="Username"
                             autoFocus
+                            onChange={formik.handleChange}
+                            error={formik.touched.username && Boolean(formik.errors.username)}
+                            helperText={formik.touched.username && formik.errors.username}
                         />
                         <TextField
                             margin="normal"
@@ -82,6 +120,9 @@ export default function SignIn() {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            onChange={formik.handleChange}
+                            error={formik.touched.password && Boolean(formik.errors.password)}
+                            helperText={formik.touched.password && formik.errors.password}
                         />
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
