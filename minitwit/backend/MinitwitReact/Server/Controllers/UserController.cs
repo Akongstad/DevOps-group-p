@@ -5,15 +5,13 @@ namespace MinitwitReact.Server.Controllers;
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger; //??
-    private readonly IAuthenticator _authenticator;
     private readonly IUserRepository _userRepository;
     private readonly IJwtUtils _jwtUtils;
 
-    public UserController(ILogger<UserController> logger, IUserRepository userRepository, IAuthenticator authenticator, IJwtUtils jwtUtils)
+    public UserController(ILogger<UserController> logger, IUserRepository userRepository, IJwtUtils jwtUtils)
     {
         _logger = logger;
         _userRepository = userRepository;
-        _authenticator = authenticator;
         _jwtUtils = jwtUtils;
     }
     
@@ -45,7 +43,7 @@ public class UserController : ControllerBase
         }
         else
         {
-            await _authenticator.Register(request["username"]!.ToString(),
+            await _userRepository.Register(request["username"]!.ToString(),
                 request["email"]!.ToString(), request["pwd"]!.ToString());
         }
 
@@ -59,7 +57,7 @@ public class UserController : ControllerBase
         var user = await  _userRepository.GetUserDetailsByName(login.Username);
         if (user is null) return BadRequest(new {message = "Invalid Username"});
         
-        var id = await _authenticator.Login(user.Username, login.PwHash);
+        var id = await _userRepository.Login(user.Username, login.PwHash);
         if(id < 1) return BadRequest(new {message = "Invalid Password"});
 
         var jwt = _jwtUtils.GenerateToken(user);

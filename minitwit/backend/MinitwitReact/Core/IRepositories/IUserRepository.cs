@@ -8,5 +8,8 @@ public interface IUserRepository
 
     Task<long> GetUserIdFromUsername(string username);
     Task<UserDetailsDto?> GetUserDetailsByName(string name);
+    
+    Task<long> Login(string username, string pw);
+    Task<long> Register(string username, string email, string pw);
 }
 

@@ -4,3 +4,6 @@ global using MinitwitReact;
 global using MinitwitReact.Entities;
 global using Xunit;
 global using MinitwitReact.Core.DTO;
+global using MinitwitReact.Core;
+global using MinitwitReact.Core.IRepositories;
+global using MinitwitReact.Infrastructure.Repositories;

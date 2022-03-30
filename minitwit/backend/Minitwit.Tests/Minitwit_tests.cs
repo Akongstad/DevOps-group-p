@@ -271,14 +271,12 @@ public class MinitwitTests : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!_disposed)
+        if (_disposed) return;
+        if (disposing)
         {
-            if (disposing)
-            {
-                _context.Dispose();
-            }
-            _disposed = true;
+            _context.Dispose();
         }
+        _disposed = true;
     }
 
     public void Dispose()
