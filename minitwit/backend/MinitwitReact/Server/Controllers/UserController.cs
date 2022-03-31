@@ -1,7 +1,7 @@
 namespace MinitwitReact.Server.Controllers;
 
 [ApiController]
-[Route("[controller]/user")]
+[Route("[controller]")]
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger; //??
@@ -18,37 +18,9 @@ public class UserController : ControllerBase
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<string>> Register()
+    public async Task<long> PostRegister ([FromBody] UserCreateDto user)
     {
-        var request = await Request.ReadFromJsonAsync<JsonObject>();
-
-        var id = await _userRepository.GetUserIdFromUsername(request!["username"]!.ToString());
-        var error = "";
-        
-        if (!request.ContainsKey("username"))
-        {
-            error = "you have to enter a username";
-        }
-        else if(!request.ContainsKey("email") || !request["email"]!.ToString().Contains('@'))
-        {
-            error = "You have to enter a valid email address";
-        }
-        else if (!request.ContainsKey("pwd"))
-        {
-            error = "You have to enter a password";
-        }
-        else if (id > 0)
-        {
-            error = "The username ios already taken";
-        }
-        else
-        {
-            await _userRepository.Register(request["username"]!.ToString(),
-                request["email"]!.ToString(), request["pwd"]!.ToString());
-        }
-
-        if (error == "") return NoContent();
-        return BadRequest(error);
+        return await _userRepository.Register(user.Username, user.Email, user.PwHash);
     }
     
     [HttpPost("login")]
@@ -66,6 +38,9 @@ public class UserController : ControllerBase
     }
     
     
-
+    [HttpGet("")]
+    public Task<IEnumerable<UserDto>> Get(){
+        return _userRepository.GetAllUsers();
+    }
 
 }

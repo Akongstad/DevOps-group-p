@@ -13,7 +13,7 @@ public class MessageRepositoryTests : BaseRepositoryTest
     }
     
     [Fact]
-    public async Task PublicTimeline_returns_public_timeline()
+    public async Task GetPublicTimeline_returns_public_timeline()
     {
         var actual = await _messageRepository.GetPublicTimeline();
         var valueTuples = actual.ToList();
@@ -23,7 +23,38 @@ public class MessageRepositoryTests : BaseRepositoryTest
         Assert.Equal("Bruce Wayne", valueTuples.Last().Author);
         Assert.Equal("I am Batman!", valueTuples.Last().Text);
     }
+    
+    [Fact]
+    public async Task GetTimelineByUsernameAndSessionId_returns_null_if_invalid_user()
+    {
+        var actual = await _messageRepository.GetTimelineByUsernameAndSessionId(1, "a");
+        
+        Assert.Null(actual);
+    }
 
+    [Fact]
+    public async Task GetOwnTimelineBySessionId_returns_own_timeline()
+    {
+        var actual = await _messageRepository.GetOwnTimelineBySessionId(1);
+        var valueTuples = actual.ToList();
+        
+        Assert.Equal("Elon Musk", valueTuples.First().Author);
+        Assert.Equal("Tesla stonks", valueTuples.First().Text);
+    }
+    
+    
+    [Fact]
+    public async Task GetOwnTimelineBySessionId_returns_publicTimeline_if_session_id_is_invalid()
+    {
+        var actual = await _messageRepository.GetOwnTimelineBySessionId(-1);
+        var valueTuples = actual.ToList();
+        
+        Assert.Equal("Jeff Bezos", valueTuples.First().Author);
+        Assert.Equal("Elon bad", valueTuples.First().Text);
+        Assert.Equal("Bruce Wayne", valueTuples.Last().Author);
+        Assert.Equal("I am Batman!", valueTuples.Last().Text);
+    }
+    
     [Fact]
     public async Task PostMessage_Creates_new_message_by_user()
     {

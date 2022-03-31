@@ -1,6 +1,6 @@
 namespace MinitwitReact.Server.Controllers;
 
-[Route("follows/{username}")]
+[Route("[controller]")]
 public class FollowerController : ControllerBase
 {
     private readonly IFollowerRepository _followerRepository;
@@ -11,45 +11,28 @@ public class FollowerController : ControllerBase
         _userRepository = userRepository;
     }
     
-    [HttpGet("")]
     [HttpPost("")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Follow(string username)
+    public async Task<IActionResult> Follow([FromBody] FollowerDto follower)
     {
-        var request = await Request.ReadFromJsonAsync<JsonObject>();
-        var userId = await _userRepository.GetUserIdFromUsername(username);
-        if (userId <= 0)
-        {
-            return NotFound();
-        }
 
-        request!.TryGetPropertyValue("no", out var no);
-        var limit = no == null ? 100 : int.Parse(no.ToString());
-
-        if (Request.Method == "POST" & request.ContainsKey("follow"))
-        {
-            var followUsername = request["follow"]!.ToString();
-            await _followerRepository.FollowUser(userId, followUsername);
-            return NoContent();
+        if (await ValidateId(follower.UserId)){
+            throw new ArgumentException("user not logged in");
         }
-        if(Request.Method =="POST" && request.ContainsKey("unfollow"))
-        {
-            var unfollowUsername = request["unfollow"]!.ToString();
-            await _followerRepository.UnfollowUser(userId, unfollowUsername);
-            return NoContent();
-        }
-
-        if (Request.Method != "GET") return Conflict();
-        {
-            return await GetFollows(username, limit);
-        }
+        var result = await _followerRepository.FollowUser(follower.UserId, follower.Username);
+        return result.ToActionResult();
     }
-    private async Task<IActionResult> GetFollows(string username, int limit)
+    
+    [HttpPost("remove")]
+    public async Task<IActionResult> UnFollow([FromBody] FollowerDto follower)
     {
-        var followers = await _followerRepository.GetFollowers(username, limit);
-        var filteredMessages = followers.Select(item => new {follows = item.Username}).Cast<object>().ToList();
-        return Ok(filteredMessages);
+        if (await ValidateId(follower.UserId)){
+            throw new ArgumentException("user not logged in");
+        }
+        var result = await _followerRepository.UnfollowUser(follower.UserId, follower.Username);
+        return result.ToActionResult();
+    }
+    
+    private async Task<bool> ValidateId(long id){
+        return await _userRepository.GetUserDetailsById(id) == null;
     }
 }
