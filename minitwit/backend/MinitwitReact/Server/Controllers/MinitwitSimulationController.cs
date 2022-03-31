@@ -1,5 +1,3 @@
-using Prometheus;
-
 namespace MinitwitReact.Server.Controllers;
 
 [ApiController]
@@ -74,7 +72,7 @@ public class MinitwitSimulationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> GetUserTimeline([FromRoute]string username)
     {
-        var request =await Request.ReadFromJsonAsync<JsonObject>();
+        
         UpdateLatest(Request);
         var userId = await _minitwit.GetUserId(username);
         if (userId <= 0)
@@ -101,6 +99,7 @@ public class MinitwitSimulationController : ControllerBase
         } 
         if (Request.Method == "POST")
         {
+            var request =await Request.ReadFromJsonAsync<JsonObject>();
             _tweetCounter.Inc();
             await _minitwit.PostMessage(userId, request!["content"]!.ToString());
             return NoContent();
@@ -122,7 +121,7 @@ public class MinitwitSimulationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Follow(string username)
     {
-        var request = await Request.ReadFromJsonAsync<JsonObject>();
+        
         UpdateLatest(Request);
         var userId = await _minitwit.GetUserId(username);
         if (userId <= 0)
@@ -131,17 +130,13 @@ public class MinitwitSimulationController : ControllerBase
             _userNotFoundCounter.Inc();
             return NotFound();
         }
-        int limit; 
-        request!.TryGetPropertyValue("no", out var no);
-        if (no == null)
+        int limit = 100;
+        if (Request.Method == "GET") 
         {
-            limit = 100;
-        }
-        else
-        {
-            limit = int.Parse(no.ToString());
+            return await GetFollows(username, limit);
         }
 
+        var request = await Request.ReadFromJsonAsync<JsonObject>();
         if (Request.Method == "POST" & request.ContainsKey("follow"))
         {
             _followCounter.Inc();
@@ -156,11 +151,9 @@ public class MinitwitSimulationController : ControllerBase
             await _minitwit.UnfollowUser(userId, unfollowUsername);
             return NoContent();
         }
+        return BadRequest();
 
-        if (Request.Method != "GET") return Conflict();
-        {
-            return await GetFollows(username, limit);
-        }
+        
     }
     private async Task<IActionResult> GetFollows(string username, int limit)
     {
