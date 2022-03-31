@@ -9,11 +9,12 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
         // Create an httpclient for api tests
         _client = factory.CreateClient();
     }
-    
+
 
     // API TESTS
     [Fact]
-    public async Task HTTP_GET_Users_Success(){
+    public async Task HTTP_GET_Users_Success()
+    {
         // await using var app = new WebApplicationFactory<Program>();
         // using var _client = app.CreateClient();
         var response = await _client.GetAsync("user/");
@@ -21,48 +22,49 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
     }
 
     [Fact]
-    public async Task HTTP_GET_Msgs_Success(){
+    public async Task HTTP_GET_Msgs_Success()
+    {
         var response = await _client.GetAsync("message/timeline");
         response.Should().BeSuccessful();
     }
 
     [Fact]
-    public async Task HTTP_GET_Timeline_Success(){
+    public async Task HTTP_GET_Timeline_Success()
+    {
         var response = await _client.GetAsync("message/timeline/Jeff Bezos/");
         response.Should().BeSuccessful();
     }
-    
+
     [Fact]
-    public async Task HTTP_POST_Follow_Success(){
+    public async Task HTTP_POST_Follow_Success()
+    {
         var response = await _client.PostAsJsonAsync("follower", new FollowerDto(1, "Jeff Bezos"));
         response.Should().BeSuccessful();
     }
-    
+
     [Fact]
-    public async Task HTTP_POST_Unfollow_Success(){
+    public async Task HTTP_POST_Unfollow_Success()
+    {
         var response = await _client.PostAsJsonAsync("follower/remove", new FollowerDto(2, "Elon Musk"));
         response.Should().BeSuccessful();
     }
-    
-    /*[Fact]
-    public async Task HTTP_GET_Login_Success(){
-        var response = await _client.GetAsync("minitwit/login");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }*/
-    
+
     [Fact]
-    public async Task HTTP_POST_Message_Success(){
-        var response = await _client.PostAsJsonAsync("message/", new MessageCreateDto() {Text = "some message", PubDate = 2022});
-        response.Should().BeSuccessful();
-    }
-    
-    [Fact]
-    public async Task HTTP_POST_Register_Success(){
-        var response = await _client.PostAsJsonAsync("user/register",new UserCreateDto() {Username = "apiTestUsername", Email = "apitest@email.com", PwHash = "yeet"});
+    public async Task HTTP_POST_Message_Success()
+    {
+        var response =
+            await _client.PostAsJsonAsync("message/", new MessageCreateDto() {Text = "some message", PubDate = 2022});
         response.Should().BeSuccessful();
     }
 
-    // TEST FOR ADD MESSAGES
+    [Fact]
+    public async Task HTTP_POST_Register_Success()
+    {
+        var response = await _client.PostAsJsonAsync("user/register",
+            new UserCreateDto() {Username = "apiTestUsername", Email = "apitest@email.com", PwHash = "yeet"});
+        response.Should().BeSuccessful();
+    }
+
     private bool _disposed;
 
     protected virtual void Dispose(bool disposing)
@@ -72,12 +74,13 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
         {
             // _context.Dispose();
         }
+
         _disposed = true;
     }
 
     public void Dispose()
     {
-        Dispose(disposing:true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 }
