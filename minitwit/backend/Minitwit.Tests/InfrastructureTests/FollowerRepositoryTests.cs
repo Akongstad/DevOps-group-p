@@ -10,16 +10,23 @@ public class FollowerRepositoryTests : BaseRepositoryTest
     }
     
     [Fact]
-    public async Task FollowUser_returns_updated_given_valid_session_and_target()
+    public async Task FollowUser_returns_updated_given_valid_session()
     {
         var response = await _followerRepository.FollowUser(1, "Jeff Bezos");
         Assert.Equal(Status.Updated, response);
     }
 
     [Fact]
-    public async Task FollowUser_returns_NotFound_given_invalid_session_and_target()
+    public async Task FollowUser_returns_NotFound_given_invalid_target()
     {
-        var response = await _followerRepository.FollowUser(0, "Jeffers");
+        var response = await _followerRepository.FollowUser(1, "Jeffers");
+        Assert.Equal(Status.NotFound, response);
+    }
+    
+    [Fact]
+    public async Task FollowUser_returns_NotFound_given_invalid_session()
+    {
+        var response = await _followerRepository.FollowUser(-1, "Jeffers");
         Assert.Equal(Status.NotFound, response);
     }
 
@@ -44,13 +51,22 @@ public class FollowerRepositoryTests : BaseRepositoryTest
     {
         var response = await _followerRepository.UnfollowUser(2, "Elon Musk");
         Assert.Equal(Status.Updated, response);
-    }
+    }   
+
     [Fact]
-    public async Task UnFollowUser_returns_Notfound_given_invalid_session_and_target()
+    public async Task UnFollowUser_returns_Notfound_given_invalid_target()
     {
-        var response = await _followerRepository.UnfollowUser(0, "Elonis");
+        var response = await _followerRepository.UnfollowUser(2, "Elonis");
         Assert.Equal(Status.NotFound, response);
     }
+    
+    [Fact]
+    public async Task UnFollowUser_returns_Notfound_given_invalid_session_minus_1()
+    {
+        var response = await _followerRepository.UnfollowUser(-1, "Elon Musk");
+        Assert.Equal(Status.NotFound, response);
+    }
+    
     [Fact]
     public async Task UnFollowUser_returns_Conflict_given_nonExisting_follow()
     {
@@ -72,16 +88,24 @@ public class FollowerRepositoryTests : BaseRepositoryTest
     [Fact]
     public async Task GetFollowers_returns_List_of_followers()
     {
-        var bezos = "Jeff Bezos";
-        var elon = "Elon Musk";
+        const string bezos = "Jeff Bezos";
+        const string elon = "Elon Musk";
         var actual = await _followerRepository.GetFollowers(bezos, 5);
         Assert.Equal(elon,actual.First().Username);
     }
+    
     [Fact]
     public async Task GetFollowers_returns_EmptyList_of_followers_if_no_follows()
     {
-        var elon = "Elon Musk";
+        const string elon = "Elon Musk";
         var actual = await _followerRepository.GetFollowers(elon, 5);
+        Assert.Empty(actual);
+    }
+    
+    [Fact]
+    public async Task GetFollowers_returns_EmptyList_of_followers_if_not_user()
+    {
+        var actual = await _followerRepository.GetFollowers("else", 5);
         Assert.Empty(actual);
     }
 }

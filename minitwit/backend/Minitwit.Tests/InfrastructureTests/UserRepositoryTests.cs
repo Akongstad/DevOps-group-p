@@ -23,6 +23,7 @@ public class UserRepositoryTests : BaseRepositoryTest
     {
         Assert.Equal(0, await _userRepository.GetUserIdFromUsername("Irrelevant person"));
     }
+    
     [Fact]
     public async Task GetUserDetailsById_returns_User_given_valid_id()
     {
@@ -92,4 +93,15 @@ public class UserRepositoryTests : BaseRepositoryTest
         Assert.Equal(elon.Username, actual!.Username);
         Assert.Equal(elon.Id, actual.UserId);
     }
+    
+    [Fact]
+    public async Task GetUserDetailsByName_returns_User_given_valid_id()
+    {
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
+        var actual = await _userRepository.GetUserDetailsByName("Elon Musk");
+        Assert.Equal(elon.Username, actual!.Username);
+        Assert.Equal(elon.Id, actual.UserId);
+    }
+    
+    
 }

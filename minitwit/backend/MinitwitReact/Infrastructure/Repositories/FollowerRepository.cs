@@ -55,7 +55,6 @@ public class FollowerRepository : IFollowerRepository
         _context.Followers.Remove(follower!);
         await _context.SaveChangesAsync();
         return Status.Updated;
-        
     }
     
     public async Task<IEnumerable<UserDto>> GetFollowers(string username, int limit)

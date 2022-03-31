@@ -23,6 +23,9 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSet
 builder.Services.AddDbContext<MiniTwitContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Minitwit")));
 builder.Services.AddScoped<IMiniTwitContext, MiniTwitContext>();
 builder.Services.AddScoped<IMinitwit, Minitwit>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IFollowerRepository, FollowerRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 //Cors policy
 builder.Services.AddCors(options =>
@@ -58,7 +61,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
+    pattern: "{controller}/{action}/{id?}");
     
 app.MapFallbackToFile("index.html");
 

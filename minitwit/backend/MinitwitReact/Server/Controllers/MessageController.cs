@@ -17,7 +17,7 @@ public class MessageController : ControllerBase
     }
     
     // Add message
-    [HttpPost("msg")]
+    [HttpPost("")]
     public async Task<IActionResult> PostNewMessage([FromBody] MessageCreateDto message)
     {
         var id = Convert.ToInt64(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -29,13 +29,14 @@ public class MessageController : ControllerBase
         return result.ToActionResult();
     }
     
+    [HttpGet("timeline")]
     public async Task<ActionResult<string>> GetPublicTimeline()
     {
         var timeline = await _messageRepository.GetPublicTimeline();
         return await SerializeTimeline(timeline);
     } 
     
-    [HttpGet("messages/{username}")]
+    [HttpGet("timeline/{username}")]
     public async Task<IActionResult> GetTimeline(string username)
     {
         var sessionId = Convert.ToInt64(User.FindFirstValue(ClaimTypes.NameIdentifier));
