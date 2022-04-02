@@ -9,7 +9,24 @@ import Link from '@mui/material/Link';
 
 function Header(props) {
     const { sections, title } = props;
-
+    
+    const handleLogout = () => {
+        localStorage.clear();
+        window.location.reload()
+    }
+    
+    function AuthStateButton(){
+        const loggedInUser = localStorage.getItem("token");
+        if(loggedInUser){
+            return <Button variant="outlined" size="small" onClick={handleLogout}>
+                Sign out
+            </Button>
+        } else {
+            return <Button href={"signin"} variant="outlined" size="small">
+                Sign in
+            </Button>
+        }
+    }
     return (
         <React.Fragment>
             <Toolbar sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -27,9 +44,7 @@ function Header(props) {
                 <IconButton>
                     <SearchIcon />
                 </IconButton>
-                <Button href={"signin"} variant="outlined" size="small">
-                    Sign in
-                </Button>
+                <AuthStateButton/>
             </Toolbar>
             <Toolbar
                 component="nav"

@@ -1,3 +1,6 @@
+using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using MinitwitReact.Authentication;
 
 namespace MinitwitReact.Controllers;
@@ -48,7 +51,6 @@ public class MinitwitController : ControllerBase
     [HttpPost("follow")]
     public async Task<IActionResult> Follow([FromBody] FollowerDto follower)
     {
-
         if (await ValidateId(follower.UserId)){
             throw new ArgumentException("user not logged in");
         }
@@ -68,6 +70,8 @@ public class MinitwitController : ControllerBase
 
     // Login
     [HttpPost("login")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetLogin([FromBody] UserLoginDto login)
     {
         var user = await  _minitwit.UserByName(login.Username);
@@ -82,7 +86,9 @@ public class MinitwitController : ControllerBase
     }
     
     //Register                                                                      
-    [HttpPost("register")]                                                          
+    [HttpPost("register")] 
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> PostRegister ([FromBody] UserCreateDto user)
     {
         var id = await _minitwit.Register(user.Username, user.Email, user.PwHash);
