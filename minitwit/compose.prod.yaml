@@ -121,6 +121,7 @@ services:
       - elk_elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - elastic
+      - main
     
   kibana:
     image: "docker.elastic.co/kibana/kibana:7.17.1"
