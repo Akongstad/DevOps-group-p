@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace MinitwitReact.Entities
+﻿namespace MinitwitReact.Infrastructure.Entities
 {
     public class Message
     {

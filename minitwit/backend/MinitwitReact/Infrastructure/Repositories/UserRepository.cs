@@ -9,7 +9,8 @@ public class UserRepository : IUserRepository
         _context = context;
     }
     
-    public async Task<IEnumerable<UserDto>> GetAllUsers() => await _context.Users.Select(u => new UserDto(u.Id, u.Username)).ToListAsync();
+    public async Task<IEnumerable<UserDto>> GetAllUsers() => 
+        await _context.Users.Select(u => new UserDto(u.Id, u.Username)).ToListAsync();
     
     public async Task<UserDto?> GetUserById(long userid)
     {
@@ -34,33 +35,27 @@ public class UserRepository : IUserRepository
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == name);
         return user is null ? null : new UserDetailsDto(user.Id, user.Username, user.Email, user.PwHash);
     }
-    public async Task<long> Login(string username, string pw)
+    public async Task<AuthStatus> Login(UserLoginDto userLoginDto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == userLoginDto.Username);
         if (user is null)
         {
-            return 0;
+            return AuthStatus.WrongUsername;
         }
-        if (!BCrypt.Net.BCrypt.Verify(pw, user.PwHash))
-        {
-            return -1;
-        }
-        return user.Id;
+        return !BCrypt.Net.BCrypt.Verify(userLoginDto.PwHash, user.PwHash) ? AuthStatus.WrongPassword : AuthStatus.Authorized;
     }
 
-    public async Task<long> Register(string username, string email, string pw)
+    public async Task<AuthStatus> Register(UserCreateDto userCreateDto)
     {
-        var conflict = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-        if (conflict is not null)
+        var candidateUsername = await _context.Users.FirstOrDefaultAsync(u => u.Username == userCreateDto.Username);
+        if (candidateUsername is not null)
         {
-            return 0;
+            return AuthStatus.UsernameInUse;
         }
-        var user = new User {Username = username, Email = email, PwHash = BCrypt.Net.BCrypt.HashPassword(pw)};
+        var user = new User {Username = userCreateDto.Username, Email = userCreateDto.Email, PwHash = BCrypt.Net.BCrypt.HashPassword(userCreateDto.PwHash)};
         
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
-        var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        return savedUser!.Id;
+        return AuthStatus.Authorized;
     }
-
 }

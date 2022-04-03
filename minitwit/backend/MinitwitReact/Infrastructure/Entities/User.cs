@@ -1,4 +1,4 @@
-﻿namespace MinitwitReact.Entities
+﻿namespace MinitwitReact.Infrastructure.Entities
 {
     public class User
     {

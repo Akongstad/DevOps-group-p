@@ -26,12 +26,12 @@ public class MessageRepository : IMessageRepository
         return messages;
     }
 
-    public async Task<IEnumerable<MessageDto>> GetTimelineByUsernameAndSessionId(long sessionId, string username)
+    public async Task<IEnumerable<MessageDto>> GetTimelineByUsername(string username)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null)
         {
-            return null!;
+            return new List<MessageDto>();
         }
         return await _context.Messages
             .AsNoTracking()
@@ -45,27 +45,27 @@ public class MessageRepository : IMessageRepository
                 m.PubDate)).ToListAsync();
     }
 
-    public async Task<IEnumerable<MessageDto>> GetOwnTimelineBySessionId(long sessionId)
+    public async Task<IEnumerable<MessageDto>> GetOwnTimelineById(long userId)
     {
-        var user = await _userRepository.GetUserById(sessionId);
-        if (sessionId > 0 && user != null)
+        var user = await _userRepository.GetUserById(userId);
+        if (userId > 0 && user != null)
         {
-            return await GetTimelineByUsernameAndSessionId(sessionId, user.Username);
+            return await GetTimelineByUsername(user.Username);
         }
         return await GetPublicTimeline();
     }
     
-    public async Task<Status> PostMessageToTimeline(long userid, string text)
+    public async Task<Status> PostNewMessageToTimeline(long userId, string text)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userid);
-        if (user == null)
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null && text != "")
         {
             return Status.NotFound;
         }
         await _context.Messages.AddAsync(new Message
         {
             Text = text,
-            AuthorId = userid,
+            AuthorId = userId,
             Author = user,
             PubDate = DateTime.UtcNow.Ticks,
             Flagged = 0

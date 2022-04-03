@@ -1,6 +1,4 @@
 global using Microsoft.EntityFrameworkCore;
-global using MinitwitReact.Core;
-global using MinitwitReact.Entities;
 global using Microsoft.AspNetCore.Mvc;
 global using System.Text.Json;
 global using System.Text.Json.Nodes;
@@ -10,13 +8,14 @@ global using System.Security.Claims;
 global using System.Text;
 global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Tokens;
-
 global using MinitwitReact;
-global using MinitwitReact.Core;
 global using MinitwitReact.Extensions;
 global using MinitwitReact.Authentication;
 global using MinitwitReact.Core.IRepositories;
 global using MinitwitReact.Core.DTO;
+global using MinitwitReact.Core.Enums;
 global using MinitwitReact.Infrastructure.Repositories;
+global using MinitwitReact.Infrastructure.Context;
+global using MinitwitReact.Infrastructure.Entities;
 global using Prometheus;
-
+global using Microsoft.AspNetCore.Authorization;
