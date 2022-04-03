@@ -81,6 +81,7 @@ jobs:
               echo "${{ secrets.DB_PASSWORD }}" > .local/db_password.txt  &&
               echo "${{ secrets.DB_CONNECTION_STRING }}" > .local/connection_string.txt  &&
               echo "${{ secrets.JWT_KEY }}" > .local/jwt_key.txt  &&
-              htpasswd -b -c .local/htpasswd ${{ secrets.KIBANA_USER }} "${{ secrets.KIBANA_PW }}" &&
+              rm -rf .local/.htpasswd &&
+              htpasswd -b -c .local/.htpasswd ${{ secrets.KIBANA_USER }} "${{ secrets.KIBANA_PW }}" &&
               ./run_script.sh &&
               echo "BIG CLAPS GJ Friends"
