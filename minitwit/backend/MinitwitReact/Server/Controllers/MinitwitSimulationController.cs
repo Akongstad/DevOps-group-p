@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Http.Extensions;
-using Prometheus;
 
 namespace MinitwitReact.Server.Controllers;
 
