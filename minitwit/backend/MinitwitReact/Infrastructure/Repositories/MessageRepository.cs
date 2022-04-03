@@ -35,7 +35,7 @@ public class MessageRepository : IMessageRepository
         }
         return await _context.Messages
             .AsNoTracking()
-            .Where(m => m.AuthorId == user.Id)
+            .Where(m => m.AuthorId == user.UserId)
             .OrderByDescending(m => m.PubDate)
             .Take(PageLimit)
             .Select(m => new MessageDto(
@@ -57,7 +57,7 @@ public class MessageRepository : IMessageRepository
     
     public async Task<Status> PostNewMessageToTimeline(long userId, string text)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
         if (user == null && text != "")
         {
             return Status.NotFound;

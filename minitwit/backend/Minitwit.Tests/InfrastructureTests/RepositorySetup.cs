@@ -14,12 +14,12 @@ public class RepositorySetup
         _context.Database.EnsureCreated();
 
         //Seed some stuff
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
-        var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321", Id = 2};
-        var bill = new User {Username = "Bill Gates", Email = "Microsoft@gmail.com", PwHash = "321123", Id = 3};
-        var bruce = new User{Username = "Bruce Wayne", Email = "Gotham@gmail.com", PwHash = "321", Id = 4};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
+        var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321", UserId = 2};
+        var bill = new User {Username = "Bill Gates", Email = "Microsoft@gmail.com", PwHash = "321123", UserId = 3};
+        var bruce = new User{Username = "Bruce Wayne", Email = "Gotham@gmail.com", PwHash = "321", UserId = 4};
         var hashman = new User
-            {Username = "Hash Tester", Email = "Hash@live.com", PwHash = BCrypt.Net.BCrypt.HashPassword("hashed"), Id = 5};
+            {Username = "Hash Tester", Email = "Hash@live.com", PwHash = BCrypt.Net.BCrypt.HashPassword("hashed"), UserId = 5};
         
         var hello = new Message
         {

@@ -29,11 +29,11 @@ public class UserRepositoryTests : BaseRepositoryTest
     [Fact]
     public async Task GetUserDetailsById_returns_User_given_valid_id()
     {
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
         var actual = await _userRepository.GetUserDetailsById(1);
         Assert.Equal(elon.Username, actual!.Username);
         Assert.Equal(elon.Email, actual.Email);
-        Assert.Equal(elon.Id, actual.UserId);
+        Assert.Equal(elon.UserId, actual.UserId);
         Assert.Equal(elon.PwHash, actual.PwHash);
     }
     [Fact]
@@ -56,7 +56,7 @@ public class UserRepositoryTests : BaseRepositoryTest
     [Fact]
     public async Task Login_given_invalid_username_AuthStatus_WrongUsername()
     {
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
         var login = await _userRepository.Login(new UserLoginDto("elonis", elon.PwHash));
         Assert.Equal(AuthStatus.WrongUsername, login);
     }
@@ -83,19 +83,19 @@ public class UserRepositoryTests : BaseRepositoryTest
     [Fact]
     public async Task GetUserById_returns_User_given_valid_id()
     {
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
         var actual = await _userRepository.GetUserById(1);
         Assert.Equal(elon.Username, actual!.Username);
-        Assert.Equal(elon.Id, actual.UserId);
+        Assert.Equal(elon.UserId, actual.UserId);
     }
     
     [Fact]
     public async Task GetUserDetailsByName_returns_User_given_valid_id()
     {
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
         var actual = await _userRepository.GetUserDetailsByName("Elon Musk");
         Assert.Equal(elon.Username, actual!.Username);
-        Assert.Equal(elon.Id, actual.UserId);
+        Assert.Equal(elon.UserId, actual.UserId);
     }
     
     

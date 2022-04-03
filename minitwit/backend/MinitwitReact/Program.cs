@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using MinitwitReact.Authentication;
-using Prometheus;
 using Serilog;
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -67,7 +65,7 @@ app.MapFallbackToFile("index.html");
 
 if (!app.Environment.IsEnvironment("Integration"))
 {
-    await app.SeedAsync();
+    //await app.SeedAsync();
 }
 app.Run();
 

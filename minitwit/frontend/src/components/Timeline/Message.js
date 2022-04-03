@@ -38,7 +38,7 @@ Message.propTypes = {
     post: PropTypes.shape({
         pub_date: PropTypes.string.isRequired,
         content: PropTypes.string.isRequired,
-        avatar: PropTypes.string.isRequired,
+        avatar: PropTypes.string,
         user: PropTypes.string.isRequired,
     }).isRequired,
 };

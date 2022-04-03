@@ -45,10 +45,10 @@ public class CustomWebApplicationFactory :  WebApplicationFactory<Program>
     private static void SeedProjects(MiniTwitContext context)
     {
         //Seed some stuff
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
-        var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321", Id = 2};
-        var bill = new User {Username = "Bill Gates", Email = "Microsoft@gmail.com", PwHash = "321123", Id = 3};
-        var bruce = new User{Username = "Bruce Wayne", Email = "Gotham@gmail.com", PwHash = "321", Id = 4};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
+        var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321", UserId = 2};
+        var bill = new User {Username = "Bill Gates", Email = "Microsoft@gmail.com", PwHash = "321123", UserId = 3};
+        var bruce = new User{Username = "Bruce Wayne", Email = "Gotham@gmail.com", PwHash = "321", UserId = 4};
         
         var hello = new Message
         {

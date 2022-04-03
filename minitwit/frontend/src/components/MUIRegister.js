@@ -31,7 +31,7 @@ function Copyright(props) {
     );
 }
 async function register(credentials) {
-    return fetch('https://minitwit.online/backend/register', {
+    return fetch('https://minitwit.online/apiv2/user/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

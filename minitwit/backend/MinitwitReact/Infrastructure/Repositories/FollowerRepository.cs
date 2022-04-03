@@ -66,9 +66,9 @@ public class FollowerRepository : IFollowerRepository
             return new List<UserDto>();
         }
         return await (from u in _context.Users
-            join f in _context.Followers on u.Id equals f.WhomId
+            join f in _context.Followers on u.UserId equals f.WhomId
             where f.WhoId == userId
-            select new UserDto(u.Id, u.Username)).Take(limit).ToListAsync();
+            select new UserDto(u.UserId, u.Username)).Take(limit).ToListAsync();
     }
     
     public async Task<bool> IsFollowing(long newFollowerId, UserDto targetUser)
