@@ -73,8 +73,8 @@ public class FollowerRepository : IFollowerRepository
     
     public async Task<bool> IsFollowing(long newFollowerId, UserDto targetUser)
     {
-        var follows = await _context.Followers
-            .Where(f => f.WhoId == newFollowerId && f.WhomId == targetUser.UserId).ToListAsync();
-        return follows.Count > 0;
+        var follows = 
+        await _context.Followers.FirstOrDefaultAsync(f => f.WhoId == newFollowerId && f.WhomId == targetUser.UserId);
+        return follows != null;
     }
 }

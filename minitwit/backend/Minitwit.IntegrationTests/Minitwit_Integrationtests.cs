@@ -45,7 +45,7 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
     [Fact]
     public async Task HTTP_POST_Unfollow_Success()
     {
-        var response = await _client.PostAsJsonAsync("follower/remove", new FollowerDto(2, "Elon Musk"));
+        var response = await _client.PostAsJsonAsync("follower/remove", new FollowerDto(1, "Jeff Bezos"));
         response.Should().BeSuccessful();
     }
 
