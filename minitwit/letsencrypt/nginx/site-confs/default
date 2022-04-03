@@ -1,16 +1,16 @@
 
 error_page 502 /502.html;
 
-map $status $loggable {
-    ~^[23]  0;
-    default 1;
-}
+# map $status $loggable {
+#     ~^[23]  0;
+#     default 1;
+# }
 
 # redirect access logs to stdout
-access_log /dev/stdout combined if=$loggable;
+# access_log /dev/stdout combined if=$loggable;
 
 # redirect error logs to stderr
-error_log /dev/stderr;
+# error_log /dev/stderr;
 
 # redirect all traffic to https
 server {
