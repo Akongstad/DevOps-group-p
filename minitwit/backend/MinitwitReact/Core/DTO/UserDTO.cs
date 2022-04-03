@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace MinitwitReact.Core.DTO;
 
 // string Email, should maybe not be in the normal Dto like below
@@ -14,7 +12,7 @@ public record UserCreateDto
     [StringLength(50)]
     public string Username { get; init; } = null!;
     [StringLength(50)]
-    public string Email { get; set; } = null!;
+    public string Email { get; init; } = null!;
     [StringLength(100)]
     public string PwHash { get; init; } = null!;
 }

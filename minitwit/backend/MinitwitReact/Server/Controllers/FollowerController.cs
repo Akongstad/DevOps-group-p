@@ -1,38 +1,31 @@
 namespace MinitwitReact.Server.Controllers;
 
+[Authorize]
+[ApiController]
 [Route("[controller]")]
 public class FollowerController : ControllerBase
 {
+    private readonly ILogger<FollowerController> _logger; 
     private readonly IFollowerRepository _followerRepository;
-    private readonly IUserRepository _userRepository;
-    public FollowerController(IFollowerRepository followerRepository, IUserRepository userRepository)
+    public FollowerController(ILogger<FollowerController> logger, IFollowerRepository followerRepository)
     {
+        _logger = logger;
         _followerRepository = followerRepository;
-        _userRepository = userRepository;
     }
-    
-    [HttpPost("")]
-    public async Task<IActionResult> Follow([FromBody] FollowerDto follower)
-    {
 
-        if (await ValidateId(follower.UserId)){
-            throw new ArgumentException("user not logged in");
-        }
-        var result = await _followerRepository.FollowUser(follower.UserId, follower.Username);
-        return result.ToActionResult();
-    }
-    
+    [Authorize]
+    [HttpPost("")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Follow([FromBody] FollowerDto follower)
+        => (await _followerRepository.FollowUser(follower)).ToActionResult();
+
+    [Authorize]
     [HttpPost("remove")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UnFollow([FromBody] FollowerDto follower)
-    {
-        if (await ValidateId(follower.UserId)){
-            throw new ArgumentException("user not logged in");
-        }
-        var result = await _followerRepository.UnfollowUser(follower.UserId, follower.Username);
-        return result.ToActionResult();
-    }
-    
-    private async Task<bool> ValidateId(long id){
-        return await _userRepository.GetUserDetailsById(id) == null;
-    }
+        => (await _followerRepository.UnfollowUser(follower)).ToActionResult();
 }

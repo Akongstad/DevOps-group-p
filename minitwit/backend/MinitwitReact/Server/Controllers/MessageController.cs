@@ -1,60 +1,44 @@
 namespace MinitwitReact.Server.Controllers;
 
+[Authorize]
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]")] 
 public class MessageController : ControllerBase
 {
     private readonly IMessageRepository _messageRepository;
-    private readonly IUserRepository _userRepository;
     private readonly ILogger<MessageController> _logger;
-    
 
-    public MessageController(ILogger<MessageController> logger, IMessageRepository messageRepository, IUserRepository userRepository)
+    public MessageController(ILogger<MessageController> logger, IMessageRepository messageRepository)
     {
         _logger = logger;
         _messageRepository = messageRepository;
-        _userRepository = userRepository;
     }
     
-    // Add message
+    [Authorize]
     [HttpPost("")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> PostNewMessage([FromBody] MessageCreateDto message)
-    {
-        var id = Convert.ToInt64(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        if (await ValidateId(id)){
-            throw new ArgumentException("user not logged in");
-        }
+        => (await _messageRepository.PostNewMessageToTimeline(Convert.ToInt64(User.FindFirstValue(ClaimTypes.NameIdentifier)), message.Text)).ToActionResult();
 
-        var result = await _messageRepository.PostMessageToTimeline(id, message.Text);
-        return result.ToActionResult();
-    }
-    
+
+    [AllowAnonymous]
     [HttpGet("timeline")]
+    [ProducesResponseType(typeof(IEnumerable<MessageDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<string>> GetPublicTimeline()
-    {
-        var timeline = await _messageRepository.GetPublicTimeline();
-        return await SerializeTimeline(timeline);
-    } 
-    
+        => await SerializeTimeline(await _messageRepository.GetPublicTimeline());
+
+
+    [Authorize]
     [HttpGet("timeline/{username}")]
-    public async Task<IActionResult> GetTimeline(string username)
-    {
-        var sessionId = Convert.ToInt64(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        if (await ValidateId(sessionId)){
-            throw new ArgumentException("user not logged in");
-        }
-        var timeline = await _messageRepository.GetTimelineByUsernameAndSessionId(sessionId, username);
+    [ProducesResponseType(typeof(IEnumerable<MessageDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<string>> GetTimeline(string username)
+        => await SerializeTimeline(await _messageRepository.GetTimelineByUsername(username));
 
-        return Ok(timeline);
-    }
-
-    private async Task<bool> ValidateId(long id){
-        return await _userRepository.GetUserDetailsById(id) == null;
-    }
-
+    // TODO better way?
     private static Task<ActionResult<string>> SerializeTimeline (IEnumerable<MessageDto> timeline)
     {
-        var msgs = timeline.Select(item => new {content = item.Text, pub_date = item.PubDate, user = item.Author,}).Cast<object>().ToList();
-        return Task.FromResult<ActionResult<string>>(JsonSerializer.Serialize(msgs));
+        var messages = timeline.Select(item => new {content = item.Text, pub_date = item.PubDate, user = item.Author,}).Cast<object>().ToList();
+        return Task.FromResult<ActionResult<string>>(JsonSerializer.Serialize(messages));
     }
 }

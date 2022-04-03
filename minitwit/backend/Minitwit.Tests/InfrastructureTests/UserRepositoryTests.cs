@@ -1,3 +1,5 @@
+using MinitwitReact.Core.Enums;
+
 namespace Minitwit.Tests.InfrastructureTests;
 
 public class UserRepositoryTests : BaseRepositoryTest
@@ -44,47 +46,40 @@ public class UserRepositoryTests : BaseRepositoryTest
     [Fact]
     public async Task Login_given_valid_username_and_pw_returns_id()
     {
-        var hashman = new User
+        var user = new User
             {Username = "Hash Tester", Email = "Hash@live.com", PwHash = "hashed"};
         
-        var login = await _userRepository.Login(hashman.Username, hashman.PwHash);
-        Assert.Equal(5, login);
+        var login = await _userRepository.Login(new UserLoginDto(user.Username, user.PwHash));
+        Assert.Equal(AuthStatus.Authorized, login);
     }
 
     [Fact]
-    public async Task Login_given_invalid_username_and_pw_returns_0()
+    public async Task Login_given_invalid_username_AuthStatus_WrongUsername()
     {
         var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
-        var login = await _userRepository.Login("elonis", elon.PwHash);
-        Assert.Equal(0, login);
+        var login = await _userRepository.Login(new UserLoginDto("elonis", elon.PwHash));
+        Assert.Equal(AuthStatus.WrongUsername, login);
     }
     [Fact]
-    public async Task Login_given_valid_username_and_invalid_pw_returns_minus1()
+    public async Task Login_given_valid_username_and_invalid_pw_returns_AuthStatus_WrongPassword()
     {
-        var login = await _userRepository.Login("Hash Tester", "Tesla->Moon");
-        Assert.Equal(-1, login);
+        var login = await _userRepository.Login(new UserLoginDto("Hash Tester", "Tesla->Moon"));
+        Assert.Equal(AuthStatus.WrongPassword, login);
     }
 
     [Fact]
-    public async Task register_returns_id_given_nonExisting_user()
+    public async Task register_returns_Success()
     {
-        var register = await _userRepository.Register("New User", "user@user.com", "SafePassword");
-        Assert.Equal(6, register);
+        var register = await _userRepository.Register(new UserCreateDto() {Username = "New User", Email = "user@user.com", PwHash = "SafePassword"});
+        Assert.Equal(AuthStatus.Authorized, register);
     }
     [Fact]
     public async Task register_returns_0_given_Existing_user()
     {
-        var register = await _userRepository.Register("Elon Musk", "Tesla@gmail.com", "SafePassword");
-        Assert.Equal(0, register);
+        var register = await _userRepository.Register(new UserCreateDto() {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "SafePassword"});
+        Assert.Equal(AuthStatus.UsernameInUse, register);
     }
-    
-    [Fact]
-    public async Task register_returns_0_given_Existing_use()
-    {
-        var register = await _userRepository.Register("Elon Musk", "Tesla@gmail.com", "SafePassword");
-        Assert.Equal(0, register);
-    }
-    
+
     [Fact]
     public async Task GetUserById_returns_User_given_valid_id()
     {

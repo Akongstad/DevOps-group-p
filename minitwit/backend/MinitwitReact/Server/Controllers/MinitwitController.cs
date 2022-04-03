@@ -57,20 +57,20 @@ public class MinitwitController : ControllerBase
     public async Task<IActionResult> Follow([FromBody] FollowerDto follower)
     {
 
-        if (await ValidateId(follower.UserId)){
+        if (await ValidateId(follower.FollowerId)){
             throw new ArgumentException("user not logged in");
         }
-        var result = await _miniTwit.FollowUser(follower.UserId, follower.Username);
+        var result = await _miniTwit.FollowUser(follower.FollowerId, follower.FollowedUsername);
         return result.ToActionResult();
     }
     //Unfollow
     [HttpPost("unfollow")]
     public async Task<IActionResult> UnFollow([FromBody] FollowerDto follower)
     {
-        if (await ValidateId(follower.UserId)){
+        if (await ValidateId(follower.FollowerId)){
             throw new ArgumentException("user not logged in");
         }
-        var result = await _miniTwit.UnfollowUser(follower.UserId, follower.Username);
+        var result = await _miniTwit.UnfollowUser(follower.FollowerId, follower.FollowedUsername);
         return result.ToActionResult();
     }
 

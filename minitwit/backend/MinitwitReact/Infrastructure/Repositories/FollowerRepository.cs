@@ -11,53 +11,54 @@ public class FollowerRepository : IFollowerRepository
         _userRepository = userRepository;
     }
     
-    public async Task<Status> FollowUser(long sessionId ,string username)
+    public async Task<Status> FollowUser(FollowerDto followRelation)
     {
-        var ownUser = await _userRepository.GetUserDetailsById(sessionId);
-        if (ownUser == null)
+        var newFollowerId = await _userRepository.GetUserDetailsById(followRelation.FollowerId);
+        var targetId = await _userRepository.GetUserIdFromUsername(followRelation.FollowedUsername);
+        
+        // Checks that both users are valid
+        if (targetId == 0 || newFollowerId is null)
         {
             return Status.NotFound;
         }
-        var whomId = await _userRepository.GetUserIdFromUsername(username);
-        if (whomId == 0)
-        {
-            return Status.NotFound;
-        }
-        var whomUser = await _userRepository.GetUserDetailsById(whomId);
-        if ( await IsFollowing(sessionId, whomUser!) || whomId == sessionId)
+        
+        // Checks that targetId is not the same as newFollowerId and that newFollowerId is not already following
+        if ( await IsFollowing(followRelation.FollowerId, (await _userRepository.GetUserDetailsById(targetId))!) || targetId == followRelation.FollowerId)
         {
             return Status.Conflict;
         }
 
-        await _context.Followers.AddAsync(new Follower {WhoId = sessionId, WhomId = whomId});
+        await _context.Followers.AddAsync(new Follower {WhoId = followRelation.FollowerId, WhomId = targetId});
         await _context.SaveChangesAsync();
         return Status.Updated;
     }
     
-    public async Task<Status> UnfollowUser(long sessionId ,string username)
+    public async Task<Status> UnfollowUser(FollowerDto followRelation)
     {
-        var ownUser = await _userRepository.GetUserDetailsById(sessionId);
-        if (ownUser is null)
+        var newFollowerId = await _userRepository.GetUserDetailsById(followRelation.FollowerId);
+        var targetId = await _userRepository.GetUserIdFromUsername(followRelation.FollowedUsername);
+        
+        // Checks that both users are valid
+        if (newFollowerId is null || targetId is 0)
         {
             return Status.NotFound;
         }
-        var whomId = await _userRepository.GetUserIdFromUsername(username);
-        if (whomId is 0)
-        {
-            return Status.NotFound;
-        }
-        var whomUser = await _userRepository.GetUserDetailsById(whomId);
-        if ( !await IsFollowing(sessionId, whomUser!) || whomId == sessionId)
+        
+        // Checks that targetId is not the same as newFollowerId and that newFollowerId is following
+        if ( !await IsFollowing(followRelation.FollowerId, (await _userRepository.GetUserDetailsById(targetId))!) || targetId == followRelation.FollowerId)
         {
             return Status.Conflict;
         }
-        var follower = await _context.Followers.FirstOrDefaultAsync(f => f.WhoId == sessionId && f.WhomId == whomId);
+        
+        var follower = await _context.Followers
+            .FirstOrDefaultAsync(f => f.WhoId == followRelation.FollowerId && f.WhomId == targetId);
         _context.Followers.Remove(follower!);
+        
         await _context.SaveChangesAsync();
         return Status.Updated;
     }
     
-    public async Task<IEnumerable<UserDto>> GetFollowers(string username, int limit)
+    public async Task<IEnumerable<UserDto>> GetFollowersByUsernameWithLimit(string username, int limit)
     {
         var userId = await _userRepository.GetUserIdFromUsername(username);
         if (userId <= 0)
@@ -70,9 +71,10 @@ public class FollowerRepository : IFollowerRepository
             select new UserDto(u.Id, u.Username)).Take(limit).ToListAsync();
     }
     
-    public async Task<bool> IsFollowing(long sessionId, UserDto user)
+    public async Task<bool> IsFollowing(long newFollowerId, UserDto targetUser)
     {
-        var follows = await _context.Followers.Where(f => f.WhoId == sessionId && f.WhomId == user.UserId).ToListAsync();
+        var follows = await _context.Followers
+            .Where(f => f.WhoId == newFollowerId && f.WhomId == targetUser.UserId).ToListAsync();
         return follows.Count > 0;
     }
 }

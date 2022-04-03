@@ -1,4 +1,4 @@
-namespace MinitwitReact.Core;
+namespace MinitwitReact.Core.Enums;
 
 public enum Status
 {

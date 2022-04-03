@@ -4,7 +4,7 @@ namespace MinitwitReact.Server.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly ILogger<UserController> _logger; //??
+    private readonly ILogger<UserController> _logger; 
     private readonly IUserRepository _userRepository;
     private readonly IJwtUtils _jwtUtils;
 
@@ -15,32 +15,47 @@ public class UserController : ControllerBase
         _jwtUtils = jwtUtils;
     }
     
+    [AllowAnonymous]
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<long> PostRegister ([FromBody] UserCreateDto user)
+    public async Task<IActionResult> PostRegister ([FromBody] UserCreateDto user)
     {
-        return await _userRepository.Register(user.Username, user.Email, user.PwHash);
+        var result = await _userRepository.Register(user);
+        if (result == AuthStatus.UsernameInUse)
+        {
+            return BadRequest(new {message = "Name already in use"});
+        }
+
+        return Ok(result);
     }
     
+    [AllowAnonymous]
     [HttpPost("login")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Login([FromBody] UserLoginDto login)
     {
-        var user = await  _userRepository.GetUserDetailsByName(login.Username);
-        if (user is null) return BadRequest(new {message = "Invalid Username"});
-        
-        var id = await _userRepository.Login(user.Username, login.PwHash);
-        if(id < 1) return BadRequest(new {message = "Invalid Password"});
+        var result = await _userRepository.Login(login);
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
+        if (result == AuthStatus.WrongUsername)
+        {
+            return BadRequest(new {message = "Invalid Username"});
+        }
 
+        if (result == AuthStatus.WrongPassword)
+        {
+            return BadRequest(new {message = "Invalid Password"});
+        }
+
+        var user = _userRepository.GetUserDetailsByName(login.Username).Result;
         var jwt = _jwtUtils.GenerateToken(user);
-        
-        return Ok(new UserLoginResponseDto(user.UserId, user.Username, user.Email, jwt));
+        return Ok(new UserLoginResponseDto(user!.UserId, user.Username, user.Email, jwt));
     }
     
-    
+    [AllowAnonymous]
     [HttpGet("")]
-    public Task<IEnumerable<UserDto>> Get(){
-        return _userRepository.GetAllUsers();
-    }
-
+    [ProducesResponseType(typeof(IEnumerable<UserDto>), StatusCodes.Status200OK)]
+    public Task<IEnumerable<UserDto>> GetAllUsers()
+        => _userRepository.GetAllUsers();
 }

@@ -54,6 +54,10 @@
       <AdditionalFiles Include="Server\Pages\_ViewImports.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Infrastructure\Migrations" />
+    </ItemGroup>
+
     <!--<ItemGroup>-->
         <!--[> Don't publish the SPA source files, but do show them in the project files list <]-->
         <!--<Content Remove="$(SpaRoot)**" />-->

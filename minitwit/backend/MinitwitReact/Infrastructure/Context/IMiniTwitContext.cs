@@ -1,4 +1,4 @@
-namespace MinitwitReact.Entities;
+namespace MinitwitReact.Infrastructure.Context;
 
 public interface IMiniTwitContext : IDisposable
 {
