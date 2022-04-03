@@ -6,7 +6,7 @@ public static class Seed
     {
         using (var scope = host.Services.CreateScope())
         {
-            var context = scope.ServiceProvider.GetRequiredService<MinitwitContext>();
+            var context = scope.ServiceProvider.GetRequiredService<MiniTwitContext>();
 
             await SeedMinitwitAsync(context);
         }
@@ -14,7 +14,7 @@ public static class Seed
         return host;
     }
 
-    private static async Task SeedMinitwitAsync(MinitwitContext context)
+    private static async Task SeedMinitwitAsync(MiniTwitContext context)
     {
         await context.Database.MigrateAsync();
     }

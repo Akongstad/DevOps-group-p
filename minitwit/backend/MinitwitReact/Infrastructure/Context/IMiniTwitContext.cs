@@ -1,12 +1,9 @@
-namespace MinitwitReact.Entities;
+namespace MinitwitReact.Infrastructure.Context;
 
-public interface IMinitwitContext : IDisposable
+public interface IMiniTwitContext : IDisposable
 {
     DbSet<Follower> Followers { get; }
     DbSet<Message> Messages { get; }
     DbSet<User> Users { get; }
-
-    int SaveChanges();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-
 }

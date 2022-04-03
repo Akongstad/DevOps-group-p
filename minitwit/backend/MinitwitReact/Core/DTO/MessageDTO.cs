@@ -1,6 +1,6 @@
-namespace MinitwitReact.Core;
+namespace MinitwitReact.Core.DTO;
 
-public record MessageDto(long MessageId, string Author, string Text, long PubDate);
+public record MessageDto (long MessageId, string Author, string Text, long PubDate);
 
 public record MessageDetailsDto(long MessageId, string Author, string Text, long PubDate, long Flagged);
 

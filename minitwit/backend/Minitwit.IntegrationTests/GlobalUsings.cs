@@ -6,4 +6,6 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using System.Net.Http.Json;
 global using FluentAssertions;
-global using MinitwitReact.Entities;
+global using MinitwitReact.Core.DTO;
+global using MinitwitReact.Infrastructure.Entities;
+global using MinitwitReact.Infrastructure.Context;

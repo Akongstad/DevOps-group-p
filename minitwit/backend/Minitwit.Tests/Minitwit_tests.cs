@@ -6,7 +6,7 @@ namespace Minitwit.Tests;
 public class MinitwitTests : IDisposable
 {
     private readonly IMinitwit _minitwit;
-    private readonly IMinitwitContext _context;
+    private readonly IMiniTwitContext _context;
 
 
     public MinitwitTests()
@@ -16,18 +16,18 @@ public class MinitwitTests : IDisposable
         //Setup for EF Core
         var conn = new SqliteConnection("Filename=:memory:");
         conn.Open();
-        var builder = new DbContextOptionsBuilder<MinitwitContext>();
+        var builder = new DbContextOptionsBuilder<MiniTwitContext>();
         builder.UseSqlite(conn);
-        var context = new MinitwitContext(builder.Options);
+        var context = new MiniTwitContext(builder.Options);
         context.Database.EnsureCreated();
 
         //Seed some stuff
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
-        var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321", UserId = 2};
-        var bill = new User {Username = "Bill Gates", Email = "Microsoft@gmail.com", PwHash = "321123", UserId = 3};
-        var bruce = new User{Username = "Bruce Wayne", Email = "Gotham@gmail.com", PwHash = "321", UserId = 4};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
+        var jeff = new User {Username = "Jeff Bezos", Email = "Amazon@gmail.com", PwHash = "321", Id = 2};
+        var bill = new User {Username = "Bill Gates", Email = "Microsoft@gmail.com", PwHash = "321123", Id = 3};
+        var bruce = new User{Username = "Bruce Wayne", Email = "Gotham@gmail.com", PwHash = "321", Id = 4};
         var hashman = new User
-            {Username = "Hash Tester", Email = "Hash@live.com", PwHash = BCrypt.Net.BCrypt.HashPassword("hashed"), UserId = 5};
+            {Username = "Hash Tester", Email = "Hash@live.com", PwHash = BCrypt.Net.BCrypt.HashPassword("hashed"), Id = 5};
         
         var hello = new Message
         {
@@ -80,11 +80,11 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task GetUserDetailsById_returns_User_given_valid_id()
     {
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
         var actual = await _minitwit.GetUserDetailsById(1);
         Assert.Equal(elon.Username, actual!.Username);
         Assert.Equal(elon.Email, actual.Email);
-        Assert.Equal(elon.UserId, actual.UserId);
+        Assert.Equal(elon.Id, actual.UserId);
         Assert.Equal(elon.PwHash, actual.PwHash);
     }
     [Fact]
@@ -209,7 +209,7 @@ public class MinitwitTests : IDisposable
     [Fact]
     public async Task Login_given_invalid_username_and_pw_returns_0()
     {
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
         var login = await _minitwit.Login("elonis", elon.PwHash);
         Assert.Equal(0, login);
     }
@@ -234,12 +234,19 @@ public class MinitwitTests : IDisposable
     }
     
     [Fact]
+    public async Task register_returns_0_given_Existing_use()
+    {
+        var register = await _minitwit.Register("Elon Musk", "Tesla@gmail.com", "SafePassword");
+        Assert.Equal(0, register);
+    }
+    
+    [Fact]
     public async Task GetUserById_returns_User_given_valid_id()
     {
-        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", UserId = 1};
+        var elon = new User {Username = "Elon Musk", Email = "Tesla@gmail.com", PwHash = "123", Id = 1};
         var actual = await _minitwit.GetUserById(1);
         Assert.Equal(elon.Username, actual!.Username);
-        Assert.Equal(elon.UserId, actual.UserId);
+        Assert.Equal(elon.Id, actual.UserId);
     }
 
     [Fact]
@@ -264,14 +271,12 @@ public class MinitwitTests : IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!_disposed)
+        if (_disposed) return;
+        if (disposing)
         {
-            if (disposing)
-            {
-                _context.Dispose();
-            }
-            _disposed = true;
+            _context.Dispose();
         }
+        _disposed = true;
     }
 
     public void Dispose()

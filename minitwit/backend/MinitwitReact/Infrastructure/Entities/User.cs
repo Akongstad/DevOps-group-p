@@ -1,8 +1,8 @@
-﻿namespace MinitwitReact.Entities
+﻿namespace MinitwitReact.Infrastructure.Entities
 {
     public class User
     {
-        public long UserId { get; init; }
+        public long Id { get; init; }
         public string Username { get; init; } = null!;
         
         [EmailAddress]
