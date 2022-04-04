@@ -42,7 +42,6 @@ public class UserController : ControllerBase
         {
             return BadRequest(new {message = "Invalid Username"});
         }
-
         if (result == AuthStatus.WrongPassword)
         {
             return BadRequest(new {message = "Invalid Password"});
@@ -53,9 +52,9 @@ public class UserController : ControllerBase
         return Ok(new UserLoginResponseDto(user!.UserId, user.Username, user.Email, jwt));
     }
     
-    [AllowAnonymous]
+    [Authorize]
     [HttpGet("")]
     [ProducesResponseType(typeof(IEnumerable<UserDto>), StatusCodes.Status200OK)]
-    public Task<IEnumerable<UserDto>> GetAllUsers()
-        => _userRepository.GetAllUsers();
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
+        => Ok(await _userRepository.GetAllUsers());
 }

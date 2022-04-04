@@ -49,17 +49,7 @@ public class MinitwitSimulationController : ControllerBase
         _publicTimelineCounter.Inc();
         UpdateLatest(Request);
         var timeline = await _minitwit.PublicTimeline();
-        var filteredMsgs = new List<object>();
-        foreach (var item in timeline)
-        {
-            var filteredMsg = new
-            {
-                content = item.Text,
-                pub_date = TimeZoneInfo.ConvertTimeFromUtc(new DateTime(item.PubDate), TimeZoneInfo.Local).ToString("hh:mm tt ddd"),
-                user = item.Author,
-            };
-            filteredMsgs.Add(filteredMsg); 
-        }
+        var filteredMsgs = timeline.Select(item => new {content = item.Text, pub_date = new DateTime(item.PubDate).AddHours(2).ToString("hh:mm tt ddd"), user = item.Author,}).Cast<object>().ToList();
         return Ok(filteredMsgs);
     }
 
@@ -86,17 +76,7 @@ public class MinitwitSimulationController : ControllerBase
         if (Request.Method == "GET")
         {
             var timeline = await _minitwit.UserTimeline(0, username);
-            var filteredMsgs = new List<object>();
-            foreach (var item in timeline)
-            {
-                var filteredMsg = new
-                {
-                    content = item.Text,
-                    pub_date = item.PubDate,
-                    user = item.Author,
-                };
-                filteredMsgs.Add(filteredMsg);
-            }
+            var filteredMsgs = timeline.Select(item => new {content = item.Text, pub_date = item.PubDate, user = item.Author,}).Cast<object>().ToList();
             return Ok(filteredMsgs);
         } 
         if (Request.Method == "POST")
@@ -163,15 +143,7 @@ public class MinitwitSimulationController : ControllerBase
     private async Task<IActionResult> GetFollows(string username, int limit)
     {
         var followers = await _minitwit.GetFollowers(username, limit);
-        var filteredMsgs = new List<object>();
-        foreach (var item in followers)
-        {
-            var filteredMsg = new
-            {
-                follows = item.Username
-            };
-            filteredMsgs.Add(filteredMsg);
-        }
+        var filteredMsgs = followers.Select(item => new {follows = item.Username}).Cast<object>().ToList();
         return Ok(filteredMsgs);
     }
     

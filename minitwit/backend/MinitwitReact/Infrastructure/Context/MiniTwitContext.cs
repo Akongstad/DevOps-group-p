@@ -11,7 +11,7 @@ public class MiniTwitContext : DbContext, IMiniTwitContext
     {
         modelBuilder
             .Entity<Follower>().HasKey(nameof(Follower.WhoId), nameof(Follower.WhomId));
-        modelBuilder.Entity<User>().HasIndex(u => u.Id);
+        modelBuilder.Entity<User>().HasIndex(u => u.UserId);
 
         modelBuilder.Entity<Message>().HasIndex(m => m.PubDate);
     }

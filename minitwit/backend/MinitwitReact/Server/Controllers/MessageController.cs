@@ -25,20 +25,14 @@ public class MessageController : ControllerBase
     [AllowAnonymous]
     [HttpGet("timeline")]
     [ProducesResponseType(typeof(IEnumerable<MessageDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<string>> GetPublicTimeline()
-        => await SerializeTimeline(await _messageRepository.GetPublicTimeline());
+    public async Task<ActionResult> GetPublicTimeline()
+        => Ok(await _messageRepository.GetPublicTimeline());
 
 
     [Authorize]
     [HttpGet("timeline/{username}")]
     [ProducesResponseType(typeof(IEnumerable<MessageDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<string>> GetTimeline(string username)
-        => await SerializeTimeline(await _messageRepository.GetTimelineByUsername(username));
-
-    // TODO better way?
-    private static Task<ActionResult<string>> SerializeTimeline (IEnumerable<MessageDto> timeline)
-    {
-        var messages = timeline.Select(item => new {content = item.Text, pub_date = item.PubDate, user = item.Author,}).Cast<object>().ToList();
-        return Task.FromResult<ActionResult<string>>(JsonSerializer.Serialize(messages));
-    }
+    public async Task<ActionResult> GetTimeline(string username)
+        => Ok(await _messageRepository.GetTimelineByUsername(username));
+    
 }

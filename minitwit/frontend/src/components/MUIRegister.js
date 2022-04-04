@@ -31,7 +31,7 @@ function Copyright(props) {
     );
 }
 async function register(credentials) {
-    return fetch('https://minitwit.online/backend/register', {
+    return fetch('https://minitwit.online/apiv2/user/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -77,8 +77,8 @@ export default function SignUp() {
                 Email: values.email,
                 Pwhash: values.password,}
             const response = await register(newUser);
-            if(response.statusCode === 400 || response.statusCode === 409) {
-                alert("Something went wrong. Could not register" + response.statusCode)
+            if(response.status !== 200) {
+                alert("Something went wrong. Could not register. Status: " + response.statusCode)
             } else {
                 navigate('/signin');
             }

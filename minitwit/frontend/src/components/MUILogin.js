@@ -30,7 +30,7 @@ function Copyright(props) {
     );
 }
 async function login(credentials) {
-    return fetch('https://minitwit.online/backend/login', {
+    return fetch('https://minitwit.online/apiv2/user/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -67,18 +67,21 @@ export default function SignIn() {
         onSubmit: async (values) => {
             const userLogin = {
                 Username: values.username,
-                Pwhash: values.password,}
-            const response = await login(userLogin);
-            if(response.statusCode === 400 || response.statusCode === 409) {
-                alert("Something went wrong. Could not login" + response.statusCode)
-            } else {
-                response.json().then(data => {
-                    setToken(data.token);
-                    navigate('/');
-                })
+                Pwhash: values.password,
             }
-        },
-    });
+            await login(userLogin)
+                .then(response => {
+                    if (response.status !== 200) {
+                        alert("Something went wrong. Could not login. Status: " + response.status)
+                    } else {
+                        response.json().then(data => {
+                            setToken(data.token);
+                            navigate('/');
+                        })
+                    }
+                })
+        }
+    })
 
     return (
         <ThemeProvider theme={theme}>
