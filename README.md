@@ -29,6 +29,8 @@ While we develop features and patches on temporary branches, everything worthwhi
 - Run workflows
 - Build and push docker images
 
+[BRANCH RULES]
+
 ### production
 The **production** branch lives on our production server is our main branch's lean and automated counterpart.
 It is developed in a manner such that our multi-container application can be rebuilt and updated on the production server to include updated Docker images and/or changes in configuration files with a single command, minimizing downtime withoud using load-balancers. 
@@ -37,3 +39,5 @@ It is developed in a manner such that our multi-container application can be reb
 
 - Store configuration-files
 - Pull and run docker images
+
+[BRANCH RULES]
