@@ -63,9 +63,9 @@ app.MapControllerRoute(
     
 app.MapFallbackToFile("index.html");
 
-if (!app.Environment.IsEnvironment("Integration"))
+if (app.Environment.IsEnvironment("Seed"))
 {
-    //await app.SeedAsync();
+    await app.SeedAsync();
 }
 app.Run();
 
