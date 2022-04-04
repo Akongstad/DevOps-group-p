@@ -25,7 +25,7 @@ namespace MinitwitReact.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Username = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
@@ -33,7 +33,7 @@ namespace MinitwitReact.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -54,7 +54,7 @@ namespace MinitwitReact.Migrations
                         name: "FK_Messages_Users_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -69,9 +69,9 @@ namespace MinitwitReact.Migrations
                 column: "PubDate");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_Id",
+                name: "IX_Users_UserId",
                 table: "Users",
-                column: "Id");
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
