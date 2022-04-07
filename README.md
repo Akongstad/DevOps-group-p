@@ -1,3 +1,12 @@
+Workflow Status:
+---
+
+![sonar cloud](https://github.com/Akongstad/DevOps-group-p/actions/workflows/sonar%20cloud.yml/badge.svg)  
+![release schedule](https://github.com/Akongstad/DevOps-group-p/actions/workflows/release_schedule.yml/badge.svg)  
+![Deploy](https://github.com/Akongstad/DevOps-group-p/actions/workflows/deploy.yml/badge.svg)
+![codeyml](https://github.com/Akongstad/DevOps-group-p/actions/workflows/codeql.yml/badge.svg)
+![.Net](https://github.com/Akongstad/DevOps-group-p/actions/workflows/dotnet.yml/badge.svg)
+
 # Minitwit
 
 This is a fork of a Twitter Clone which was developed at an unknown time by unknown students at the IT University of Copenhagen (ITU).
