@@ -31,6 +31,11 @@ services:
     networks:
       - main
       - elastic
+      - proxy
+    deploy:
+      placement: 
+        constraints:
+          - node.role == manager
 
   frontend:
 
@@ -46,16 +51,23 @@ services:
     depends_on:
       - backend
 
-    restart: on-failure
+    restart: always
 
     networks:
       - main
+    deploy:
+      mode: replicated
+      replicas: 2
+      placement: 
+        constraints:
+          - node.role == worker
   
   db:
     container_name: postgres_database
     image: postgres:14.2
     ports:
       - 5432:5432
+    restart: always
     environment:
       - POSTGRES_USER=sa
       - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
@@ -66,11 +78,16 @@ services:
       - /var/lib/docker/volume/data:/var/lib/postgresql/data
     networks:
       - main
+    deploy:
+      placement: 
+        constraints:
+          - node.role == manager
 
 
   prometheus:
     image: prom/prometheus:v2.33.5
     container_name: prometheus
+    restart: always
     ports: 
       - 9090:9090
     volumes:
@@ -81,6 +98,7 @@ services:
   grafana:
     image: grafana/grafana
     container_name: grafana
+    restart: always
     ports:
       - 3001:3000
     volumes:
@@ -93,6 +111,7 @@ services:
 
     image: virginity/minitwit_backend:latest
     container_name: dotnet_backend
+    restart: always
     ports:
       - 5229:80
 
@@ -110,18 +129,29 @@ services:
     restart: on-failure
     networks:
       - main
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement: 
+        constraints:
+          - node.role == worker
   
   elasticsearch:
     image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.1"
     container_name: elasticsearch
     environment:
-      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - "ES_JAVA_OPTS=-Xms512 -Xmx512m"
       - "discovery.type=single-node"
     volumes:
       - elk_elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - elastic
       - main
+    deploy:
+      resources:
+        reservation:
+        cpus: '0.25'
+        memory: '512M'
     
   kibana:
     image: "docker.elastic.co/kibana/kibana:7.17.1"
@@ -135,6 +165,11 @@ services:
       SERVER_BASEPATH: '/kibana'
     networks:
       - elastic
+    deploy:
+      resources:
+        reservation:
+        cpus: '0.25'
+        memory: '256M'
   
   filebeat:
     image: "docker.elastic.co/beats/filebeat:7.17.1"
@@ -154,6 +189,8 @@ networks:
   main:
     name: minitwit-internal
   elastic:
+  proxy:
+    external: true
   
 volumes:
   elk_elasticsearch_data:
