@@ -151,7 +151,7 @@ services:
     deploy:
       resources:
         reservation:
-        cpus: '0.25'
+        cpus: 0.25
         memory: 512M
     
   kibana:
@@ -169,7 +169,7 @@ services:
     deploy:
       resources:
         reservation:
-        cpus: '0.25'
+        cpus: 0.25
         memory: 256M
   
   filebeat:
