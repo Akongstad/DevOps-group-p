@@ -150,8 +150,8 @@ services:
       - main
     deploy:
       resources:
-        reservation:
-        cpus: 0.25
+        limits:
+        cpus: '0.25'
         memory: 512M
     
   kibana:
@@ -168,8 +168,8 @@ services:
       - elastic
     deploy:
       resources:
-        reservation:
-        cpus: 0.25
+        limits:
+        cpus: '0.25'
         memory: 256M
   
   filebeat:
