@@ -192,6 +192,7 @@ networks:
   elastic:
   proxy:
     external: true
+      name: proxy
   
 volumes:
   elk_elasticsearch_data:
