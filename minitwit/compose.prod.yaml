@@ -152,7 +152,7 @@ services:
       resources:
         reservation:
         cpus: '0.25'
-        memory: '512M'
+        memory: 512M
     
   kibana:
     image: "docker.elastic.co/kibana/kibana:7.17.1"
@@ -170,7 +170,7 @@ services:
       resources:
         reservation:
         cpus: '0.25'
-        memory: '256M'
+        memory: 256M
   
   filebeat:
     image: "docker.elastic.co/beats/filebeat:7.17.1"
