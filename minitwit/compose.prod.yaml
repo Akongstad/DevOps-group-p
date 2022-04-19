@@ -253,7 +253,7 @@ services:
 networks:
   main:
     name: minitwit-internal
-  trafik-public:
+  traefik-public:
     external: true
   
 volumes:
