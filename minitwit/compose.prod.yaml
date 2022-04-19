@@ -109,7 +109,7 @@ services:
     restart: on-failure
     networks:
       - main
-  
+
 networks:
 
   main:
