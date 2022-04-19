@@ -27,7 +27,7 @@ services:
         - traefik.http.routers.traefik-public-http.middlewares=https-redirect
         # traefik-https the actual router using HTTPS
         # Uses the environment variable DOMAIN
-        - traefik.http.routers.traefik-public-https.rule=Host(`${DOMAIN?Variable not set}`)
+        - traefik.http.routers.traefik-public-https.rule=Host(`minitwit.online`)
         - traefik.http.routers.traefik-public-https.entrypoints=https
         - traefik.http.routers.traefik-public-https.tls=true
         # Use the special Traefik service api@internal with the web UI/Dashboard
@@ -74,11 +74,7 @@ services:
       - target: 443
         published: 443
         mode: host
-    volumes:
-      # Add Docker as a mounted volume, so that Traefik can read the labels of other services
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      # Mount the volume to store the certificates
-      - traefik-public-certificates:/certificates
+   
     deploy:
        placement:
           constraints:
@@ -103,6 +99,10 @@ services:
     networks:
       - main
     deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.minitwit-frontend-http.rule=PathPrefix(`/`)
+        - traefik.http.services.minitwit-frontend.loadbalancer.server.port=80
       mode: replicated
       replicas: 2
       placement: 
@@ -177,6 +177,10 @@ services:
     networks:
       - main
     deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.minitwit-backend-http.rule=PathPrefix(`/api`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`)
+        - traefik.http.services.minitwit-backend.loadbalancer.server.port=80
       mode: replicated
       replicas: 3
       placement: 
@@ -232,11 +236,12 @@ services:
       - elastic
   
 networks:
-
   main:
     name: minitwit-internal
   elastic:
-  proxy:
+  traefik-public:
+    # Allow setting it to false for testing
+    external: true
   
 volumes:
   elk_elasticsearch_data:
