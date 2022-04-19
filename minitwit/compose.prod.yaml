@@ -66,8 +66,6 @@ services:
     command:
       # Enable Docker in Traefik, so that it reads labels from Docker services
       - --providers.docker
-      # Add a constraint to only use services with the label "traefik.constraint-label=traefik-public"
-      - --providers.docker.constraints=Label(`traefik.constraint-label`, `traefik-public`)
       # Do not expose all Docker services, only the ones explicitly exposed
       - --providers.docker.exposedbydefault=false
       # Enable Docker Swarm mode
@@ -115,7 +113,7 @@ services:
       - traefik.http.routers.minitwit-app-http.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/`)
       - traefik.http.routers.minitwit-app-http.entrypoints=http
       - traefik.http.routers.minitwit-app-http.middlewares=https-redirect
-      - traefik.http.routers.minitwit-app-https.rule=Host(`app..minitwit-swarm.online`) && PathPrefix(`/`)
+      - traefik.http.routers.minitwit-app-https.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/`)
       - traefik.http.routers.minitwit-app-https.entrypoints=https
       - traefik.http.routers.minitwit-app-https.tls=true
       - traefik.http.routers.minitwit-app-https.tls.certresolver=le
