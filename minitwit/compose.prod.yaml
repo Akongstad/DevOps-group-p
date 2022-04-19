@@ -84,7 +84,7 @@ services:
     secrets:
       - db_password
     volumes:
-      - /var/lib/docker/volume/data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - main
       - proxy
@@ -210,6 +210,8 @@ networks:
 volumes:
   elk_elasticsearch_data:
   grafana_data:
+  postgres_data:
+  
 
     
 secrets:
