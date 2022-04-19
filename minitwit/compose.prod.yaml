@@ -18,7 +18,7 @@ services:
         mode: host
     deploy:
       restart_policy:
-        condition: always
+        condition: on-failure
       placement:
         constraints:
           # Make the traefik service run only on the node with this label
