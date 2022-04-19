@@ -12,7 +12,7 @@ for service in {frontend,backend}; do
 done
 
 RUNNING_CONTAINERS="$( docker ps | awk '{print $(NF)}')"
-for service in {db,prometheus,letsencrypt,elasticsearch,kibana,filebeat}; do
+for service in {db,prometheus,letsencrypt}; do
     if [[ "$service" = *"$RUNNING_CONTAINERS"* ]]; then
         docker-compose -f compose.prod.yaml restart $service;
     else
