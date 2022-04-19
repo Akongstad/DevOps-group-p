@@ -30,7 +30,6 @@ services:
 
     networks:
       - main
-      - elastic
 
   frontend:
 
@@ -111,54 +110,14 @@ services:
     networks:
       - main
   
-  elasticsearch:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.1"
-    container_name: elasticsearch
-    environment:
-      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
-      - "discovery.type=single-node"
-    volumes:
-      - elk_elasticsearch_data:/usr/share/elasticsearch/data
-    networks:
-      - elastic
-    
-  kibana:
-    image: "docker.elastic.co/kibana/kibana:7.17.1"
-    container_name: kibana
-    ports:
-      - 5601:5601
-    environment:
-      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
-      SERVER_NAME: 'minitwit.online'
-      SERVER_PUBLICBASEURL: 'https://minitwit.online/kibana'
-      SERVER_BASEPATH: '/kibana'
-    networks:
-      - elastic
-  
-  filebeat:
-    image: "docker.elastic.co/beats/filebeat:7.17.1"
-    container_name: filebeat
-    environment:
-      - "ELK_USER=${ELK_USER}"
-    user: root
-    volumes:
-      - ${ELK_DIR}/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/lib/docker:/var/lib/docker:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - elastic
-  
 networks:
 
   main:
     name: minitwit-internal
-  elastic:
   
 volumes:
-  elk_elasticsearch_data:
   grafana_data:
 
-    
 secrets:
   db_password:
     file: .local/db_password.txt
