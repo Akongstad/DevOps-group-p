@@ -19,9 +19,9 @@ services:
 
     volumes:
       - ./letsencrypt:/config
-      - type: bind
-        source: ./.local/.htpasswd
-        target: /etc/nginx/.htpasswd
+      #- type: bind
+       # source: ./.local/.htpasswd
+        #target: /etc/nginx/.htpasswd
 
     restart: unless-stopped
 
