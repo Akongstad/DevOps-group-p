@@ -95,7 +95,6 @@ services:
     restart: on-failure
     networks:
       - main
-      - traefik-public
     deploy:
       mode: replicated
       replicas: 1
@@ -105,7 +104,9 @@ networks:
   main:
     name: minitwit-internal
   traefik-public:
-    external: true
+    driver: overlay
+    attachable: true
+    name: traefik-public
   
 volumes:
   grafana_data:

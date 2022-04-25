@@ -78,6 +78,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - main
+      - traefik-public
     deploy:
       placement:
         constraints:
