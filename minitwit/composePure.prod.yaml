@@ -12,10 +12,7 @@ services:
       - traefik-public
     deploy:
       mode: replicated
-      replicas: 2
-      placement:
-        constraints:
-          - node.role == worker
+      replicas: 3
   
   db:
     image: postgres:14.2
@@ -102,9 +99,6 @@ services:
     deploy:
       mode: replicated
       replicas: 3
-      placement:
-        constraints:
-          - node.role == worker
 
 networks:
 
