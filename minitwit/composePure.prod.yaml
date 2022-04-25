@@ -12,7 +12,7 @@ services:
       - traefik-public
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 1
   
   db:
     image: postgres:14.2
@@ -97,7 +97,7 @@ services:
       - main
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 1
 
 networks:
 
