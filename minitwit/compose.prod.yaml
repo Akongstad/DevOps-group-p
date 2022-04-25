@@ -34,7 +34,7 @@ services:
       - traefik-public
       - main
 
-    frontend:
+  frontend:
     image: virginity/minitwit_frontend:latest
     ports:
       - 3000:3000
