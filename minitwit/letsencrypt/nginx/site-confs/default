@@ -32,6 +32,11 @@ server {
 
     # enable subfolder method reverse proxy confs
     include /config/nginx/proxy-confs/minitwit.subfolder.conf;
+    
+   upstream frontend {
+   server 159.89.3.174:3000;
+   server 207.154.206.161:3000;
+    }
 
     # all ssl related config moved to ssl.conf
     include /config/nginx/ssl.conf;
