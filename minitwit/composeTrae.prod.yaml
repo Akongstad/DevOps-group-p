@@ -88,7 +88,6 @@ services:
       - --api
       - --metrics
       - --metrics.prometheus.buckets=0.1,0.3,1.2,5.0
-      - --docker.watch
     networks:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with HTTPS
