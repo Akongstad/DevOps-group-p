@@ -109,19 +109,19 @@ services:
       placement: 
         constraints:
           - node.role == worker
-        labels:
-          - traefik.port=3000
-          - traefik.enable=true
-          - traefik.docker.network=traefik-public
-          - traefik.constraint-label=traefik-public
-          - traefik.http.routers.minitwit-app-http.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/app`)
-          - traefik.http.routers.minitwit-app-http.entrypoints=http
-          - traefik.http.routers.minitwit-app-http.middlewares=https-redirect
-          - traefik.http.routers.minitwit-app-https.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/app`)
-          - traefik.http.routers.minitwit-app-https.entrypoints=https
-          - traefik.http.routers.minitwit-app-https.tls=true
-          - traefik.http.routers.minitwit-app-https.tls.certresolver=le
-          - traefik.http.services.minitwit-app.loadbalancer.server.port=3000
+      labels:
+        - traefik.port=3000
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.minitwit-app-http.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/app`)
+        - traefik.http.routers.minitwit-app-http.entrypoints=http
+        - traefik.http.routers.minitwit-app-http.middlewares=https-redirect
+        - traefik.http.routers.minitwit-app-https.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/app`)
+        - traefik.http.routers.minitwit-app-https.entrypoints=https
+        - traefik.http.routers.minitwit-app-https.tls=true
+        - traefik.http.routers.minitwit-app-https.tls.certresolver=le
+        - traefik.http.services.minitwit-app.loadbalancer.server.port=3000
   
   db:
     image: postgres:14.2
@@ -237,19 +237,19 @@ services:
       placement: 
         constraints:
           - node.role == worker
-        labels:
-          - traefik.enable=true
-          - traefik.docker.network=traefik-public
-          - traefik.constraint-label=traefik-public
-          - traefik.http.routers.minitwit-api-http.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/api`)
-          - traefik.http.routers.minitwit-api-http.entrypoints=http
-          - traefik.http.routers.minitwit-api-http.middlewares=https-redirect
-          - traefik.http.routers.minitwit-api-https.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/api`)
-          - traefik.http.routers.minitwit-api-https.entrypoints=https
-          - traefik.http.routers.minitwit-api-https.tls=true
-          - traefik.http.routers.minitwit-api-https.tls.certresolver=le
-          - traefik.http.services.minitwit-api.loadbalancer.server.port=5229
-
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.minitwit-api-http.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/api`)
+        - traefik.http.routers.minitwit-api-http.entrypoints=http
+        - traefik.http.routers.minitwit-api-http.middlewares=https-redirect
+        - traefik.http.routers.minitwit-api-https.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/api`)
+        - traefik.http.routers.minitwit-api-https.entrypoints=https
+        - traefik.http.routers.minitwit-api-https.tls=true
+        - traefik.http.routers.minitwit-api-https.tls.certresolver=le
+        - traefik.http.services.minitwit-api.loadbalancer.server.port=5229
+ 
   
 networks:
   main:
