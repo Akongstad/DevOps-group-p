@@ -109,7 +109,6 @@ services:
         constraints:
           - node.role == manager
       labels:
-        - traefik.port=3000
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
@@ -211,7 +210,7 @@ services:
         - traefik.http.routers.minitwit-grafana-https.entrypoints=https
         - traefik.http.routers.minitwit-grafana-https.tls=true
         - traefik.http.routers.minitwit-grafana-https.tls.certresolver=le
-        - traefik.http.services.minitwit-grafana.loadbalancer.server.port=3001
+        - traefik.http.services.minitwit-grafana.loadbalancer.server.port=3000
       
   backend:
 
