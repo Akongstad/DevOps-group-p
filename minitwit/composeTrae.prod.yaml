@@ -43,6 +43,7 @@ services:
         # traefik-http set up only to use the middleware to redirect to https
         # Uses the environment variable DOMAIN
         - traefik.http.routers.traefik-public-http.rule=Host(`minitwit-swarm.online`)
+        - traefik.http.routers.traefik-public-http.rule=Sans(`*.minitwit-swarm.online`)
         - traefik.http.routers.traefik-public-http.entrypoints=http
         - traefik.http.routers.traefik-public-http.middlewares=https-redirect
         # traefik-https the actual router using HTTPS
@@ -113,10 +114,10 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.minitwit-app-http.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/app`)
+        - traefik.http.routers.minitwit-app-http.rule=Host(`minitwit-swarm.online`) && Path(`/app`)
         - traefik.http.routers.minitwit-app-http.entrypoints=http
         - traefik.http.routers.minitwit-app-http.middlewares=https-redirect
-        - traefik.http.routers.minitwit-app-https.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/app`)
+        - traefik.http.routers.minitwit-app-https.rule=Host(`minitwit-swarm.online`) && Path(`/app`)
         - traefik.http.routers.minitwit-app-https.entrypoints=https
         - traefik.http.routers.minitwit-app-https.tls=true
         - traefik.http.routers.minitwit-app-https.tls.certresolver=le
@@ -169,10 +170,10 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.minitwit-prometheus-http.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/metrics`)
+        - traefik.http.routers.minitwit-prometheus-http.rule=Host(`minitwit-swarm.online`) && Path(`/metrics`)
         - traefik.http.routers.minitwit-prometheus-http.entrypoints=http
         - traefik.http.routers.minitwit-prometheus-http.middlewares=https-redirect
-        - traefik.http.routers.minitwit-prometheus-https.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/metrics`)
+        - traefik.http.routers.minitwit-prometheus-https.rule=Host(`minitwit-swarm.online`) && Path(`/metrics`)
         - traefik.http.routers.minitwit-prometheus-https.entrypoints=https
         - traefik.http.routers.minitwit-prometheus-https.tls=true
         - traefik.http.routers.minitwit-prometheus-https.tls.certresolver=le
