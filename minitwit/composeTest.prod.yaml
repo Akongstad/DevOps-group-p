@@ -115,7 +115,7 @@ services:
         - traefik.http.routers.minitwit-app-https.tls=true
         - traefik.http.routers.minitwit-app-https.tls.certresolver=le
         - traefik.http.services.minitwit-app.loadbalancer.server.port=3000
-  
+        
   db:
     image: postgres:14.2
     ports:
@@ -133,76 +133,10 @@ services:
       - main
       - traefik-public
     deploy:
-      placement: 
-        constraints:
-          - node.role == manager
-
-
-  prometheus:
-    image: prom/prometheus:v2.33.5
-    restart: always
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - main
-      - traefik-public
-    deploy:
-      mode: replicated
-      replicas: 1
       placement:
         constraints:
           - node.role == manager
-      resources:
-        limits:
-          memory: 1024M
-        reservations:
-          memory: 128M
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
-        - traefik.http.routers.minitwit-prometheus-http.rule=Host(`minitwit-swarm.online`) && Path(`/metrics`)
-        - traefik.http.routers.minitwit-prometheus-http.entrypoints=http
-        - traefik.http.routers.minitwit-prometheus-http.middlewares=https-redirect
-        - traefik.http.routers.minitwit-prometheus-https.rule=Host(`minitwit-swarm.online`) && Path(`/metrics`)
-        - traefik.http.routers.minitwit-prometheus-https.entrypoints=https
-        - traefik.http.routers.minitwit-prometheus-https.tls=true
-        - traefik.http.routers.minitwit-prometheus-https.tls.certresolver=le
-        - traefik.http.services.minitwit-prometheus.loadbalancer.server.port=9090
-  
-  grafana:
-    image: grafana/grafana
-    restart: always
-    volumes:
-      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
-      - grafana_data:/var/lib/grafana
-    networks:
-      - main
-      - traefik-public
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
-        - traefik.http.routers.minitwit-grafana-http.rule=Host(`minitwit-swarm.online`) && Path(`/grafana`)
-        - traefik.http.routers.minitwit-grafana-http.entrypoints=http
-        - traefik.http.routers.minitwit-grafana-http.middlewares=https-redirect
-        - traefik.http.routers.minitwit-grafana-https.rule=Host(`minitwit-swarm.online`) && Path(`/grafana`)
-        - traefik.http.routers.minitwit-grafana-https.entrypoints=https
-        - traefik.http.routers.minitwit-grafana-https.tls=true
-        - traefik.http.routers.minitwit-grafana-https.tls.certresolver=le
-        - traefik.http.services.minitwit-grafana.loadbalancer.server.port=3000
-      
+          
   backend:
 
     image: virginity/minitwit_backend:latest
@@ -233,8 +167,7 @@ services:
         - traefik.http.routers.minitwit-api-https.tls=true
         - traefik.http.routers.minitwit-api-https.tls.certresolver=le
         - traefik.http.services.minitwit-api.loadbalancer.server.port=5229
- 
-  
+        
 networks:
   main:
     name: minitwit-internal
@@ -258,3 +191,4 @@ secrets:
     file: .local/connection_string.txt
   jwt_key:
     file: .local/jwt_key.txt
+
