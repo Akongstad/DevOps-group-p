@@ -38,22 +38,23 @@ services:
          #- traefik.http.middlewares.admin-auth.basicauth.users=admin:$$apr1$$JVKKO/1u$$3FfFA3QC.uKBBs3FeJ2Eo/
         # https-redirect middleware to redirect HTTP to HTTPS
         # It can be re-used by other stacks in other Docker Compose files
-        - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
-        - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+        #- traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+        #- traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
         # traefik-http set up only to use the middleware to redirect to https
         # Uses the environment variable DOMAIN
         - traefik.http.routers.traefik-public-http.rule=Host(`minitwit-swarm.online`)
         - traefik.http.routers.traefik-public-http.entrypoints=http
-        - traefik.http.routers.traefik-public-http.middlewares=https-redirect
+        - traefik.http.routers.traefik-public-http.service=api@internal
+        #- traefik.http.routers.traefik-public-http.middlewares=https-redirect
         # traefik-https the actual router using HTTPS
         # Uses the environment variable DOMAIN
-        - traefik.http.routers.traefik-public-https.rule=Host(`minitwit-swarm.online`)
-        - traefik.http.routers.traefik-public-https.entrypoints=https
-        - traefik.http.routers.traefik-public-https.tls=true
+        #- traefik.http.routers.traefik-public-https.rule=Host(`minitwit-swarm.online`)
+        #- traefik.http.routers.traefik-public-https.entrypoints=https
+        #- traefik.http.routers.traefik-public-https.tls=true
         # Use the special Traefik service api@internal with the web UI/Dashboard
-        - traefik.http.routers.traefik-public-https.service=api@internal
+        #- traefik.http.routers.traefik-public-https.service=api@internal
         # Use the "le" (Let's Encrypt) resolver created below
-        - traefik.http.routers.traefik-public-https.tls.certresolver=le
+        #- traefik.http.routers.traefik-public-https.tls.certresolver=le
         # Enable HTTP Basic auth, using the middleware created above
         #- traefik.http.routers.traefik-public-https.middlewares=admin-auth
         # Define the port inside of the Docker service to use
@@ -62,7 +63,7 @@ services:
       # Add Docker as a mounted volume, so that Traefik can read the labels of other services
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # Mount the volume to store the certificates
-      - traefik-public-certificates:/certificates
+      #- traefik-public-certificates:/certificates
     command:
       # Enable Docker in Traefik, so that it reads labels from Docker services
       - --providers.docker
@@ -73,13 +74,13 @@ services:
       # Create an entrypoint "http" listening on port 80
       - --entrypoints.http.address=:80
       # Create an entrypoint "https" listening on port 443
-      - --entrypoints.https.address=:443
+      #- --entrypoints.https.address=:443
       # Create the certificate resolver "le" for Let's Encrypt, uses the environment variable EMAIL
-      - --certificatesresolvers.le.acme.email=kongstad@outlook.com
+      #- --certificatesresolvers.le.acme.email=kongstad@outlook.com
       # Store the Let's Encrypt certificates in the mounted volume
-      - --certificatesresolvers.le.acme.storage=/certificates/acme.json
+      #- --certificatesresolvers.le.acme.storage=/certificates/acme.json
       # Use the TLS Challenge for Let's Encrypt
-      - --certificatesresolvers.le.acme.tlschallenge=true
+      #- --certificatesresolvers.le.acme.tlschallenge=true
       # Enable the access log, with HTTP requests
       - --accesslog
       # Enable the Traefik log, for configurations and errors
@@ -106,15 +107,14 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
         - traefik.http.routers.minitwit-app-http.rule=Host(`minitwit-swarm.online`) && Path(`/app`)
-        - traefik.http.routers.minitwit-app-http.entrypoints=http
-        - traefik.http.routers.minitwit-app-http.middlewares=https-redirect
-        - traefik.http.routers.minitwit-app-https.rule=Host(`minitwit-swarm.online`) && Path(`/app`)
-        - traefik.http.routers.minitwit-app-https.entrypoints=https
-        - traefik.http.routers.minitwit-app-https.tls=true
-        - traefik.http.routers.minitwit-app-https.tls.certresolver=le
+        #- traefik.http.routers.minitwit-app-http.entrypoints=http
         - traefik.http.services.minitwit-app.loadbalancer.server.port=3000
+       #- traefik.http.routers.minitwit-app-http.middlewares=https-redirect
+        #- traefik.http.routers.minitwit-app-https.rule=Host(`minitwit-swarm.online`) && Path(`/app`)
+        #- traefik.http.routers.minitwit-app-https.entrypoints=https
+        #- traefik.http.routers.minitwit-app-https.tls=true
+       # - traefik.http.routers.minitwit-app-https.tls.certresolver=le
         
   db:
     image: postgres:14.2
@@ -158,15 +158,14 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
         - traefik.http.routers.minitwit-api-http.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/api`)
-        - traefik.http.routers.minitwit-api-http.entrypoints=http
-        - traefik.http.routers.minitwit-api-http.middlewares=https-redirect
-        - traefik.http.routers.minitwit-api-https.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/api`)
-        - traefik.http.routers.minitwit-api-https.entrypoints=https
-        - traefik.http.routers.minitwit-api-https.tls=true
-        - traefik.http.routers.minitwit-api-https.tls.certresolver=le
         - traefik.http.services.minitwit-api.loadbalancer.server.port=5229
+        #- traefik.http.routers.minitwit-api-http.entrypoints=http
+        #- traefik.http.routers.minitwit-api-http.middlewares=https-redirect
+        #- traefik.http.routers.minitwit-api-https.rule=Host(`minitwit-swarm.online`) && PathPrefix(`/api`)
+        #- traefik.http.routers.minitwit-api-https.entrypoints=https
+        #- traefik.http.routers.minitwit-api-https.tls=true
+        #- traefik.http.routers.minitwit-api-https.tls.certresolver=le
         
 networks:
   main:
