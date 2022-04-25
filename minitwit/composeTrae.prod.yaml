@@ -86,8 +86,8 @@ services:
       - --log
       # Enable the Dashboard and API
       - --api
-      - --metrics
-      - --metrics.prometheus.buckets=0.1,0.3,1.2,5.0
+      #- --metrics
+      #- --metrics.prometheus.buckets=0.1,0.3,1.2,5.0
     networks:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with HTTPS
@@ -204,14 +204,14 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.minitwit-grafana-http.rule=Host(`grafane.minitwit-swarm.online`)
+        - traefik.http.routers.minitwit-grafana-http.rule=Host(`grafana.minitwit-swarm.online`)
         - traefik.http.routers.minitwit-grafana-http.entrypoints=http
         - traefik.http.routers.minitwit-grafana-http.middlewares=https-redirect
-        - traefik.http.routers.minitwit-grafana-https.rule=Host(`grafane.minitwit-swarm.online`)
+        - traefik.http.routers.minitwit-grafana-https.rule=Host(`grafana.minitwit-swarm.online`)
         - traefik.http.routers.minitwit-grafana-https.entrypoints=https
         - traefik.http.routers.minitwit-grafana-https.tls=true
         - traefik.http.routers.minitwit-grafana-https.tls.certresolver=le
-        - traefik.http.services.minitwit-grafana.loadbalancer.server.port=3000
+        - traefik.http.services.minitwit-grafana.loadbalancer.server.port=3001
       
   backend:
 
