@@ -1,0 +1,127 @@
+version: "3.8"
+services:
+
+  frontend:
+    image: virginity/minitwit_frontend:latest
+    ports:
+      - 3000:3000
+    command: serve -s build -l 3000
+    restart: always
+    networks:
+      - main
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 2
+      placement:
+        constraints:
+          - node.role == worker
+  
+  db:
+    image: postgres:14.2
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+      - POSTGRES_DB=Minitwit
+    secrets:
+      - db_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - main
+      - traefik-public
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+
+  prometheus:
+    image: prom/prometheus:v2.33.5
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - main
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 128M
+      placement:
+        constraints:
+          - node.role == manager
+  
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3001:3000
+    volumes:
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - grafana_data:/var/lib/grafana
+    networks:
+      - main
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+      
+  backend:
+    image: virginity/minitwit_backend:latest
+    ports:
+      - 5229:80
+    environment:
+      ConnectionStrings__Minitwit:
+    secrets:
+      - source: connection_string
+        target: ConnectionStrings__Minitwit
+      - source: jwt_key
+        target: AppSettings__Secret
+    restart: on-failure
+    networks:
+      - main
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement:
+        constraints:
+          - node.role == worker
+
+networks:
+
+  main:
+    name: minitwit-internal
+  traefik-public:
+    external: true
+  
+volumes:
+  grafana_data:
+  postgres_data:
+
+secrets:
+  db_password:
+    file: .local/db_password.txt
+  connection_string:
+    file: .local/connection_string.txt
+  jwt_key:
+    file: .local/jwt_key.txt
+
