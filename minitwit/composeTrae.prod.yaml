@@ -104,10 +104,10 @@ services:
       - traefik-public
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 1
       placement: 
         constraints:
-          - node.role == worker
+          - node.role == manager
       labels:
         - traefik.port=3000
         - traefik.enable=true
@@ -204,10 +204,10 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.minitwit-grafana-http.rule=Host(`grafana.minitwit-swarm.online`) && Path(`/grafana`)
+        - traefik.http.routers.minitwit-grafana-http.rule=Host(`minitwit-swarm.online`) && Path(`/grafana`)
         - traefik.http.routers.minitwit-grafana-http.entrypoints=http
         - traefik.http.routers.minitwit-grafana-http.middlewares=https-redirect
-        - traefik.http.routers.minitwit-grafana-https.rule=Host(`grafana.minitwit-swarm.online`) && Path(`/grafana`)
+        - traefik.http.routers.minitwit-grafana-https.rule=Host(`minitwit-swarm.online`) && Path(`/grafana`)
         - traefik.http.routers.minitwit-grafana-https.entrypoints=https
         - traefik.http.routers.minitwit-grafana-https.tls=true
         - traefik.http.routers.minitwit-grafana-https.tls.certresolver=le
