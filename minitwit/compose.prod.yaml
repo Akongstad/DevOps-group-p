@@ -16,9 +16,9 @@ services:
 
     volumes:
       - ./letsencrypt:/config
-      - type: bind
-        source: ./.local/.htpasswd
-        target: /etc/nginx/.htpasswd
+      #- type: bind
+       # source: ./.local/.htpasswd
+        #target: /etc/nginx/.htpasswd
     ports:
       - 80:80
       - 443:443
@@ -51,7 +51,6 @@ services:
           - node.role == worker
   
   db:
-    container_name: postgres_database
     image: postgres:14.2
     ports:
       - 5432:5432
@@ -62,7 +61,7 @@ services:
     secrets:
       - db_password
     volumes:
-      - /var/lib/docker/volume/data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - main
       - traefik-public
@@ -92,6 +91,9 @@ services:
           memory: 1024M
         reservations:
           memory: 128M
+      placement:
+        constraints:
+          - node.role == manager
   
   grafana:
     image: grafana/grafana
