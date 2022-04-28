@@ -30,7 +30,8 @@ export default function Timeline() {
     headers.append('Content-Type', 'application/json');
     //headers.append('Accept', 'application/json');
     //headers.append('Origin','http://localhost:3000');
-    let url = `https://minitwit.online/api/msgs`
+    let url = window.appConfig.API_URL;
+    //let url = `https://minitwit.online/api/msgs`
     //let url = `https://minitwit.online/apiv2/message/timeline`
     //let url = `http://localhost:5229/message/timeline`
     const [posts, setPosts] = useState([]);
