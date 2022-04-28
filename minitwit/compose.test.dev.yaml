@@ -1,0 +1,64 @@
+version: '3.9'
+services:
+
+  frontend:
+    container_name: react_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    command: serve -s build -l 3000
+    depends_on:
+      - backend
+    restart: on-failure
+    networks:
+      - main
+
+  db:
+    image: postgres:14.2
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+      - POSTGRES_DB=Minitwit
+    secrets:
+      - db_password
+    volumes:
+      - /var/lib/docker/volume/data:/var/lib/postgresql/data
+    networks:
+      - main
+
+  backend:
+    container_name: dotnet_backend
+    build:
+      context: ./backend/MinitwitReact
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5229:80"
+    environment:
+      ConnectionStrings__Minitwit:
+    depends_on:
+      - db
+    secrets:
+      - source: connection_string
+        target: ConnectionStrings__Minitwit
+      - source: jwt_key
+        target: AppSettings__Secret
+    restart: on-failure
+    networks:
+      - main
+        
+networks:
+  main:
+    name: tbd-minitwit
+
+
+secrets:
+  db_password:
+    file: .local/db_password.txt
+  connection_string:
+    file: .local/connection_string.txt
+  jwt_key:
+    file: .local/jwt_key.txt
