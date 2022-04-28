@@ -51,6 +51,6 @@
     "axios": "^0.26.0",
     "react-bootstrap": "^2.3.0",
     "react-router": "^6.2.1",
-    "reactstrap": "^9.0.1"
+    "reactstrap": "^9.0.2"
   }
 }
