@@ -1,0 +1,39 @@
+version: '3.9'
+
+networks:
+  main:
+    name: tbd-minitwit
+    
+nginx:
+    image: nginx
+    ports:
+      - "5432:5432"
+      - "8881:8881"
+      - "8882:8882"
+      
+    networks:
+      - main
+    volumes:
+      - type: bind
+        source: ./nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
+        
+services:
+  db:
+    image: postgres:14.2
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+      - POSTGRES_DB=Minitwit
+    secrets:
+      - db_password
+    volumes:
+      - /var/lib/docker/volume/data:/var/lib/postgresql/data
+    networks:
+      - main
+
+secrets:
+  db_password:
+    file: .local/db_password.txt
