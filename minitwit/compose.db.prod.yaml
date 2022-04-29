@@ -9,6 +9,8 @@ services:
     image: nginx
     ports:
       - "5432:5432"
+      - "8881:8881"
+      - "8882:8882"
     networks:
       - main
     volumes:
