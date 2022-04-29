@@ -19,6 +19,7 @@ services:
         target: /etc/nginx/nginx.conf
         
   db:
+    container_name: postgres_database
     image: postgres:14.2
     ports:
       - "5432:5432"
