@@ -1,0 +1,2 @@
+DELETE FROM Messages
+    WHERE PubDate < 1648764000;
