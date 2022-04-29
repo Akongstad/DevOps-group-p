@@ -4,11 +4,11 @@ networks:
   main:
     name: tbd-minitwit
     
-nginx:
+services:
+  nginx:
     image: nginx
     ports:
       - "5432:5432"
-      
     networks:
       - main
     volumes:
@@ -16,7 +16,6 @@ nginx:
         source: ./nginx/nginx.conf
         target: /etc/nginx/nginx.conf
         
-services:
   db:
     image: postgres:14.2
     ports:
