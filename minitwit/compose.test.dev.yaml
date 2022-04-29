@@ -9,6 +9,8 @@ services:
     ports:
       - "3000:3000"
     command: serve -s build -l 3000
+    volumes:
+      - ./frontendConfig:/app/build/config
     depends_on:
       - backend
     restart: on-failure
