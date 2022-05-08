@@ -1,3 +1,4 @@
 [submodule "report"]
 	path = report
 	url = https://github.com/Akongstad/DevOps-Report
+	branch = main
