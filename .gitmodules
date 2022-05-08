@@ -2,6 +2,7 @@
 	path = report
 	url = https://github.com/Akongstad/DevOps-Report
 	branch = main
+
 [submodule "deployment"]
 	path = deployment
 	url = git@github.com:mikaeleythor/itu-minitwit-ops
