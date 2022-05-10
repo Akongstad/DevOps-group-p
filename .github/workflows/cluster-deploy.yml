@@ -1,0 +1,87 @@
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+    branches: [ main ]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore minitwit/backend
+    - name: Build
+      run: dotnet build minitwit/backend --no-restore
+    - name: Test
+      run: dotnet test minitwit/backend --no-build --verbosity normal
+
+  deployment:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    env:
+    steps:
+        - name: Checkout repository and submodules
+          uses: actions/checkout@v2
+        - name: Get week num
+          id: week
+          run: |
+            FIRST=$( echo $(date +%W) | awk '{ print substr( $0, 1, 1 ) }'); \
+            if [[ "$FIRST" = "0" ]]; \
+            then echo "::set-output name=week::$(echo $(( $( echo $(date +%W) | awk '{ print substr( $0, 2, 1 ) }')-4 )))"; \
+            else echo "::set-output name=week::$(echo $(( $(date +%W)-4 )))"; fi
+
+        - name: Docker login
+          run: |
+             echo "LOGIN"
+             echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+             
+        - name: Docker Build and Push
+          run: |
+             echo "BUILD"
+             cd minitwit/frontend
+             docker build -t virginity/minitwit_frontend:latest . -f Dockerfile.dev
+             cd ../backend/MinitwitReact
+             docker build -t virginity/minitwit_backend:latest . -f Dockerfile.dev
+             cd ../../../
+             echo "PUSH"
+             docker push virginity/minitwit_frontend:latest
+             docker push virginity/minitwit_backend:latest
+        - name: Run Snyk to check backend for vulnerabilities
+          uses: snyk/actions/docker@master
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          with:
+            image: virginity/minitwit_backend:latest
+            args: --severity-threshold=critical
+        - name: Run Snyk to check frontend for vulnerabilities
+          uses: snyk/actions/docker@master
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          with:
+            image: virginity/minitwit_frontend:latest
+            args: --severity-threshold=critical
+            
+  dispatch:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - deployment
+    steps:
+    - uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.PAT_TOKEN }}
+        script: |
+          await github.rest.actions.createWorkflowDispatch({
+            owner: 'docker-sstc',
+            repo: 'docker-notify',
+            workflow_id: 'apply.yml',
+            ref: 'master'
+          })
