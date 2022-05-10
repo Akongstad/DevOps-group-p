@@ -5,7 +5,6 @@ import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Avatar from "@mui/material/Avatar";
 import { useNavigate } from "react-router-dom";
 
@@ -38,9 +37,9 @@ function Message(props) {
 Message.propTypes = {
     post: PropTypes.shape({
         pubDate: PropTypes.string.isRequired,
-        Text: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired,
         avatar: PropTypes.string,
-        Username: PropTypes.string.isRequired,
+        author: PropTypes.string.isRequired,
     }).isRequired,
 };
 
