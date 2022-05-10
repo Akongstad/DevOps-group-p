@@ -40,18 +40,49 @@ jobs:
           run: |
              echo "LOGIN"
              echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-             
-        - name: Docker Build and Push
+
+        - name: Set up scripts
           run: |
-             echo "BUILD"
-             cd minitwit/frontend
-             docker build -t virginity/minitwit_frontend:latest . -f Dockerfile.dev
-             cd ../backend/MinitwitReact
-             docker build -t virginity/minitwit_backend:latest . -f Dockerfile.dev
-             cd ../../../
-             echo "PUSH"
-             docker push virginity/minitwit_frontend:latest
-             docker push virginity/minitwit_backend:latest
+            chmod +x docker-build-multiple-tags.sh
+            chmod +x docker-image-version-check.sh
+            chmod +x docker-push-multiple-tags.sh
+             
+        - name: Docker build & push
+          env:
+            RELEASE_VERSION: v${{ steps.week.outputs.week }}.0
+            FRONTEND_FILE: minitwit/frontend/Dockerfile.dev
+            FRONTEND_FOLDER: minitwit/frontend
+            FRONTEND_IMAGE: minitwit_frontend
+            BACKEND_FILE: minitwit/backend/MinitwitReact/Dockerfile.dev
+            BACKEND_FOLDER: minitwit/backend/MinitwitReact
+            BACKEND_IMAGE: minitwit_backend
+          run: |
+            ./docker-build-multiple-tags.sh \
+              ${{ secrets.DOCKER_USERNAME }}/$BACKEND_IMAGE \
+              $BACKEND_FILE \
+              $BACKEND_FOLDER \
+              $RELEASE_VERSION latest production
+
+            ./docker-build-multiple-tags.sh \
+              ${{ secrets.DOCKER_USERNAME }}/$FRONTEND_IMAGE \
+              $FRONTEND_FILE \
+              $FRONTEND_FOLDER \
+              $RELEASE_VERSION latest production
+              
+            ./docker-image-version-check.sh \
+              ${{ secrets.DOCKER_USERNAME }}/$BACKEND_IMAGE \
+              $RELEASE_VERSION latest \
+              ./docker-push-multiple-tags.sh \
+                ${{ secrets.DOCKER_USERNAME }}/$BACKEND_IMAGE \
+                $RELEASE_VERSION latest production
+
+            ./docker-image-version-check.sh \
+              ${{ secrets.DOCKER_USERNAME }}/$FRONTEND_IMAGE \
+              $RELEASE_VERSION latest \
+              ./docker-push-multiple-tags.sh \
+                ${{ secrets.DOCKER_USERNAME }}/$FRONTEND_IMAGE \
+                $RELEASE_VERSION latest production
+
         - name: Run Snyk to check backend for vulnerabilities
           uses: snyk/actions/docker@master
           env:
