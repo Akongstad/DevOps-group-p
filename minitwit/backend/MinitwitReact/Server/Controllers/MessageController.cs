@@ -29,7 +29,7 @@ public class MessageController : ControllerBase
         => Ok(await _messageRepository.GetPublicTimeline());
 
 
-    [Authorize]
+    [AllowAnonymous]
     [HttpGet("timeline/{username}")]
     [ProducesResponseType(typeof(IEnumerable<MessageDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult> GetTimeline(string username)

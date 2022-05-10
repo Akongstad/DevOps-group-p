@@ -8,6 +8,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Message from "./Message";
 import {useEffect, useState} from "react";
+import { useParams } from 'react-router';
 
 
 const sections = [
@@ -30,7 +31,15 @@ export default function Timeline() {
     headers.append('Content-Type', 'application/json');
     //headers.append('Accept', 'application/json');
     //headers.append('Origin','http://localhost:3000');
-    let url = window.appConfig.API_URL;
+    const { username } = useParams();
+    //let url = ''
+    //if(username == undefined) {
+    //    url = `${window.appConfig.API_URL}/message/timeline/${username}`;
+    //} else {
+    let url = `${window.appConfig.API_URL}/message/timeline`;
+    //}
+    // let url = `${window.appConfig.API_URL}/message/timeline/{username}`;
+    
     //let url = `https://minitwit.online/api/msgs`
     //let url = `https://minitwit.online/apiv2/message/timeline`
     //let url = `http://localhost:5229/message/timeline`
@@ -61,7 +70,7 @@ export default function Timeline() {
                 <Grid container spacing={2}  justifyContent={"center"}>
                     { isLoading ? null :
                         posts.map((post) => (
-                        <Message key={post.user} post={post}/>
+                        <Message key={post.Username} post={post}/>
                         ))
                     }
                     
