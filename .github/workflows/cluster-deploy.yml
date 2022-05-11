@@ -49,6 +49,7 @@ jobs:
              
         - name: Docker build & push
           env:
+            OWNER: virginity
             RELEASE_VERSION: v${{ steps.week.outputs.week }}.0
             FRONTEND_FILE: minitwit/frontend/Dockerfile.dev
             FRONTEND_FOLDER: minitwit/frontend
@@ -58,29 +59,29 @@ jobs:
             BACKEND_IMAGE: minitwit_backend
           run: |
             ./docker-build-multiple-tags.sh \
-              ${{ secrets.DOCKER_USERNAME }}/$BACKEND_IMAGE \
+              $OWNER/$BACKEND_IMAGE \
               $BACKEND_FILE \
               $BACKEND_FOLDER \
               $RELEASE_VERSION latest production
 
             ./docker-build-multiple-tags.sh \
-              ${{ secrets.DOCKER_USERNAME }}/$FRONTEND_IMAGE \
+              $OWNER/$FRONTEND_IMAGE \
               $FRONTEND_FILE \
               $FRONTEND_FOLDER \
               $RELEASE_VERSION latest production
               
             ./docker-image-version-check.sh \
-              ${{ secrets.DOCKER_USERNAME }}/$BACKEND_IMAGE \
+              $OWNER/$BACKEND_IMAGE \
               $RELEASE_VERSION latest \
               ./docker-push-multiple-tags.sh \
-                ${{ secrets.DOCKER_USERNAME }}/$BACKEND_IMAGE \
+                $OWNER/$BACKEND_IMAGE \
                 $RELEASE_VERSION latest production
 
             ./docker-image-version-check.sh \
-              ${{ secrets.DOCKER_USERNAME }}/$FRONTEND_IMAGE \
+              $OWNER/$FRONTEND_IMAGE \
               $RELEASE_VERSION latest \
               ./docker-push-multiple-tags.sh \
-                ${{ secrets.DOCKER_USERNAME }}/$FRONTEND_IMAGE \
+                $OWNER/$FRONTEND_IMAGE \
                 $RELEASE_VERSION latest production
 
         - name: Run Snyk to check backend for vulnerabilities
