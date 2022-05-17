@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import {useNavigate} from "react-router-dom";
 
 function Header(props) {
     const { sections, title } = props;
@@ -27,10 +28,12 @@ function Header(props) {
             </Button>
         }
     }
+    let navigate = useNavigate();
+    
     return (
         <React.Fragment>
             <Toolbar sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Button size="small">Public Timeline</Button>
+                <Button size="small" onClick= {() => {navigate("/")}}>Public Timeline</Button>
                 <Typography
                     component="h2"
                     variant="h5"

@@ -11,12 +11,10 @@ import { useNavigate } from "react-router-dom";
 function Message(props) {
     const { post } = props;
     let navigate = useNavigate();
-   //new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(emp.createdAt)
-   // let date = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(post.pubDate);
     return (
         <Grid item xs={12} md={8} alignContent={"center"}>
             <Card sx={{display: 'flex'}}>
-                <CardActionArea onClick= {() => {navigate(`${window.appConfig.API_URL}/message/timeline/${post.author}`)}} sx={{flex:1}}>
+                <CardActionArea onClick= {() => {navigate(`/${post.author}`)}} sx={{flex:1}}>
                     <Avatar sx={{width:56, height:56}} alt={"A"} src={post.avatar}/>
                 </CardActionArea>
                 <CardContent sx={{flex: 18}}>
