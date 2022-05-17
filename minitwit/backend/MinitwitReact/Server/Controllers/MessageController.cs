@@ -28,19 +28,26 @@ public class MessageController : ControllerBase
     public async Task<ActionResult> GetPublicTimeline()
     {
         var messages = await _messageRepository.GetPublicTimeline();
-        var newMessages = messages.Select(item =>
+        var timelineMsgs = messages.Select(item =>
             new MessageTransferDto(MessageId: item.MessageId,
                 Author: item.Author,
                 Text: item.Text,
                 PubDate: new DateTime(item.PubDate).AddHours(2).ToString("hh:mm tt ddd").ToString())).ToList();
-        return Ok(newMessages);
+        return Ok(timelineMsgs);
     }
-
-
+    
     [AllowAnonymous]
     [HttpGet("timeline/{username}")]
-    [ProducesResponseType(typeof(IEnumerable<MessageDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<MessageTransferDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult> GetTimeline(string username)
-        => Ok(await _messageRepository.GetTimelineByUsername(username));
-    
+    {
+        var messages = await _messageRepository.GetTimelineByUsername(username);
+        var userTimelineMsgs = messages.Select(item =>
+            new MessageTransferDto(MessageId: item.MessageId,
+                Author: item.Author,
+                Text: item.Text,
+                PubDate: new DateTime(item.PubDate).AddHours(2).ToString("hh:mm tt ddd").ToString())).ToList();
+        return Ok(userTimelineMsgs);
+    }
+
 }
