@@ -4,6 +4,8 @@ public record MessageDto (long MessageId, string Author, string Text, long PubDa
 
 public record MessageDetailsDto(long MessageId, string Author, string Text, long PubDate, long Flagged);
 
+public record MessageTransferDto(long MessageId, string Author, string Text, string PubDate);
+
 public record MessageCreateDto
 {
     public string? Author { get; set; }
