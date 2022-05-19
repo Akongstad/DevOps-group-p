@@ -9,6 +9,7 @@ import Footer from './Footer';
 import Message from "./Message";
 import {useEffect, useState} from "react";
 import { useParams } from 'react-router';
+import PostMessage from './PostMessage';
 
 
 const sections = [
@@ -67,6 +68,7 @@ export default function Timeline() {
             <CssBaseline />
             <Container maxWidth="lg">
                 <Header title="Minitwit" sections={sections}/>
+                <PostMessage/>
                 <Grid container spacing={2}  justifyContent={"center"}>
                     { isLoading ? null :
                         posts.map((post) => (
