@@ -1,8 +1,6 @@
-﻿//Component only visble if logged in
-// Should call the backend's postMessage endpoint with the message in the textfield
+//Component only visble if logged in
+// backend's postMessage endpoint with the message in the textfield
 
-// A wrapper for <Route> that redirects to the login
-// screen if you're not yet authenticated.
 import Button from "@mui/material/Button";
 import * as React from "react";
 import {TextField, ThemeProvider} from "@mui/material";
