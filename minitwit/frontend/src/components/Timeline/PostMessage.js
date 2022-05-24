@@ -8,32 +8,37 @@ import * as React from "react";
 import {TextField, ThemeProvider} from "@mui/material";
 import {createTheme} from "@mui/material/styles";
 import {useState} from "react";
-import PropTypes from "prop-types";
 import Box from '@mui/material/Box';
 
 function PostMessage() {
     const [errorMessage, setErrorMessage] = useState("");
     const [message, setMessage] = useState("");
     const loggedInUser = localStorage.getItem("token"); // possible to see if user is logged in
+    let trimmed = ""
+    if(loggedInUser) {
+        trimmed = loggedInUser.substring(1, loggedInUser.length - 1);
+    }
     let handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            let res = await fetch(`${window.appConfig.API_URL}/message`, {
-                method: "POST",
-                body:{
-                    User: loggedInUser,
-                    message: message,
-                },
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer " + trimmed);
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({
+                Text: message,
             });
-            let resJson = await res.json();
-            if (res.status === 200) {
-                setErrorMessage("Message posted successfully");
-            } else {
-                setErrorMessage("Some error occured");
-            }
-        } catch (err) {
-            console.log(err);
-        }
+            
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            fetch(`${window.appConfig.API_URL}/message`, requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
     };
     const theme = createTheme();
 
@@ -41,12 +46,11 @@ function PostMessage() {
         if (loggedInUser) {
             // SHOW THE TEXT FIELD THEY CAN WRITE IN
             return (
-                <Box component="form" onSubmit={handleSubmit}>
+                <Box component="form" onSubmit={handleSubmit} style={{display: 'flex',  justifyContent:'center'}}>
                     <TextField
                         name={message}
                         type="text"
                         value={message}
-                        required
                         id="message"
                         autoFocus
                         label="Message"
@@ -56,7 +60,13 @@ function PostMessage() {
                     <Button
                         type="submit"
                         variant="contained"
-                        sx={{mt: 3, mb: 2}}
+                        sx={
+                            {
+                                mt: 2.3,
+                                mb: 2,
+                                ml: 2
+                            }
+                    }
                     >
                         Post
                     </Button>
@@ -64,7 +74,7 @@ function PostMessage() {
                 </Box>
             )
         } else {
-            return (<div><p>You need to be logged in to post a message</p></div>)
+            return (<div style={{display: 'flex',  justifyContent:'center'}}><p><i>You need to be logged in to post a message</i></p></div>)
             // DON'T SHOW THE TEXT FIELD
         }
     }
@@ -78,30 +88,3 @@ function PostMessage() {
     )
 }
 export default PostMessage;
-
-
-
-/*export default function postMessage() {
-
-    /!*const formik = useFormik( {
-    onSubmit: async (values) => {
-        const messageToPost = {
-            Message: values.message,
-        }*!/
-    const test =
-        await postMessage(messageToPost)
-            .then(response => {
-                if (response.status !== 200) {
-                    alert("Something went wrong. Could not login. Status: " + response.status)
-                } else {
-                    response.json().then(data => {
-                        // we should do anything with the response, right?
-                        navigate('/');
-                    })
-                }
-            })
-}
-})
-}*/
-
-// need to return stuff
