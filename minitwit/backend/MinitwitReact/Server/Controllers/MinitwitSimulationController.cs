@@ -122,14 +122,14 @@ public class MinitwitSimulationController : ControllerBase
         }
 
         var request = await Request.ReadFromJsonAsync<JsonObject>();
-        if (Request.Method == "POST" & request.ContainsKey("follow"))
+        if (request != null && Request.Method == "POST" & request.ContainsKey("follow"))
         {
             _followCounter.Inc();
             var followUsername = request["follow"]!.ToString();
             await _minitwit.FollowUser(userId, followUsername);
             return NoContent();
         }
-        if(Request.Method =="POST" && request.ContainsKey("unfollow"))
+        if(request != null && Request.Method =="POST" && request.ContainsKey("unfollow"))
         {
             _unfollowCounter.Inc();
             var unfollowUsername = request["unfollow"]!.ToString();

@@ -1,4 +1,4 @@
-// Missing Login success!
+/*// Missing Login success!
 
 namespace Minitwit.Tests.ControllerTests;
 
@@ -42,7 +42,7 @@ public class UserControllerTests
 
         // Assert
         Assert.Equal(expected, actual);
-    }*/
+    }#1#
     
     /*[Fact]
     public async Task PostLogin_returns_UserLoginResponseDto_and_token()
@@ -77,6 +77,6 @@ public class UserControllerTests
 
         // Assert
         Assert.Equal(0, result);
-    } */
+    } #1#
     
-}
+}*/

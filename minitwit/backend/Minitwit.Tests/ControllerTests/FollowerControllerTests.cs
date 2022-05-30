@@ -10,7 +10,7 @@ public class FollowerControllerTests
         var follower = new FollowerDto(1,"Elon Musk");
         var followerRepository = new Mock<IFollowerRepository>();
         followerRepository.Setup(m => m.FollowUser(follower)).ReturnsAsync(Status.Updated);
-        var controller = new FollowerController(logger.Object, followerRepository.Object);
+        var controller = new FollowerController(followerRepository.Object);
 
         // Act
         var response = await controller.Follow(follower);
@@ -27,7 +27,7 @@ public class FollowerControllerTests
         var follower = new FollowerDto(-1 ,"");
         var followerRepository = new Mock<IFollowerRepository>();
         followerRepository.Setup(m => m.FollowUser(follower )).ReturnsAsync(Status.NotFound);
-        var controller = new FollowerController(logger.Object, followerRepository.Object);
+        var controller = new FollowerController(followerRepository.Object);
 
         // Act
         var response = await controller.Follow(follower);
@@ -44,7 +44,7 @@ public class FollowerControllerTests
         var follower = new FollowerDto(1 ,"");
         var followerRepository = new Mock<IFollowerRepository>();
         followerRepository.Setup(m => m.FollowUser(follower )).ReturnsAsync(Status.NotFound);
-        var controller = new FollowerController(logger.Object, followerRepository.Object);
+        var controller = new FollowerController(followerRepository.Object);
 
         // Act
         var response = await controller.Follow(follower);
@@ -61,7 +61,7 @@ public class FollowerControllerTests
         var follower = new FollowerDto(1 ,"Elon Musk");
         var followerRepository = new Mock<IFollowerRepository>();
         followerRepository.Setup(m => m.FollowUser(follower)).ReturnsAsync(Status.Conflict);
-        var controller = new FollowerController(logger.Object, followerRepository.Object);
+        var controller = new FollowerController(followerRepository.Object);
 
         // Act
         var response = await controller.Follow(follower);
@@ -78,7 +78,7 @@ public class FollowerControllerTests
         var follower = new FollowerDto(1,"Elon Musk");
         var followerRepository = new Mock<IFollowerRepository>();
         followerRepository.Setup(m => m.UnfollowUser(follower)).ReturnsAsync(Status.Updated);
-        var controller = new FollowerController(logger.Object, followerRepository.Object);
+        var controller = new FollowerController(followerRepository.Object);
 
         // Act
         var response = await controller.UnFollow(follower);
@@ -95,7 +95,7 @@ public class FollowerControllerTests
         var follower = new FollowerDto(-1 ,"");
         var followerRepository = new Mock<IFollowerRepository>();
         followerRepository.Setup(m => m.UnfollowUser(follower )).ReturnsAsync(Status.NotFound);
-        var controller = new FollowerController(logger.Object, followerRepository.Object);
+        var controller = new FollowerController(followerRepository.Object);
 
         // Act
         var response = await controller.UnFollow(follower);
@@ -112,7 +112,7 @@ public class FollowerControllerTests
         var follower = new FollowerDto(1 ,"");
         var followerRepository = new Mock<IFollowerRepository>();
         followerRepository.Setup(m => m.UnfollowUser(follower)).ReturnsAsync(Status.NotFound);
-        var controller = new FollowerController(logger.Object, followerRepository.Object);
+        var controller = new FollowerController(followerRepository.Object);
 
         // Act
         var response = await controller.UnFollow(follower);
@@ -129,7 +129,7 @@ public class FollowerControllerTests
         var follower = new FollowerDto(1 ,"Elon Musk");
         var followerRepository = new Mock<IFollowerRepository>();
         followerRepository.Setup(m => m.UnfollowUser(follower)).ReturnsAsync(Status.Conflict);
-        var controller = new FollowerController(logger.Object, followerRepository.Object);
+        var controller = new FollowerController(followerRepository.Object);
 
         // Act
         var response = await controller.UnFollow(follower);

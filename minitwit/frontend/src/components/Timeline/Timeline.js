@@ -12,16 +12,7 @@ import PostMessage from './PostMessage';
 
 
 const sections = [
-    /*{ title: 'Technology', url: '#' },
-    { title: 'Design', url: '#' },
-    { title: 'Culture', url: '#' },
-    { title: 'Business', url: '#' },
-    { title: 'Politics', url: '#' },
-    { title: 'Opinion', url: '#' },
-    { title: 'Science', url: '#' },
-    { title: 'Health', url: '#' },
-    { title: 'Style', url: '#' },
-    { title: 'Travel', url: '#' },*/
+    
 ];
 const theme = createTheme();
 
@@ -29,14 +20,7 @@ const theme = createTheme();
 export default function Timeline() {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    //headers.append('Accept', 'application/json');
-    //headers.append('Origin','http://localhost:3000');
     let url = `${window.appConfig.API_URL}/message/timeline`;
-    // let url = `${window.appConfig.API_URL}/message/timeline/{username}`;
-    
-    //let url = `https://minitwit.online/api/msgs`
-    //let url = `https://minitwit.online/apiv2/message/timeline`
-    //let url = `http://localhost:5229/message/timeline`
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
