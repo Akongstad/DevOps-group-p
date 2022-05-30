@@ -8,7 +8,6 @@ import Header from './Header';
 import Footer from './Footer';
 import Message from "./Message";
 import {useEffect, useState} from "react";
-import { useParams } from 'react-router';
 import PostMessage from './PostMessage';
 
 
