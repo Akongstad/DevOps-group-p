@@ -1,0 +1,118 @@
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+    branches: [ main ]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore minitwit/backend
+    - name: Build
+      run: dotnet build minitwit/backend --no-restore
+    - name: Test
+      run: dotnet test minitwit/backend --no-build --verbosity normal
+
+  deployment:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+        - name: Checkout repository and submodules
+          uses: actions/checkout@v2
+        - name: Get week num
+          id: week
+          run: |
+            FIRST=$( echo $(date +%W) | awk '{ print substr( $0, 1, 1 ) }'); \
+            if [[ "$FIRST" = "0" ]]; \
+            then echo "::set-output name=week::$(echo $(( $( echo $(date +%W) | awk '{ print substr( $0, 2, 1 ) }')-4 )))"; \
+            else echo "::set-output name=week::$(echo $(( $(date +%W)-4 )))"; fi
+
+        - name: Docker login
+          run: |
+             echo "LOGIN"
+             echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+        - name: Set up scripts
+          run: |
+            chmod +x docker-build-multiple-tags.sh
+            chmod +x docker-image-version-check.sh
+            chmod +x docker-push-multiple-tags.sh
+             
+        - name: Docker build & push
+          env:
+            OWNER: virginity
+            RELEASE_VERSION: v${{ steps.week.outputs.week }}.0
+            FRONTEND_FILE: minitwit/frontend/Dockerfile.dev
+            FRONTEND_FOLDER: minitwit/frontend
+            FRONTEND_IMAGE: minitwit_frontend
+            BACKEND_FILE: minitwit/backend/MinitwitReact/Dockerfile.dev
+            BACKEND_FOLDER: minitwit/backend/MinitwitReact
+            BACKEND_IMAGE: minitwit_backend
+          run: |
+            ./docker-build-multiple-tags.sh \
+              $OWNER/$BACKEND_IMAGE \
+              $BACKEND_FILE \
+              $BACKEND_FOLDER \
+              $RELEASE_VERSION latest production
+
+            ./docker-build-multiple-tags.sh \
+              $OWNER/$FRONTEND_IMAGE \
+              $FRONTEND_FILE \
+              $FRONTEND_FOLDER \
+              $RELEASE_VERSION latest production
+              
+            ./docker-image-version-check.sh \
+              $OWNER/$BACKEND_IMAGE \
+              $RELEASE_VERSION latest \
+              ./docker-push-multiple-tags.sh \
+                $OWNER/$BACKEND_IMAGE \
+                $RELEASE_VERSION latest production
+
+            ./docker-image-version-check.sh \
+              $OWNER/$FRONTEND_IMAGE \
+              $RELEASE_VERSION latest \
+              ./docker-push-multiple-tags.sh \
+                $OWNER/$FRONTEND_IMAGE \
+                $RELEASE_VERSION latest production
+
+        - name: Run Snyk to check backend for vulnerabilities
+          uses: snyk/actions/docker@master
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          with:
+            image: virginity/minitwit_backend:latest
+            args: --severity-threshold=critical
+        - name: Run Snyk to check frontend for vulnerabilities
+          uses: snyk/actions/docker@master
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          with:
+            image: virginity/minitwit_frontend:latest
+            args: --severity-threshold=critical
+            
+  dispatch:
+    name: dispatch
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - deployment
+    steps:
+    - uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.OPS_PAT_TOKEN }}
+        script: |
+          await github.rest.actions.createWorkflowDispatch({
+            owner: 'mikaeleythor',
+            repo: 'itu-minitwit-ops',
+            workflow_id: 'apply.yml',
+            ref: 'master'
+          })
