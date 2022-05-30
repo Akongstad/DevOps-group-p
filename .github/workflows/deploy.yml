@@ -2,9 +2,6 @@ name: deploy
 
 on:
   workflow_dispatch:
-  release:
-      types: [created]
-      branches: [ main ]
 
 jobs:
   build:
