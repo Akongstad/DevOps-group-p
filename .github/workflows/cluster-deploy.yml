@@ -1,8 +1,9 @@
+name: cluster-deploy
+
 on:
   workflow_dispatch:
   release:
     types: [published]
-    branches: [ main ]
     
 jobs:
   build:
