@@ -44,9 +44,6 @@ function Header(props) {
                 >
                     {title}
                 </Typography>
-                <IconButton>
-                    <SearchIcon />
-                </IconButton>
                 <AuthStateButton/>
             </Toolbar>
             <Toolbar

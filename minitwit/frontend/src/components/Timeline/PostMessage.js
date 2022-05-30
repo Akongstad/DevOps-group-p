@@ -9,7 +9,6 @@ import {useState} from "react";
 import Box from '@mui/material/Box';
 
 function PostMessage() {
-    const [errorMessage, setErrorMessage] = useState("");
     const [message, setMessage] = useState("");
     const loggedInUser = localStorage.getItem("token"); // possible to see if user is logged in
     let trimmed = ""
@@ -68,7 +67,6 @@ function PostMessage() {
                     >
                         Post
                     </Button>
-                    <div className="message">{errorMessage ? <p>{errorMessage}</p> : null}</div>
                 </Box>
             )
         } else {

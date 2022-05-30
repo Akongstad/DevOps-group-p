@@ -32,13 +32,7 @@ export default function Timeline() {
     headers.append('Content-Type', 'application/json');
     //headers.append('Accept', 'application/json');
     //headers.append('Origin','http://localhost:3000');
-    const { username } = useParams();
-    //let url = ''
-    //if(username == undefined) {
-    //    url = `${window.appConfig.API_URL}/message/timeline/${username}`;
-    //} else {
     let url = `${window.appConfig.API_URL}/message/timeline`;
-    //}
     // let url = `${window.appConfig.API_URL}/message/timeline/{username}`;
     
     //let url = `https://minitwit.online/api/msgs`
