@@ -64,4 +64,4 @@ or harvesting the data, which would be sensitive data, which would be sensitive 
 ### C. Pen-test Your System
 
 In this part of the exercise it was required to test our own system for vulnerabilities, and fix one of these vulnerabilities. We chose to use `wmap` for this.
-In the logs it was discovered that the server received requests from all around the world, e.g. Nevada.
+In the logs it was discovered that the server received requests from all around the world, e.g. Nevada. The pen test did not yield any system vulnerabilities, except from acting as a DOS attack on our own system, eventually crashing the ELK stack.
