@@ -9,7 +9,6 @@ global using System.Text;
 global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Tokens;
 global using MinitwitReact;
-global using MinitwitReact.Extensions;
 global using MinitwitReact.Authentication;
 global using MinitwitReact.Core.IRepositories;
 global using MinitwitReact.Core.DTO;

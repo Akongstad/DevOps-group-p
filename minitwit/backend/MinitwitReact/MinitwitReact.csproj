@@ -47,11 +47,8 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Pages\Error.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\_ViewImports.cshtml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Server\Pages\Error.cshtml" />
-      <AdditionalFiles Include="Server\Pages\_ViewImports.cshtml" />
+      <_ContentIncludedByDefault Remove="Server\Pages\Error.cshtml" />
+      <_ContentIncludedByDefault Remove="Server\Pages\_ViewImports.cshtml" />
     </ItemGroup>
 
     <!--<ItemGroup>-->

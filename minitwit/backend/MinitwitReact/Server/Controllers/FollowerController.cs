@@ -1,3 +1,5 @@
+using MinitwitReact.Server.Extensions;
+
 namespace MinitwitReact.Server.Controllers;
 
 [Authorize]
