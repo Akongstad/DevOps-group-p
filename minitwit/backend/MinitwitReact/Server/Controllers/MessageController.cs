@@ -24,15 +24,30 @@ public class MessageController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("timeline")]
-    [ProducesResponseType(typeof(IEnumerable<MessageDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<MessageToFrontendDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult> GetPublicTimeline()
-        => Ok(await _messageRepository.GetPublicTimeline());
-
-
-    [Authorize]
-    [HttpGet("timeline/{username}")]
-    [ProducesResponseType(typeof(IEnumerable<MessageDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult> GetTimeline(string username)
-        => Ok(await _messageRepository.GetTimelineByUsername(username));
+    {
+        var messages = await _messageRepository.GetPublicTimeline();
+        var timelineMsgs = messages.Select(item =>
+            new MessageToFrontendDto(MessageId: item.MessageId,
+                Author: item.Author,
+                Text: item.Text,
+                PubDate: new DateTime(item.PubDate).AddHours(2).ToString("hh:mm tt ddd").ToString())).ToList();
+        return Ok(timelineMsgs);
+    }
     
+    [AllowAnonymous]
+    [HttpGet("timeline/{username}")]
+    [ProducesResponseType(typeof(IEnumerable<MessageToFrontendDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult> GetTimeline(string username)
+    {
+        var messages = await _messageRepository.GetTimelineByUsername(username);
+        var userTimelineMsgs = messages.Select(item =>
+            new MessageToFrontendDto(MessageId: item.MessageId,
+                Author: item.Author,
+                Text: item.Text,
+                PubDate: new DateTime(item.PubDate).AddHours(2).ToString("hh:mm tt ddd").ToString())).ToList();
+        return Ok(userTimelineMsgs);
+    }
+
 }
