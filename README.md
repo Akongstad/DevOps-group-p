@@ -40,7 +40,7 @@ While we develop features and patches on temporary branches, everything worthwhi
 
 > Merge to main requires 2 approvals
 
-### production
+### production (Deprecated. See deployment submodule instead)
 The **production** branch lives on our production server and is our main branch's lean and automated counterpart.
 It is developed in a manner such that our multi-container application can be rebuilt and updated on the production server to include updated Docker images and/or changes in configuration files with a single command, minimizing downtime withoud using load-balancers. 
 
