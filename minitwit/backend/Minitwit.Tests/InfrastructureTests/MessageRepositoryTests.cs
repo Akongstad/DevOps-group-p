@@ -68,8 +68,6 @@ public class MessageRepositoryTests : BaseRepositoryTest
         var response = await _messageRepository.PostNewMessageToTimeline(111, "I make a new post yes");
         Assert.Equal(Status.NotFound, response);
     }
-
-    // TODO Andreas?
     [Fact]
     public async Task PostMessage_Posts_Message_to_top_of_timeline()
     {

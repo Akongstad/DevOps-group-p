@@ -12,27 +12,27 @@ public class UserRepository : IUserRepository
     public async Task<IEnumerable<UserDto>> GetAllUsers() => 
         await _context.Users.Select(u => new UserDto(u.UserId, u.Username)).ToListAsync();
     
-    public async Task<UserDto?> GetUserById(long userid)
+    public async Task<UserDto?> GetUserById(long userId)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userid);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
         return user == null ? null : new UserDto(user.UserId, user.Username);
     }
         
-    public async Task<UserDetailsDto?> GetUserDetailsById(long userid)
+    public async Task<UserDetailsDto?> GetUserDetailsById(long userId)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userid);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
         return user == null ? null : new UserDetailsDto(user.UserId, user.Username, user.Email, user.PwHash);
     }
     
-    public async Task<long> GetUserIdFromUsername(string username)
+    public async Task<long> GetUserIdFromUsername(string userName)
     { 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == userName);
         return user?.UserId ?? 0;
     }
     
-    public async Task<UserDetailsDto?> GetUserDetailsByName(string name)
+    public async Task<UserDetailsDto?> GetUserDetailsByName(string userName)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == name);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == userName);
         return user is null ? null : new UserDetailsDto(user.UserId, user.Username, user.Email, user.PwHash);
     }
     

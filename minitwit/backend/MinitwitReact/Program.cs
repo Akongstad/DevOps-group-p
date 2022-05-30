@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using MinitwitReact.Server.Extensions;
 using Serilog;
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";

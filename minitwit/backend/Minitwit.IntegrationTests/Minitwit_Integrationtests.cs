@@ -15,8 +15,6 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
     [Fact]
     public async Task HTTP_GET_Users_Success()
     {
-        // await using var app = new WebApplicationFactory<Program>();
-        // using var _client = app.CreateClient();
         var response = await _client.GetAsync("user/");
         response.Should().BeSuccessful();
     }
@@ -129,9 +127,7 @@ public class MinitwitTests : IDisposable, IClassFixture<CustomWebApplicationFact
     {
         if (_disposed) return;
         if (disposing)
-        {
-            // _context.Dispose();
-        }
+        { }
 
         _disposed = true;
     }

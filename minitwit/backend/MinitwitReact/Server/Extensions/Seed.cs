@@ -1,4 +1,4 @@
-namespace MinitwitReact.Extensions;
+namespace MinitwitReact.Server.Extensions;
 
 public static class Seed
 {

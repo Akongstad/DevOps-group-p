@@ -13,16 +13,6 @@ import { useParams } from 'react-router';
 // This should be a user's timeline
 // User should arrive here after they clicked an avatar icon (located in Message) - this should do it just fine.
 const sections = [
-    /*{ title: 'Technology', url: '#' },
-    { title: 'Design', url: '#' },
-    { title: 'Culture', url: '#' },
-    { title: 'Business', url: '#' },
-    { title: 'Politics', url: '#' },
-    { title: 'Opinion', url: '#' },
-    { title: 'Science', url: '#' },
-    { title: 'Health', url: '#' },
-    { title: 'Style', url: '#' },
-    { title: 'Travel', url: '#' },*/
 ];
 const theme = createTheme();
 

@@ -1,3 +1,5 @@
+using MinitwitReact.Server.Extensions;
+
 namespace MinitwitReact.Server.Controllers;
 
 [Authorize]
@@ -6,11 +8,9 @@ namespace MinitwitReact.Server.Controllers;
 public class MessageController : ControllerBase
 {
     private readonly IMessageRepository _messageRepository;
-    private readonly ILogger<MessageController> _logger;
 
-    public MessageController(ILogger<MessageController> logger, IMessageRepository messageRepository)
+    public MessageController(IMessageRepository messageRepository)
     {
-        _logger = logger;
         _messageRepository = messageRepository;
     }
     

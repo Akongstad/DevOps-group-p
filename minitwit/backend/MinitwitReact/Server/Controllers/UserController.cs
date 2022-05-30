@@ -4,13 +4,11 @@ namespace MinitwitReact.Server.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly ILogger<UserController> _logger; 
     private readonly IUserRepository _userRepository;
     private readonly IJwtUtils _jwtUtils;
 
-    public UserController(ILogger<UserController> logger, IUserRepository userRepository, IJwtUtils jwtUtils)
+    public UserController(IUserRepository userRepository, IJwtUtils jwtUtils)
     {
-        _logger = logger;
         _userRepository = userRepository;
         _jwtUtils = jwtUtils;
     }
@@ -48,8 +46,9 @@ public class UserController : ControllerBase
         }
 
         var user = _userRepository.GetUserDetailsByName(login.Username).Result;
+        if (user == null) return BadRequest(new {message = "User not found"});
         var jwt = _jwtUtils.GenerateToken(user);
-        return Ok(new UserLoginResponseDto(user!.UserId, user.Username, user.Email, jwt));
+        return Ok(new UserLoginResponseDto(user.UserId, user.Username, user.Email, jwt));
     }
     
     [Authorize]

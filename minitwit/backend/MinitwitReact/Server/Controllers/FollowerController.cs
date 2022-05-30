@@ -1,3 +1,5 @@
+using MinitwitReact.Server.Extensions;
+
 namespace MinitwitReact.Server.Controllers;
 
 [Authorize]
@@ -5,11 +7,9 @@ namespace MinitwitReact.Server.Controllers;
 [Route("[controller]")]
 public class FollowerController : ControllerBase
 {
-    private readonly ILogger<FollowerController> _logger; 
     private readonly IFollowerRepository _followerRepository;
-    public FollowerController(ILogger<FollowerController> logger, IFollowerRepository followerRepository)
+    public FollowerController(IFollowerRepository followerRepository)
     {
-        _logger = logger;
         _followerRepository = followerRepository;
     }
 

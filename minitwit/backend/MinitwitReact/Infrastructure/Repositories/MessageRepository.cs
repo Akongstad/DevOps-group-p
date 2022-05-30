@@ -55,16 +55,16 @@ public class MessageRepository : IMessageRepository
         return await GetPublicTimeline();
     }
     
-    public async Task<Status> PostNewMessageToTimeline(long userId, string text)
+    public async Task<Status> PostNewMessageToTimeline(long userId, string message)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
-        if (user == null && text != "")
+        if (user == null && message != "")
         {
             return Status.NotFound;
         }
         await _context.Messages.AddAsync(new Message
         {
-            Text = text,
+            Text = message,
             AuthorId = userId,
             Author = user,
             PubDate = DateTime.UtcNow.Ticks,

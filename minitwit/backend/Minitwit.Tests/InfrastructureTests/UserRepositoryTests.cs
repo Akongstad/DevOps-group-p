@@ -1,5 +1,3 @@
-using MinitwitReact.Core.Enums;
-
 namespace Minitwit.Tests.InfrastructureTests;
 
 public class UserRepositoryTests : BaseRepositoryTest

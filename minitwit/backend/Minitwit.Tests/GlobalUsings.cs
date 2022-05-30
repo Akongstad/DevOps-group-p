@@ -12,4 +12,3 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.Logging;
 global using MinitwitReact.Server.Controllers;
 global using Moq;
-global using MinitwitReact.Authentication;
