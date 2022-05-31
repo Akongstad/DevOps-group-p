@@ -61,15 +61,15 @@ TBD-MiniTwit has a development environment for developing and testing code befor
 
 **Steps to run**
 
-1. Clone the repository.
+**1.** Clone the repository.
 ```bash
 git clone https://github.com/Akongstad/DevOps-group-p.git
 ```
-2. Cd into the minitwit folder: 
+**2.** Cd into the minitwit folder: 
 ```bash
 cd DevOps-group-p/minitwit
 ```
-3. Create and polulate the .local folder: 
+**3.** Create and polulate the .local folder: 
 ```bash
 mkdir .local && cd .local
 ```
@@ -90,8 +90,9 @@ Go back to the minitwit folder
 cd ..
 ```
 
-4. Run the docker compose-file: 
-  a. Run the full development system(Includes logging with elk and monitoring with prometheus/grafana)
+**4.** Run the docker compose-file: 
+  
+  **a**. Run the full development system(Includes logging with elk and monitoring with prometheus/grafana)
 ```bash
 chmod u+x setup_elk.sh
 
@@ -101,7 +102,7 @@ Run the application
 ```bash
 docker-compose -f compose.dev.yaml up --build
 ```
-  b. Run the base development system(frontend, backend, database)
+  **b**. Run the base development system(frontend, backend, database)
 ```bash
 docker-compose -f compose.test.dev.yaml up --build
 ```
