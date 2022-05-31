@@ -53,8 +53,58 @@ It is developed in a manner such that our multi-container application can be reb
 
 Environments
 ---
+TBD-MiniTwit has a development environment for developing and testing code before it is deployed to the kubernetes cluster which has the production code.
 
 ### Development
+**Prerequisites**
+- Install docker: https://docs.docker.com/get-docker/
+
+**Steps to run**
+
+1. Clone the repository.
+```bash
+git clone https://github.com/Akongstad/DevOps-group-p.git
+```
+2. Cd into the minitwit folder: 
+```bash
+cd DevOps-group-p/minitwit
+```
+3. Create and polulate the .local folder: 
+```bash
+mkdir .local && cd .local
+```
+Create database password file (replace MySecretPassword with your desired password)
+```bash
+Touch db_password.txt && echo "MySecretPassword" > db_password.txt
+```
+Create database connection string file. (MySecretPassword should be replaced with the content of  db_password.txt)
+```bash
+touch connection_string.txt && echo "Host=db;Database=Minitwit;Username=sa;Password=MySecretPassword;" > db_password.txt
+```
+Create jwt key file. (MySecretKeyshould be replaced with your desired key)
+```bash
+touch jwt_key.txt && echo "MySecretKey" > jwt_key.txt
+```
+Go back to the minitwit folder
+```bash
+cd ..
+```
+
+4. Run the docker compose-file: 
+  a. Run the full development system(Includes logging with elk and monitoring with prometheus/grafana)
+```bash
+chmod u+x setup_elk.sh
+
+./setup_elk.sh
+```
+Run the application
+```bash
+docker-compose -f compose.dev.yaml up --build
+```
+  b. Run the base development system(frontend, backend, database)
+```bash
+docker-compose -f compose.test.dev.yaml up --build
+```
 
 ### Production
-
+See deployment submodule for instruction on how to deploy and update the MiniTwit-TBD cluster
