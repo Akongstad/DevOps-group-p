@@ -21,6 +21,7 @@ public class JwtUtils : IJwtUtils
         // generate token that is valid for 1days
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Secret ?? "backup"));
 
+
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
         var token = new JwtSecurityToken(
             claims: claims,
