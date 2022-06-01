@@ -19,7 +19,7 @@ public class JwtUtils : IJwtUtils
             new(ClaimTypes.Name, user.Username), new(ClaimTypes.NameIdentifier, user.UserId.ToString())
         };
         // generate token that is valid for 1days
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Secret ?? "backup"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Secret ?? "ed24e03d-20c7-464e-a5ea-c82f75c49196"));
 
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
