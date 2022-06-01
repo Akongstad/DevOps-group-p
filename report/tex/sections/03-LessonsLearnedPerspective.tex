@@ -1,0 +1,27 @@
+\section{Lessons Learned}
+\label{sec:lessons_learned}
+% Describe the biggest issues, how you solved them, and which are major lessons learned with regards to:
+The following section will focus on the lessons learned, significant issues encountered, how they were solved, and reflections on the project.
+\subsection{Refactoring}
+% - evolution and refactoring
+We had issues´\textit{transcribing} the flask frontend to ReactJS. Trial and error resulted in us basing the new frontend on the look instead of the code of the old one.\\
+C\# was chosen for the backend for convenience since most of the team had experience with it and did not wish to learn a new language on top of the course material.
+Since the initial refactor, we have incrementally refactored the backend, first migrating from accessing the database through raw SQL to using an object-relational mapper. After doing the initial refactor to raw SQL, it became apparent that not immediately adding the abstraction layer of an object-relational mapper meant wasted effort since we had to completely rewrite the initial refactor for this purpose during the following weeks.
+We have decoupled the original MiniTwit class into separate classes, adhering to the single responsibility principle. Continually adding tests while refactoring allowed us to regression test changes.
+
+
+\subsection{Operation}
+We now see the benefits of infrastructure as code. The original legacy system felt fickle as it had undocumented manual changes. Thus reverting or redeploying became hard. Without logging all changes to the system, it is impossible to reach a state of transparency where every team member knows what is going on in the system. After implementing infrastructure as code for provisioning a cluster\cite{opsIssue5} we had detailed documentation of what was done to the system, and reprovision was automated.
+\subsection{Maintenance}
+% - operation, and maintenance of your ITU-MiniTwit systems. Link back to respective commit messages, issues, tickets, etc. to illustrate these.
+As the simulation was running, we made maintenance on the program, fixing issues such as authentication for the simulator\footnote{Pull request fixing login \& register\cite{loginIssue}}.
+This issue caused us to lose data as we could not register users. The problem no longer occurred when the simulator moved to the next batch.
+Another issue we had was that our follow and unfollow endpoints suddenly stopped working\footnote{Issue illustrating problem\cite{issue172}}. The problem was indirectly solved when we did more refactoring on the system. However, we would likely not have caught the issue if it were not for the monitoring we had implemented at that time.\\
+Our follower issues were related to inconsistent or missing user data in the database, which was common among the other groups. This made us realize the importance of keeping a database backup in case of data loss. This is especially important when serving live users, which the simulation allowed us to do, as service uptime and data consistency are essential for users.
+
+\subsection{DevOps Adaptation}
+% - Also reflect and describe what was the "DevOps" style of your work. For example, what did you do differently to previous development projects and how did it work?
+The most notable difference from earlier projects was incrementally releasing in small batches by adopting the flow principle. Continually providing value instead of doing 1 big hand-off made it easier to focus on finishing individual assignments. It did, however, limit options for distributing work. For example, it is hard for multiple people to be productive when setting up a droplet on DigitalOcean or creating a CD workflow file. 
+It also provided us with instantaneous feedback through the CI chain, allowing us to quickly solve problems and keep a consistent level of code quality. We realize now that at least minimal CI should be present in all projects, and we will implement it in future projects.
+Continual Learning and Experimentation are something we feel lacking in our adaptation of DevOps. While we did learn a wide range of new tools. We feel we stagnated in improving our development practices between increments. This might have been solved by implementing something akin to a retrospective meeting focusing on improvements.\\
+The course has given us a comprehensive range of tools and technologies for developing, maintaining, and operating software. Some of which will prove helpful for future projects and when we enter the industry.

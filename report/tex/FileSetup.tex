@@ -1,0 +1,132 @@
+% Blaðsíðustillingar
+
+\usepackage[includefoot]{geometry}
+
+\geometry{
+	paper=a4paper, % letterpaper lika til
+	top=2.5cm, % Top margin
+	bottom=1cm, % Bottom margin
+	left=2.5cm, % Left margin
+	right=2.4cm, % Right margin
+	headheight=0.75cm,% Header height
+	footskip=1.5cm, % Space from the bottom margin to the baseline of the footer
+	headsep=0.75cm, % Space from the top margin to the baseline of the header
+	%showframe, % Uncomment to show how the type block is set on the page
+}
+
+%--------------------% Page style %-----------------%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\chead{DevOps Project Report}
+\lhead{Group: TBD}
+\rhead{IT-University, Copenhagen}
+
+\usepackage[colorlinks = true,
+            linkcolor = blue,
+            urlcolor  = blue,
+            citecolor = red,
+            anchorcolor = blue]{hyperref}
+%-------------------------------- Íslenska ----------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%\usepackage[icelandic]{babel}
+
+%----------------------------- Stærðfræðipakkar frá AMS ---------------
+
+\usepackage{amsmath, amsfonts, amsthm, amssymb} % Stærðfræðipakkar
+\usepackage{braket, nicefrac} % fyrir mengi, brotabrot
+
+% ----------- Fyrir SI Einingar
+\usepackage{siunitx}
+
+
+%------------------------------ Listar/ númeringar -------------------------
+\usepackage{enumitem, multicol}
+
+%------------------------------- Fyrir innsetningu mynda --------------
+\usepackage{graphicx, float} 
+\usepackage{keystroke}
+\usepackage{pgfplots}\usepgfplotslibrary{units}
+\pgfplotsset{compat=1.18}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Nýtt Matlab viðmót
+\usepackage{listings}
+\usepackage{fancyvrb}
+
+\def\lstbasicfont{\fontfamily{pcr}\selectfont\normalsize}
+\definecolor{mygreen}{RGB}{28,172,0} 
+\definecolor{mylilas}{RGB}{170,55,241}
+\lstset{language=Matlab,%
+	basicstyle={\lstbasicfont},
+	breaklines=true,%
+	morekeywords={matlab2tikz},
+	keywordstyle=\color{blue},%
+	morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+	identifierstyle=\color{black},%
+	stringstyle=\color{mylilas},
+	commentstyle=\color{mygreen},%
+	showstringspaces=false, %without this there will be a symbol in the places where there is a space
+	numbers=left,%
+	numberstyle={\tiny \color{black}},% size of the numbers
+	numbersep=5 pt, % this defines how far the numbers are from the text 
+	inputencoding=latin1,
+	backgroundcolor = \color{gray!3},
+	framexleftmargin= -1 mm,
+	frame=none,
+	rulesepcolor=\color{blue!30},
+	extendedchars=true,
+	emph={logical},emphstyle=\color{blue},	
+	emph={all,equal, minor, on, off, long, short, bank, rat},emphstyle=\color{mylilas},	
+}
+\renewcommand\lstlistingname{\textsc{Matlab}}%
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+%Hérna vel ég stillingar fyrir ramma sem ég skýri matlabUT
+\tcbset{matlabUT/.style={
+		enhanced,
+		colback=gray!1,
+		colframe=gray!30,
+		title=Command Window,
+		arc=0mm,
+		coltitle=black,
+		center title, 
+		title style={top color=white, bottom color = gray!30},
+		grow to left by= -3 mm,
+		left= 4 mm,
+		grow to right by=0.5mm,
+		colupper = gray!70!black
+}}
+
+% Les inn textaskra sem inniheldur niðurstöður úr Command Window
+\newcommand{\CommandWindow}[1]{\begin{tcolorbox}[matlabUT]
+		\VerbatimInput{#1}
+\end{tcolorbox}}
+
+%%%%%%%%%%%%%%%%    Matlab endar %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Formatta kóða
+
+ \DefineVerbatimEnvironment%
+      {verbatimprog}%
+      {Verbatim}%
+      {fontsize=\tiny}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% Hyperlink References %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{hyperref}
+
+%--------------------% Storage Path for images %-----------------%
+\graphicspath{{graphics/}{Graphics/}{./}}
+
+%--------------------% Bibliography %-----------------%
+\usepackage[
+backend=biber,
+style=ieee,
+sorting=ynt
+]{biblatex}
+
+\addbibresource{references.bib}
+
+
