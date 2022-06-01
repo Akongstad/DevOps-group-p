@@ -1,0 +1,82 @@
+\documentclass{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage{enumerate}
+\usepackage{relsize}
+\usepackage{steinmetz}
+\usepackage{verbatim}
+\usepackage[onehalfspacing]{setspace}
+\input{tex/FileSetup}
+\input{tex/commands}
+
+\begin{document}
+
+%TC:ignore
+\begin{titlepage}
+    \centering
+    \includegraphics[width=10cm]{images/ITU_logo_UK jpg.jpg}
+    \vspace{1.5cm}
+    
+	{\huge\bfseries Project Report\par}
+	\vspace{1cm}
+    {\scshape\Large DevOps, Software Evolution and Software Maintenance \par}
+	\vspace{2cm}
+	{\Large Group O "TBD"}\par
+	\vspace{0.5cm}
+	{\Large\itshape Andreas Kongstad}\par
+	\texttt{kong@itu.dk}\par
+	\vspace{0.5cm}
+	{\Large\itshape Charlotte Schack Berg}\par
+	\texttt{csbe@itu.dk}\par
+	\vspace{0.5cm}
+	{\Large\itshape Eythor Mikael Eythorsson}\par
+	\texttt{eyey@itu.dk}\par
+	\vspace{0.5cm}
+	{\Large\itshape Christian Lyon Lüthcke}\par
+	\texttt{clyt@itu.dk}\par
+	\vspace{0.5cm}
+	{\Large\itshape Frederik Baht-Hagen}\par
+	\texttt{fbah@itu.dk}\par
+	\vfill
+	Instructors:\par
+    Helge Pfeiffer \& Mircea Lungu
+
+	\vspace{1cm}
+
+% Bottom of the page
+	{\large \today\par}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+
+\clearpage
+%TC:endignore
+%TODO
+% Decomposition diagram (class diagram) of a package in the backend + text
+% 2.0 Process perspective re-write - done
+% 2.5.3 Logging - done
+% 3.0 add additional reflections - done
+% Figure 6: Technologies & Tools on which TBD-MiniTwit depends
+% theory references
+% mention 
+
+% reduce word count - Currently at 3418 words = -82 words remain
+% formatting
+% proof read
+% Release
+
+\input{tex/sections/01-SystemPerspective}
+\clearpage
+\input{tex/sections/02-ProcessPerspective}
+\clearpage
+\input{tex/sections/03-LessonsLearnedPerspective}
+\clearpage
+
+%TC:ignore
+\addcontentsline{toc}{section}{References}
+\printbibliography
+\clearpage
+\appendix
+\input{tex/appendix}
+%TC:endignore
+\end{document}
