@@ -1,5 +1,5 @@
-[submodule "report"]
-	path = report
+[submodule "report_submodule"]
+	path = report_submodule
 	url = https://github.com/Akongstad/DevOps-Report
 	branch = main
 
