@@ -14,7 +14,7 @@ public class MessageController : ControllerBase
         _messageRepository = messageRepository;
     }
     
-    [Authorize]
+    [AllowAnonymous]
     [HttpPost("")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
