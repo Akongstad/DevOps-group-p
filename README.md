@@ -3,7 +3,7 @@ Workflow Status:
 
 ![sonar cloud](https://github.com/Akongstad/DevOps-group-p/actions/workflows/sonar%20cloud.yml/badge.svg)  
 ![release schedule](https://github.com/Akongstad/DevOps-group-p/actions/workflows/release_schedule.yml/badge.svg)  
-![cluster-deploy](https://github.com/Akongstad/DevOps-group-p/actions/workflows/deploy-deploy.yml/badge.svg)
+![cluster-deploy](https://github.com/Akongstad/DevOps-group-p/actions/workflows/deploy-cluster.yml/badge.svg)
 ![codeyml](https://github.com/Akongstad/DevOps-group-p/actions/workflows/codeql.yml/badge.svg)
 ![.Net](https://github.com/Akongstad/DevOps-group-p/actions/workflows/dotnet.yml/badge.svg)
 
