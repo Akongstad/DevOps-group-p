@@ -32,7 +32,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.6" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.4" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.5" />
         <PackageReference Include="prometheus-net" Version="6.0.0" />
         <PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0" />
         <PackageReference Include="Prometheus.Client.HttpRequestDurations" Version="3.5.0" />
@@ -40,7 +40,7 @@
         <PackageReference Include="Serilog.Enrichers.ClientInfo" Version="1.1.4" />
         <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
         <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.18.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.19.0" />
 
     </ItemGroup>
 
