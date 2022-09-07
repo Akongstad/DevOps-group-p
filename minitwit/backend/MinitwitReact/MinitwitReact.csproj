@@ -40,7 +40,7 @@
         <PackageReference Include="Serilog.Enrichers.ClientInfo" Version="1.1.4" />
         <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
         <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.19.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.23.0" />
 
     </ItemGroup>
 
