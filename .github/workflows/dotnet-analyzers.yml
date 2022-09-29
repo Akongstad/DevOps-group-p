@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v3.0.0
         with:
           dotnet-version: 3.1.x #scuffed, but won't work on later versions as it's built on this.
           # can still use rule sets from later .net releases.
