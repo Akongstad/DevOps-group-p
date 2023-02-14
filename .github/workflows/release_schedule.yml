@@ -2,8 +2,8 @@ name: release_schedule
 
 on:
   workflow_dispatch:
-  schedule:
-  - cron: "0 20 * * 0"
+  #schedule:
+  #- cron: "0 20 * * 0"
 
 jobs:
   #From: https://github.com/actions/create-release
